@@ -1,3 +1,4 @@
+
 * {
   margin: 0;
   padding: 0;
@@ -9,6 +10,7 @@
   background-color: #f3f4f6;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
 }
+
 
 .header {
   background-color: #059669;
@@ -38,22 +40,21 @@
   opacity: 0.9;
 }
 
+
 .nav-icons {
   display: flex;
-  gap: 3rem; 
+  gap: 1rem;
 }
 
 .nav-icon {
   background-color: #10b981;
-  padding: 1rem; 
+  padding: 0.75rem;
   border-radius: 50%;
   cursor: pointer;
   transition: background-color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 65px; 
-  height: 65px; 
 }
 
 .nav-icon:hover {
@@ -62,8 +63,9 @@
 
 .nav-icon span {
   color: white;
-  font-size: 1.75rem; 
+  font-size: 1.5rem;
 }
+
 
 .main-content {
   display: flex;
@@ -88,6 +90,7 @@
   gap: 1.5rem;
 }
 
+
 .input-group {
   width: 100%;
 }
@@ -111,6 +114,7 @@
 .input-field:focus {
   box-shadow: 0 0 0 2px #34d399;
 }
+
 
 .button-container {
   display: flex;
@@ -138,6 +142,7 @@
   box-shadow: 0 0 0 2px #34d399;
 }
 
+
 @media (max-width: 768px) {
   .header-content {
     flex-direction: column;
@@ -146,17 +151,6 @@
   
   .nav-icons {
     justify-content: center;
-    gap: 1rem; 
-  }
-  
-  .nav-icon {
-    width: 50px; 
-    height: 50px;
-    padding: 0.75rem;
-  }
-  
-  .nav-icon span {
-    font-size: 1.5rem; 
   }
   
   .title {
