@@ -1,12 +1,19 @@
-import LoginPage from './Development/LoginPage';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+import LoginPage from './screens/LoginPage';
+import Homepage from './screens/HomePage';
+import './App.css';
 
 function App() {
   return (
-    <LoginPage />
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/home" element={<Homepage />} />
+      </Routes>
+    </Router>
   );
 }
 
-//((((((((((((((((((((((((install niyo lucid react)))))))))))))))))))))))))))))))))))))
 export default App;
