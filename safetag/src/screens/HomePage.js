@@ -29,12 +29,16 @@ function Homepage() {
       </header>
 
       <main className="main-content homepage-content">
-        <div className="info-box">
-          <h2>Secure. Authenticate. Fast. Every Tag Matters.</h2>
-          <p>This site an emergency alert platform designed for DLSL students, instantly receiving </p>
-          <p>   and responding to distress signals triggered through their personal SAFE Tags.</p>
-        </div>
-      </main>
+  <div className="info-box">
+    <div className="h2-box">
+      <h2>Secure. Authenticate. Fast. Every Tag Matters.</h2>
+    </div>
+    <p>This site is an emergency alert platform designed for DLSL students, instantly receiving </p>
+    <p>and responding to distress signals triggered through their personal SAFE Tags.</p>
+  </div>
+  <i className="fab fa-facebook-square"></i>
+</main>
+
     </div>
   );
 }
