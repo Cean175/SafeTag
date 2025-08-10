@@ -138,6 +138,15 @@
   box-shadow: 0 0 0 2px #34d399;
 }
 
+/* ✅ Always visible h2 box styling */
+.h2-box {
+  background-color: #7ED957;         /* Give it a background so it pops         /* Green border */
+  border-radius: 25px;               /* Rounded corners */
+  padding: 5rem;                    /* Space inside */
+  margin-bottom: 1rem;              /* Space below */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Light shadow */
+}
+
 @media (max-width: 768px) {
   .header-content {
     flex-direction: column;
@@ -167,10 +176,4 @@
     margin: 1rem;
     padding: 1.5rem;
   }
-
-  .h2-box {
-    margin: 1rem;
-    padding: 1.5rem;
-  }
 }
-
