@@ -9,6 +9,10 @@ function Homepage() {
     navigate('/');
   };
 
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <div className="homepage-container">
       <header className="header">
@@ -19,26 +23,35 @@ function Homepage() {
           </div>
 
           <div className="nav-icons">
-            <div className="nav-icon"><span>🏠</span></div>
-            <div className="nav-icon"><span>👤</span></div>
-            <div className="nav-icon"><span>📊</span></div>
-            <div className="nav-icon"><span>📞</span></div>
-            <div className="nav-icon"><span>⚙️</span></div>
+            <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
+              <span>🏠</span>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/user')}>
+              <span>👤</span>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/stats')}>
+              <span>📊</span>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
+              <span>📞</span>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
+              <span>⚙️</span>
+            </div>
           </div>
         </div>
       </header>
 
       <main className="main-content homepage-content">
-  <div className="info-box">
-    <div className="h2-box">
-      <h2>Secure. Authenticate. Fast. Every Tag Matters.</h2>
-    </div>
-    <p>This site is an emergency alert platform designed for DLSL students, instantly receiving </p>
-    <p>and responding to distress signals triggered through their personal SAFE Tags.</p>
-  </div>
-  <i className="fab fa-facebook-square"></i>
-</main>
-
+        <div className="info-box">
+          <div className="h2-box">
+            <h2>Secure. Authenticate. Fast. Every Tag Matters.</h2>
+          </div>
+          <p>This site is an emergency alert platform designed for DLSL students, instantly receiving </p>
+          <p>and responding to distress signals triggered through their personal SAFE Tags.</p>
+        </div>
+        <i className="fab fa-facebook-square"></i>
+      </main>
     </div>
   );
 }
