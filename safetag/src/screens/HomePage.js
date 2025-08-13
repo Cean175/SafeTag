@@ -33,10 +33,17 @@ function Homepage() {
     <div className="h2-box">
       <h2>Secure. Authenticate. Fast. Every Tag Matters.</h2>
     </div>
-    <p>This site is an emergency alert platform designed for DLSL students, instantly receiving </p>
-    <p>and responding to distress signals triggered through their personal SAFE Tags.</p>
+    <p className= "about"> This site is an emergency alert platform designed for DLSL students, instantly receiving </p>
+    <p className= "about"> and responding to distress signals triggered through their personal SAFE Tags.</p>
   </div>
-  <i className="fab fa-facebook-square"></i>
+  <div className="soc-media">
+    <div className="social-icons">
+      <i className="fab fa-facebook-square"></i>
+      <i className="fab fa-twitter-square"></i>
+      <i className="fab fa-instagram-square"></i>
+      <i className="fab fa-linkedin"></i>
+    </div>
+  </div>
 </main>
 
     </div>
