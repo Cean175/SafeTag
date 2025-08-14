@@ -6,6 +6,7 @@ import Homepage from './screens/HomePage';
 import EmergencyPage from './screens/EmergencyPage';
 import UserPage from './screens/UserPage';
 import AddStudentPage from './screens/AddStudentPage';
+import StudentsPage from './screens/StudentsPage';
 import './App.css';
 
 function App() {
@@ -17,7 +18,7 @@ function App() {
         <Route path="/user" element={<UserPage />} />
         <Route path="/emergencies" element={<EmergencyPage />} />
         <Route path="/addstudent" element={<AddStudentPage />} />
-     
+        <Route path="/students" element={<StudentsPage />} />
       </Routes>
     </Router>
   );
