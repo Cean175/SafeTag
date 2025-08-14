@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/UserPage.css';
+import '../css/AddStudentPage.css';
 
 
 
-function UserPage() {
+function AddStudentPage() {
   const navigate = useNavigate();
 
   const handleNavigation = (path) => {
@@ -20,7 +20,7 @@ function UserPage() {
   };
 
   const handleAddStudent = () => {
-    navigate('/addstudent');
+    navigate('/add-student');
   };
 
   const handleDocumentations = () => {
@@ -57,26 +57,10 @@ function UserPage() {
       </header>
 
       <main className="main-content user-page-content">
-        <div className="action-buttons">
-          <button className="action-btn emergency-btn" onClick={handleEmergencies}>
-            Emergencies
-          </button>
-          
-          <button className="action-btn students-btn" onClick={handleStudents}>
-            Students
-          </button>
-          
-          <button className="action-btn add-student-btn" onClick={handleAddStudent}>
-            Add new student
-          </button>
-          
-          <button className="action-btn documentations-btn" onClick={handleDocumentations}>
-            Documentations
-          </button>
-        </div>
+       
       </main>
     </div>
   );
 }
 
-export default UserPage;
+export default AddStudentPage;
