@@ -16,7 +16,7 @@ function LoginPage() {
     if (username === validUsername && password === validPassword) {
       console.log('Login successful!');
       setErrorMessage('');
-      navigate('/home'); // comment out this line if you're not using routing
+      navigate('/home'); 
     } else {
       setErrorMessage('Invalid username or password.');
     }

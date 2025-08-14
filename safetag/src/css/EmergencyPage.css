@@ -1,0 +1,202 @@
+
+.user-page-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.user-page-content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 80px 20px 20px;
+  min-height: calc(100vh - 120px);
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 60px;
+}
+
+.action-btn {
+  padding: 20px 40px;
+  border: none;
+  border-radius: 50px;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Emergency-List{
+    background-color: #ff3742;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 600px;
+    margin-top: 60px;
+    padding: 10px;
+    border-radius: 50px;
+    color: white;
+    }
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+.emergency-btn {
+  background: linear-gradient(135deg, #ff4757, #ff3742);
+}
+
+.emergency-btn:hover {
+  background: linear-gradient(135deg, #ff3742, #ff2731);
+}
+
+.students-btn {
+  background: linear-gradient(135deg, #7bed9f, #5fbf78);
+}
+
+.students-btn:hover {
+  background: linear-gradient(135deg, #70e693, #57b86b);
+}
+
+.add-student-btn {
+  background: linear-gradient(135deg, #7bed9f, #5fbf78);
+}
+
+.add-student-btn:hover {
+  background: linear-gradient(135deg, #70e693, #57b86b);
+}
+
+.documentations-btn {
+  background: linear-gradient(135deg, #7bed9f, #5fbf78);
+}
+
+.documentations-btn:hover {
+  background: linear-gradient(135deg, #70e693, #57b86b);
+}
+
+
+.header {
+  background: linear-gradient(135deg, #2ed573, #1eb960);
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.branding .title {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.branding .subtitle {
+  color: white;
+  font-size: 0.9rem;
+  margin: 0;
+  opacity: 0.9;
+  letter-spacing: 1px;
+}
+
+.nav-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-icon {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.nav-icon:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.nav-icon.active {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.nav-icon span {
+  font-size: 20px;
+  filter: brightness(0) invert(1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .user-page-content {
+    padding: 100px 15px 20px;
+  }
+  
+  .action-buttons {
+    max-width: 100%;
+    gap: 15px;
+  }
+  
+  .action-btn {
+    padding: 18px 30px;
+    font-size: 16px;
+    min-height: 60px;
+  }
+  
+  .branding .title {
+    font-size: 2rem;
+  }
+  
+  .branding .subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .nav-icons {
+    gap: 10px;
+  }
+  
+  .nav-icon {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .nav-icon span {
+    font-size: 18px;
+  }
+}

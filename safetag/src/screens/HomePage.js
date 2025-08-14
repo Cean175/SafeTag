@@ -9,6 +9,10 @@ function Homepage() {
     navigate('/');
   };
 
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <div className="homepage-container">
       <header className="header">
@@ -19,11 +23,21 @@ function Homepage() {
           </div>
 
           <div className="nav-icons">
-            <div className="nav-icon"><span>🏠</span></div>
-            <div className="nav-icon"><span>👤</span></div>
-            <div className="nav-icon"><span>📊</span></div>
-            <div className="nav-icon"><span>📞</span></div>
-            <div className="nav-icon"><span>⚙️</span></div>
+            <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
+              <span>🏠</span>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/user')}>
+              <span>👤</span>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/stats')}>
+              <span>📊</span>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
+              <span>📞</span>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
+              <span>⚙️</span>
+            </div>
           </div>
         </div>
       </header>
