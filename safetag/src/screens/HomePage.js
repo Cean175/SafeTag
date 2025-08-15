@@ -43,16 +43,36 @@ function Homepage() {
       </header>
 
       <main className="main-content homepage-content">
-  <div className="info-box">
-    <div className="h2-box">
-      <h2>Secure. Authenticate. Fast. Every Tag Matters.</h2>
-    </div>
-    <p>This site is an emergency alert platform designed for DLSL students, instantly receiving </p>
-    <p>and responding to distress signals triggered through their personal SAFE Tags.</p>
-  </div>
-  <i className="fab fa-facebook-square"></i>
-</main>
+        <div className="info-box">
+          <div className="h2-box">
+            <h2>Secure. Authenticate. Fast. Every Tag Matters.</h2>
+          </div>
+          <p className="about">
+            This site is an emergency alert platform designed for DLSL students, instantly receiving
+          </p>
+          <p className="about">
+            and responding to distress signals triggered through their personal SAFE Tags.
+          </p>
 
+          {/* Social Links as Buttons */}
+          <div className="social-buttons">
+            <a
+              href="https://web.facebook.com/dlsl.isseso" // example FB link
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-btn"
+            >
+              Facebook
+            </a>
+            <a
+              href="mailto:isesso@dlsl.edu.ph"
+              className="social-btn"
+            >
+              Email
+            </a>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

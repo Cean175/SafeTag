@@ -6,13 +6,15 @@ function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate(); // comment this out if not using routing
+  const navigate = useNavigate(); 
 
   // Temporary valid credentials
   const validUsername = 'testuser@example.com';
   const validPassword = 'test1234';
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault(); // prevents page reload
+
     if (username === validUsername && password === validPassword) {
       console.log('Login successful!');
       setErrorMessage('');
@@ -43,8 +45,8 @@ function LoginPage() {
 
       <div className="main-content">
         <div className="login-form">
-          <div className="form-content">
-
+          <form className="form-content" onSubmit={handleLogin}>
+            
             {errorMessage && (
               <div className="error-message">
                 {errorMessage}
@@ -73,13 +75,13 @@ function LoginPage() {
 
             <div className="button-container">
               <button
-                onClick={handleLogin}
+                type="submit"
                 className="login-button"
               >
                 LOG IN
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>

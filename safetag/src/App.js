@@ -7,6 +7,7 @@ import EmergencyPage from './screens/EmergencyPage';
 import UserPage from './screens/UserPage';
 import AddStudentPage from './screens/AddStudentPage';
 import StudentsPage from './screens/StudentsPage';
+import Documentations from './screens/Documentations';
 import './App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/emergencies" element={<EmergencyPage />} />
         <Route path="/addstudent" element={<AddStudentPage />} />
         <Route path="/students" element={<StudentsPage />} />
+        <Route path="/documentations" element={<Documentations />} />
       </Routes>
     </Router>
   );
