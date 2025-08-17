@@ -1,6 +1,8 @@
+//StudentsPage.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/StudentsPage.css';
+import '../css/AddStudentPage.css'
 
 function StudentsPage() {
   const navigate = useNavigate();
