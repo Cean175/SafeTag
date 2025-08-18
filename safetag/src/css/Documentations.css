@@ -1,0 +1,155 @@
+/* Container */
+.user-page-container {
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background-color: #2e7d32;
+  color: white;
+  padding: 10px 20px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.branding .title {
+  font-size: 28px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.branding .subtitle {
+  font-size: 14px;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.nav-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-icon {
+  background: #43a047;
+  padding: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 20px;
+}
+
+.nav-icon:hover {
+  background: #2e7d32;
+}
+
+.nav-icon.active {
+  background: #1b5e20;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+}
+
+.doc-title {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.doc-note {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Documentation Card */
+.doc-card {
+  background: #7cd56d;
+  border-radius: 20px;
+  padding: 25px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+}
+
+.section-title {
+  background: #008f39;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* Avatar */
+.avatar-section {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+/* Input fields */
+.input-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 15px;
+  background: #eae6e1;
+  text-align: center;
+  font-size: 14px;
+  outline: none;
+}
+
+input:focus, select:focus {
+  background: #dcd9d3;
+}
+
+/* Dropdown */
+select {
+  cursor: pointer;
+}
+
+/* Confirm button */
+.confirm-btn {
+  margin-top: 15px;
+  background: #008f39;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.confirm-btn:hover {
+  background: #006d2d;
+}
