@@ -17,7 +17,7 @@
   align-items: flex-start;
 }
 
-/* Left side - Student Profile Section */
+
 .student-profile-section {
   flex: 0 0 400px;
   display: flex;
@@ -181,7 +181,7 @@
 }
 
 .treatment-value {
-  background: #66BB6A;
+  background: #f0f0f0;
   color: #1B5E20;
   padding: 1rem 1.5rem;
   border-radius: 20px;
@@ -195,7 +195,7 @@
   justify-content: center;
 }
 
-/* Empty state for profile */
+
 .no-selection .student-tab {
   background: #A5D6A7;
   color: #4CAF50;
@@ -238,7 +238,7 @@
   box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
 }
 
-/* Right side - Students List Section */
+
 .students-list-section {
   flex: 1;
   display: flex;
@@ -320,7 +320,7 @@
   transform: translateY(-2px);
 }
 
-/* Mobile responsiveness */
+
 @media (max-width: 1024px) {
   .student-profile-section {
     flex: 0 0 350px;
