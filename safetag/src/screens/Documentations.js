@@ -129,7 +129,7 @@ function Documentations() {
           <input type="text" name="medcondition" placeholder="Medical Condition" value={form.medcondition} onChange={handleChange}/>
           <input type="text" name="description" placeholder="Description of the Incident" value={form.description} onChange={handleChange}/>
           {/* Confirm button */}
-          <button className="confirm-btn" onClick={handleSubmit}>CONFIRM</button>
+          <button className="confirm-btn" onClick={handleSubmit}>SAVE</button>
         </div>
       </main>
     </div>
