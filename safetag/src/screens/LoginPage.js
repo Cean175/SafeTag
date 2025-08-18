@@ -15,6 +15,11 @@ function LoginPage() {
   const handleLogin = (e) => {
     e.preventDefault(); // prevents page reload
 
+    if (!username || !password) {
+    setErrorMessage('⚠️ Please fill in both username and password.');
+    return;
+    }
+
     if (username === validUsername && password === validPassword) {
       console.log('Login successful!');
       setErrorMessage('');

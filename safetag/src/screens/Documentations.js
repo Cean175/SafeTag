@@ -12,8 +12,13 @@ function Documentations() {
     date: '',
     time: '',
     location: '',
-    status: 'Hospitalized'
+    status: 'Action Done',
+    medcondition: '',
+    description: '',
   });
+
+  // Avatar state
+  const [avatar, setAvatar] = useState("https://cdn-icons-png.flaticon.com/512/3135/3135715.png");
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -26,6 +31,18 @@ function Documentations() {
   const handleSubmit = () => {
     console.log("Form submitted:", form);
     alert("Documentation submitted!");
+  };
+
+  // Handle avatar upload
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatar(reader.result); // Preview uploaded image
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -61,25 +78,37 @@ function Documentations() {
       {/* Main content */}
       <main className="main-content user-page-content">
         <h2 className="doc-title">DOCUMENTATION</h2>
-        <p className="doc-note">Click button if accomplished</p>
-
         <div className="doc-card">
           <h3 className="section-title">DEMOGRAPHIC PROFILE</h3>
 
           {/* Avatar */}
           <div className="avatar-section">
-            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Student Avatar" className="avatar"/>
+            <label htmlFor="avatarUpload">
+              <img 
+                src={avatar} 
+                alt="Student Avatar" 
+                className="avatar" 
+                style={{ cursor: "pointer" }} 
+              />
+            </label>
+            <input 
+              type="file" 
+              id="avatarUpload" 
+              accept="image/*" 
+              style={{ display: "none" }} 
+              onChange={handleAvatarChange} 
+            />
           </div>
 
           {/* Inputs */}
           <div className="input-row">
             <input type="text" name="name" placeholder="NAME" value={form.name} onChange={handleChange}/>
-            <input type="text" name="id" placeholder="ID" value={form.id} onChange={handleChange}/>
+            <input type="text" name="id" placeholder="STUDENT ID" value={form.id} onChange={handleChange}/>
           </div>
 
           <div className="input-row">
             <input type="text" name="age" placeholder="AGE" value={form.age} onChange={handleChange}/>
-            <input type="text" name="level" placeholder="STUDENT LVL/COURSE" value={form.level} onChange={handleChange}/>
+            <input type="text" name="level" placeholder="STUDENT LVL" value={form.level} onChange={handleChange}/>
           </div>
 
           <input type="date" name="date" value={form.date} onChange={handleChange}/>
@@ -88,12 +117,17 @@ function Documentations() {
 
           {/* Dropdown */}
           <select name="status" value={form.status} onChange={handleChange}>
+              <option value="Action Done" disabled style={{ color: "gray" }}>
+             Action Done
+            </option>
             <option>Hospitalized</option>
             <option>Clinic</option>
             <option>Treatment only</option>
             <option>Others</option>
           </select>
 
+          <input type="text" name="medcondition" placeholder="Medical Condition" value={form.medcondition} onChange={handleChange}/>
+          <input type="text" name="description" placeholder="Description of the Incident" value={form.description} onChange={handleChange}/>
           {/* Confirm button */}
           <button className="confirm-btn" onClick={handleSubmit}>CONFIRM</button>
         </div>
