@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/AddStudentPage.css';
-
+import '../css/UserPage.css';
+import  { useState } from "react";
 
 
 function AddStudentPage() {
@@ -20,13 +20,44 @@ function AddStudentPage() {
   };
 
   const handleAddStudent = () => {
-    navigate('/add-student');
+    navigate('/addstudent');
   };
 
   const handleDocumentations = () => {
     navigate('/documentations');
   };
+  const [formData, setFormData] = useState({
+    name: "",
+    studentId: "",
+    age: "",
+    level: "",
+    course: "",
+    healthCondition: "",
+    treatmentNeeds: "",
+  });
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Get saved students
+    const savedStudents = localStorage.getItem("students");
+    const students = savedStudents ? JSON.parse(savedStudents) : [];
+
+    // Add new student
+    students.push(formData);
+
+    // Save back to localStorage
+    localStorage.setItem("students", JSON.stringify(students));
+
+    // Redirect back to students page
+    navigate("/students");
+  };
+  
   return (
     <div className="user-page-container">
       <header className="header">
@@ -57,7 +88,63 @@ function AddStudentPage() {
       </header>
 
       <main className="main-content user-page-content">
-       
+         <form className="student-form" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Student Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="text"
+            name="studentId"
+            placeholder="Student Id"
+            value={formData.studentId}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="number"
+            name="age"
+            placeholder="Student Age"
+            value={formData.age}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="text"
+            name="level"
+            placeholder="Student lvl/Course"
+            value={formData.level}
+            onChange={handleChange}
+          />
+
+          <select
+            name="healthCondition"
+            value={formData.healthCondition}
+            onChange={handleChange}
+          >
+            <option value="">Health Conditions</option>
+            <option value="Asthma">Asthma</option>
+            <option value="Diabetes">Diabetes</option>
+            <option value="Heart Condition">Heart Condition</option>
+            <option value="None">None</option>
+          </select>
+
+          <textarea
+            name="treatmentNeeds"
+            placeholder="Treatment/Needs"
+            value={formData.treatmentNeeds}
+            onChange={handleChange}
+          />
+
+          <button type="submit" className="add-btn">ADD</button>
+        </form>
       </main>
     </div>
   );
