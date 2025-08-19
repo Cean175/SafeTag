@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../App.css';
+import '../css/Settings.css';
 
 function Settings() {
   const navigate = useNavigate();
@@ -46,13 +46,12 @@ function Settings() {
       </header>
 
       {/* Main Settings Content */}
-      <main className="main-content settings-content">
-        <h2 className="settings-title">⚙️ Settings</h2>
+      <main className="settings-content">
         <div className="settings-card">
-          <p className="settings-description">Manage your account and preferences here.</p>
+          <p className="settings-description">Are you sure you want to log-out?</p>
 
           <button className="logout-btn" onClick={handleLogout}>
-            🚪 Logout
+            Log-out
           </button>
         </div>
       </main>

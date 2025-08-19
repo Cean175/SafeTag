@@ -140,6 +140,13 @@
   box-shadow: 0 0 0 2px #34d399;
 }
 
+.settings-title{
+  font-size: 2rem;
+  margin-top: 0%;
+  font-weight: bold;
+  color: black;
+}
+
 .h2-box {
   background-color: #7ED957;
   border-radius: 25px;
@@ -182,6 +189,7 @@
   background-color: #34d399;
   transform: scale(1.05);
 }
+
 
 
 @media (max-width: 768px) {

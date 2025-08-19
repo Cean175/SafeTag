@@ -9,7 +9,7 @@ import AddStudentPage from './screens/AddStudentPage';
 import StudentsPage from './screens/StudentsPage';
 import Documentations from './screens/Documentations';
 import Settings from './screens/Settings';
-import './App.css';
+// import './App.css';
 
 function App() {
   return (
