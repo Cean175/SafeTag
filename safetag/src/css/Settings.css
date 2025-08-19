@@ -36,16 +36,18 @@
 .settings-card {
   background: rgb(49, 174, 103);
   padding: 120px;
-  margin-top: 100px;
+  margin-top: 150px;
   border-radius: 10px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
   max-width: 500px;
+  max-height: 50px;
   width: 100%;
   text-align: center;
 }
 
 .settings-description {
-  font-size: 1rem;
+  font-size: 20px;
+  margin-top: -60px;
   color: white;
   margin-bottom: 2rem;
 }
