@@ -8,6 +8,7 @@ import UserPage from './screens/UserPage';
 import AddStudentPage from './screens/AddStudentPage';
 import StudentsPage from './screens/StudentsPage';
 import Documentations from './screens/Documentations';
+import Settings from './screens/Settings';
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path="/addstudent" element={<AddStudentPage />} />
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/documentations" element={<Documentations />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </Router>
   );

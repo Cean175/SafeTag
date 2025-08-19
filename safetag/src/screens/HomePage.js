@@ -47,12 +47,12 @@ function Homepage() {
           <div className="h2-box">
             <h2>Secure. Authenticate. Fast. Every Tag Matters.</h2>
           </div>
-          <p className="about">
+          <div className="about">
             This site is an emergency alert platform designed for DLSL students, instantly receiving
-          </p>
-          <p className="about">
+          </div>
+          <div className="about">
             and responding to distress signals triggered through their personal SAFE Tags.
-          </p>
+          </div>
 
           {/* Social Links as Buttons */}
           <div className="social-buttons">

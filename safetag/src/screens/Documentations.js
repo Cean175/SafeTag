@@ -4,7 +4,9 @@ import '../css/Documentations.css';
 
 function Documentations() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
+
+  // Default form values
+  const initialFormState = {
     name: '',
     id: '',
     age: '',
@@ -15,22 +17,53 @@ function Documentations() {
     status: 'Action Done',
     medcondition: '',
     description: '',
-  });
+  };
+
+  // Form state
+  const [form, setForm] = useState(initialFormState);
+
+  // Error message state
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Avatar state
-  const [avatar, setAvatar] = useState("https://cdn-icons-png.flaticon.com/512/3135/3135715.png");
+  const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+  const [avatar, setAvatar] = useState(defaultAvatar);
 
+  // Navigation
   const handleNavigation = (path) => {
     navigate(path);
   };
 
+  // Input change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Submit handler with validation
   const handleSubmit = () => {
+    if (
+      !form.name ||
+      !form.id ||
+      !form.age ||
+      !form.level ||
+      !form.date ||
+      !form.time ||
+      !form.location ||
+      form.status === 'Action Done' ||
+      !form.medcondition ||
+      !form.description
+    ) {
+      setErrorMessage('⚠️ Please fill up all needed information.');
+      return;
+    }
+
     console.log("Form submitted:", form);
     alert("Documentation submitted!");
+    setErrorMessage('');
+
+    // 🔄 Reset form and avatar after submit
+    setForm(initialFormState);
+    setAvatar(defaultAvatar);
   };
 
   // Handle avatar upload
@@ -81,22 +114,27 @@ function Documentations() {
         <div className="doc-card">
           <h3 className="section-title">DEMOGRAPHIC PROFILE</h3>
 
+          {/* Error Message */}
+          {errorMessage && (
+            <div className="error-message">{errorMessage}</div>
+          )}
+
           {/* Avatar */}
           <div className="avatar-section">
             <label htmlFor="avatarUpload">
-              <img 
-                src={avatar} 
-                alt="Student Avatar" 
-                className="avatar" 
-                style={{ cursor: "pointer" }} 
+              <img
+                src={avatar}
+                alt="Student Avatar"
+                className="avatar"
+                style={{ cursor: "pointer" }}
               />
             </label>
-            <input 
-              type="file" 
-              id="avatarUpload" 
-              accept="image/*" 
-              style={{ display: "none" }} 
-              onChange={handleAvatarChange} 
+            <input
+              type="file"
+              id="avatarUpload"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleAvatarChange}
             />
           </div>
 
@@ -117,8 +155,8 @@ function Documentations() {
 
           {/* Dropdown */}
           <select name="status" value={form.status} onChange={handleChange}>
-              <option value="Action Done" disabled style={{ color: "gray" }}>
-             Action Done
+            <option value="Action Done" disabled style={{ color: "gray" }}>
+              Action Done
             </option>
             <option>Hospitalized</option>
             <option>Clinic</option>
@@ -128,6 +166,7 @@ function Documentations() {
 
           <input type="text" name="medcondition" placeholder="Medical Condition" value={form.medcondition} onChange={handleChange}/>
           <input type="text" name="description" placeholder="Description of the Incident" value={form.description} onChange={handleChange}/>
+
           {/* Confirm button */}
           <button className="confirm-btn" onClick={handleSubmit}>SAVE</button>
         </div>
