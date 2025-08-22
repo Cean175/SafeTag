@@ -1,0 +1,359 @@
+.contact-page-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffffff 0%, #fbfbfb 100%);
+  font-family: 'Arial', sans-serif;
+}
+
+.contact-page-container .header {
+  background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.contact-page-container .header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contact-page-container .branding .title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.contact-page-container .branding .subtitle {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.contact-page-container .nav-icons {
+  display: flex;
+  gap: 1rem;
+}
+
+.contact-page-container .nav-icon {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.contact-page-container .nav-icon:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.contact-page-container .nav-icon.active {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.contact-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.emergency-alert {
+  background: linear-gradient(135deg, #ce1d1d, #ee5a24);
+  color: white;
+  padding: 2rem;
+  border-radius: 20px;
+  text-align: center;
+  height: 50%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  grid-column: 1 / -1;
+  margin-bottom: 1rem;
+}
+
+.alert-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 2px;
+}
+
+.alert-subtitle {
+  margin: 0 0 1.5rem 0;
+  opacity: 0.9;
+}
+
+.done-button {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 1rem 3rem;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.done-button:hover {
+  background: #219a52;
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(39, 174, 96, 0.4);
+}
+
+.student-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+.profile-section h4 {
+  background: #2ecc71;
+  color: white;
+  margin: 0 -2rem 1.5rem -2rem;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.profile-image {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+  border: 4px solid #2ecc71;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.student-info {
+  margin-bottom: 2rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.info-row .label {
+  font-weight: bold;
+  color: #2c3e50;
+  flex-shrink: 0;
+}
+
+.info-row .value {
+  text-align: right;
+  color: #34495e;
+}
+
+.emergency-contact {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin: -2rem -2rem 0 -2rem;
+}
+
+.emergency-contact h5 {
+background-color: #ff3742;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    height: 50%;
+    max-width: 600px;
+    margin-top: 60px;
+    padding: 10px;
+    border-radius: 50px;
+    color: white;
+}
+
+.contact-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.location-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.location-section h3 {
+  margin: 0 0 1.5rem 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.map-container {
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+  height: 300px;
+}
+
+.location-map {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.location-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.click-button {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: #2ecc71;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.click-button:hover {
+  background: #27ae60;
+  transform: scale(1.05);
+}
+
+.action-buttons {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.call-button,
+.message-button {
+  padding: 1.2rem 2.5rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  min-width: 150px;
+}
+
+.call-button {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+}
+
+.call-button:hover {
+  background: linear-gradient(135deg, #2980b9, #21618c);
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(52, 152, 219, 0.4);
+}
+
+.message-button {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  color: white;
+}
+
+.message-button:hover {
+  background: linear-gradient(135deg, #8e44ad, #7d3c98);
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(155, 89, 182, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .contact-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .header-content {
+    padding: 0 1rem;
+  }
+  
+  .branding .title {
+    font-size: 1.5rem;
+  }
+  
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .call-button,
+  .message-button {
+    width: 100%;
+    max-width: 300px;
+  }
+}
