@@ -106,6 +106,10 @@ function ContactPage() {
                   <span className="label">YEAR & COURSE:</span>
                   <span className="value">{emergencyData?.course || '3rd Year BSIT'}</span>
                 </div>
+                 <div className="info-row">
+                  <span className="label">Disease</span>
+                  <span className="value">{emergencyData?.Healthcondition || 'Congestive heart failure'}</span>
+                  </div>
               </div>
               
               <div className="emergency-contact">
