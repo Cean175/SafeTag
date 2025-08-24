@@ -9,8 +9,10 @@ import AddStudentPage from './screens/AddStudentPage';
 import StudentsPage from './screens/StudentsPage';
 import Documentations from './screens/Documentations';
 import Settings from './screens/Settings';
-import Statistics from './screens/Statistics';
-// import './App.css';
+import ContactPage from './screens/ContactPage';
+
+
+
 
 function App() {
   return (
@@ -19,6 +21,7 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/home" element={<Homepage />} />
         <Route path="/user" element={<UserPage />} />
+        <Route path ="/contact" element ={ <ContactPage />} />
         <Route path="/emergencies" element={<EmergencyPage />} />
         <Route path="/addstudent" element={<AddStudentPage />} />
         <Route path="/students" element={<StudentsPage />} />
