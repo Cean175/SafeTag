@@ -1,6 +1,7 @@
-// src/pages/Statistics.js
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import "../css/Statistics.css";
+
 import {
   BarChart,
   Bar,
@@ -13,8 +14,6 @@ import {
   Cell,
   ResponsiveContainer,
 } from "recharts";
-import "../App.css";
-import "../Statistics.css";
 
 function Statistics({ documentationData }) {
   const navigate = useNavigate();
@@ -67,7 +66,7 @@ function Statistics({ documentationData }) {
             </div>
             <div
               className="nav-icon active"
-              onClick={() => handleNavigation("/stats")}
+              onClick={() => handleNavigation("/statistics")}
             >
               <span>📊</span>
             </div>

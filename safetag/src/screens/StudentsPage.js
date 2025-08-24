@@ -9,6 +9,9 @@ function StudentsPage() {
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
+function StudentsPage() {
+  const [avatar, setAvatar] = useState(null);
+
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -68,7 +71,7 @@ function StudentsPage() {
             <div className="nav-icon" onClick={() => handleNavigation('/user')}>
               <span>👤</span>
             </div>
-            <div className="nav-icon" onClick={() => handleNavigation('/stats')}>
+            <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
               <span>📊</span>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
@@ -187,6 +190,7 @@ function StudentsPage() {
       </main>
     </div>
   );
+}
 }
 
 export default StudentsPage;

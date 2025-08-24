@@ -54,7 +54,7 @@ function ContactPage() {
             <div className="nav-icon" onClick={() => handleNavigation('/user')}>
               <span>👤</span>
             </div>
-            <div className="nav-icon" onClick={() => handleNavigation('/stats')}>
+            <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
               <span>📊</span>
             </div>
             <div className="nav-icon active" onClick={() => handleNavigation('/contact')}>
