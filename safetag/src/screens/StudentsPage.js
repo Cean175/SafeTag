@@ -9,6 +9,17 @@ function StudentsPage() {
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatar(reader.result); 
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
 
   useEffect(() => {
     const savedStudents = localStorage.getItem('students');
