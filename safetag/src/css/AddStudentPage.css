@@ -1,7 +1,7 @@
 
 .add-student-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #5cb835);
+  background:linear-gradient(135deg, #4CAF50, #45a049);;
   display: flex;
   flex-direction: column;
   align-items: center;
