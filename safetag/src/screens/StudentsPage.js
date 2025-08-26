@@ -1,4 +1,3 @@
-import react from 'react';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/StudentsPage.css';
@@ -6,10 +5,8 @@ import '../css/AddStudentPage.css';
 
 function StudentsPage() {
   const navigate = useNavigate();
-  const [students, setStudents] = useState(null);
+  const [students, setStudents] = useState([]); // start as empty array
   const [selectedStudent, setSelectedStudent] = useState(null);
-
-function StudentsPage() {   
   const [avatar, setAvatar] = useState(null);
 
   const handleAvatarChange = (e) => {
@@ -17,19 +14,18 @@ function StudentsPage() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatar(reader.result); 
+        setAvatar(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
-
 
   useEffect(() => {
     const savedStudents = localStorage.getItem('students');
     if (savedStudents) {
       const studentsData = JSON.parse(savedStudents);
       setStudents(studentsData);
-      
+
       if (studentsData.length > 0) {
         setSelectedStudent({ ...studentsData[0], index: 0 });
       }
@@ -86,24 +82,23 @@ function StudentsPage() {
 
       <main className="main-content students-page-content">
         <div className="students-layout">
-         
           <div className="student-profile-section">
             {selectedStudent ? (
               <>
-              
                 <div className="student-tab">
                   STUDENT {selectedStudent.index + 1}
                 </div>
 
-               
                 <div className="profile-card">
-                  <div className="profile-header-badge">
-                    DEMOGRAPHIC PROFILE
-                  </div>
+                  <div className="profile-header-badge">DEMOGRAPHIC PROFILE</div>
 
                   <div className="profile-avatar-section">
                     {selectedStudent.profilePicture ? (
-                      <img src={selectedStudent.profilePicture} alt={selectedStudent.name} className="profile-avatar" />
+                      <img
+                        src={selectedStudent.profilePicture}
+                        alt={selectedStudent.name}
+                        className="profile-avatar"
+                      />
                     ) : (
                       <div className="profile-avatar default-avatar">
                         <div className="avatar-icon">👤</div>
@@ -122,11 +117,17 @@ function StudentsPage() {
                     </div>
                     <div className="profile-field">
                       <div className="field-label">ID</div>
-                      <div className="field-value">{selectedStudent.id || selectedStudent.studentId || 'N/A'}</div>
+                      <div className="field-value">
+                        {selectedStudent.id || selectedStudent.studentId || 'N/A'}
+                      </div>
                     </div>
                     <div className="profile-field">
                       <div className="field-label">STUDENT LVL/COURSE</div>
-                      <div className="field-value">{(selectedStudent.level || selectedStudent.yearLevel || '') + (selectedStudent.course ? ' - ' + selectedStudent.course : '') || 'N/A'}</div>
+                      <div className="field-value">
+                        {(selectedStudent.level || selectedStudent.yearLevel || '') +
+                          (selectedStudent.course ? ' - ' + selectedStudent.course : '') ||
+                          'N/A'}
+                      </div>
                     </div>
                   </div>
 
@@ -139,16 +140,18 @@ function StudentsPage() {
 
                   <div className="treatment-section">
                     <div className="treatment-field">
-                      <div className="treatment-value">{selectedStudent.treatmentNeeds || selectedStudent.treatment || 'Treatment/needs'}</div>
+                      <div className="treatment-value">
+                        {selectedStudent.treatmentNeeds ||
+                          selectedStudent.treatment ||
+                          'Treatment/needs'}
+                      </div>
                     </div>
                   </div>
                 </div>
               </>
             ) : (
               <div className="no-selection">
-                <div className="student-tab">
-                  SELECT A STUDENT
-                </div>
+                <div className="student-tab">SELECT A STUDENT</div>
                 <div className="profile-card empty-card">
                   <div className="empty-message">
                     <p>No student selected</p>
@@ -161,7 +164,6 @@ function StudentsPage() {
             )}
           </div>
 
-     
           <div className="students-list-section">
             {students.length === 0 ? (
               <div className="no-students-message">
@@ -175,9 +177,11 @@ function StudentsPage() {
             ) : (
               <div className="students-list">
                 {students.map((student, index) => (
-                  <div 
-                    key={student.id || index} 
-                    className={`student-list-item ${selectedStudent && selectedStudent.index === index ? 'selected' : ''}`}
+                  <div
+                    key={student.id || index}
+                    className={`student-list-item ${
+                      selectedStudent && selectedStudent.index === index ? 'selected' : ''
+                    }`}
                     onClick={() => handleStudentClick(student, index)}
                   >
                     Student {index + 1}
@@ -190,7 +194,6 @@ function StudentsPage() {
       </main>
     </div>
   );
-}
 }
 
 export default StudentsPage;

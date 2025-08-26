@@ -6,8 +6,11 @@ function Settings() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // You can also clear auth/session storage here if needed
-    navigate('/');
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+    if (confirmLogout) {
+      // clear session/auth if needed
+      navigate('/');
+    }
   };
 
   const handleNavigation = (path) => {

@@ -62,6 +62,16 @@
   color: white;
 }
 
+.user-page-container .nav-icon:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.user-page-container .nav-icon.active {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
 .action-buttons {
   display: flex;
   flex-direction: column;
