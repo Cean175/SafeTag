@@ -1,7 +1,18 @@
+
 .students-page-container {
   min-height: 100vh;
   background:linear-gradient(135deg, #4CAF50, #45a049);
+  font-family: 'Arial', sans-serif;
+} 
+
+.students-page-container .header {
+  background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
+
+
 
 .students-page-content {
   padding: 2rem;

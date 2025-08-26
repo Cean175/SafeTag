@@ -22,7 +22,6 @@ function Statistics({ documentationData }) {
     navigate(path);
   };
 
-  // --- Example dataset (replace with your Documentation data) ---
   const monthlyCases = [
     { month: "January", January: 3 },
     { month: "February", February: 7 },

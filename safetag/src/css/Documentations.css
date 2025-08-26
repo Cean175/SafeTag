@@ -132,10 +132,6 @@ input, select {
   outline: none;
 }
 
-input:focus, select:focus {
-  background: #dcd9d3;
-}
-
 /* Dropdown */
 select {
   cursor: pointer;

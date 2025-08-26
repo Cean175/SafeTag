@@ -1,15 +1,15 @@
-//StudentsPage.js
+import react from 'react';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/StudentsPage.css';
-import '../css/AddStudentPage.css'
+import '../css/AddStudentPage.css';
 
 function StudentsPage() {
   const navigate = useNavigate();
-  const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
-function StudentsPage() {
+function StudentsPage() {   
   const [avatar, setAvatar] = useState(null);
 
   const handleAvatarChange = (e) => {
