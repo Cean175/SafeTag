@@ -1,6 +1,6 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/UserPage.css';
+import '../css/AddStudentPage.css';
 import  { useState } from "react";
 
 
