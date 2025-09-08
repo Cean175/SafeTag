@@ -6,7 +6,7 @@ import  { useState } from "react";
 
 function AddStudentPage() {
   const navigate = useNavigate();
-
+  
   const handleNavigation = (path) => {
     navigate(path);
   };

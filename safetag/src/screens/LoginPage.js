@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import '../App.css';
 import '../css/LoginPage.css';
@@ -13,17 +13,26 @@ function LoginPage() {
   const validUsername = 'testuser@example.com';
   const validPassword = 'test1234';
 
+  // ✅ Redirect away from login if already logged in
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
+      navigate('/home');
+    }
+  }, [navigate]);
+
   const handleLogin = (e) => {
     e.preventDefault(); // prevents page reload
 
     if (!username || !password) {
-    setErrorMessage('⚠️ Please fill in both username and password.');
-    return;
+      setErrorMessage('⚠️ Please fill in both username and password.');
+      return;
     }
 
     if (username === validUsername && password === validPassword) {
       console.log('Login successful!');
       setErrorMessage('');
+      localStorage.setItem('isLoggedIn', 'true'); // ✅ Save login state
       navigate('/home'); 
     } else {
       setErrorMessage('Invalid username or password.');

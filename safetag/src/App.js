@@ -11,27 +11,46 @@ import Documentations from './screens/Documentations';
 import Settings from './screens/Settings';
 import ContactPage from './screens/ContactPage';
 import Statistics from './screens/Statistics';
-
-
-
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Login Page - redirect if already logged in */}
         <Route path="/" element={<LoginPage />} />
-        <Route path="/home" element={<Homepage />} />
-        <Route path="/user" element={<UserPage />} />
-        <Route path ="/contact" element ={ <ContactPage />} />
-        <Route path="/emergencies" element={<EmergencyPage />} />
-        <Route path="/addstudent" element={<AddStudentPage />} />
-        <Route path="/students" element={<StudentsPage />} />
-        <Route path="/documentations" element={<Documentations />} />
-        <Route path="/statistics" element={<Statistics />} />
-        <Route path="/settings" element={<Settings />} />
+
+        {/* Protected Routes */}
+        <Route path="/home" element={
+          <ProtectedRoute><Homepage /></ProtectedRoute>
+        } />
+        <Route path="/user" element={
+          <ProtectedRoute><UserPage /></ProtectedRoute>
+        } />
+        <Route path="/contact" element={
+          <ProtectedRoute><ContactPage /></ProtectedRoute>
+        } />
+        <Route path="/emergencies" element={
+          <ProtectedRoute><EmergencyPage /></ProtectedRoute>
+        } />
+        <Route path="/addstudent" element={
+          <ProtectedRoute><AddStudentPage /></ProtectedRoute>
+        } />
+        <Route path="/students" element={
+          <ProtectedRoute><StudentsPage /></ProtectedRoute>
+        } />
+        <Route path="/documentations" element={
+          <ProtectedRoute><Documentations /></ProtectedRoute>
+        } />
+        <Route path="/statistics" element={
+          <ProtectedRoute><Statistics /></ProtectedRoute>
+        } />
+        <Route path="/settings" element={
+          <ProtectedRoute><Settings /></ProtectedRoute>
+        } />
       </Routes>
     </Router>
   );
-}
+} 
 
 export default App;

@@ -5,13 +5,13 @@ import '../css/Settings.css';
 function Settings() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    const confirmLogout = window.confirm("Are you sure you want to log out?");
-    if (confirmLogout) {
-      // clear session/auth if needed
-      navigate('/');
-    }
-  };
+const handleLogout = () => {
+  const confirmLogout = window.confirm("Are you sure you want to log out?");
+  if (confirmLogout) {
+    localStorage.removeItem('isLoggedIn'); // ✅ clear login session
+    navigate('/');
+  }
+};
 
   const handleNavigation = (path) => {
     navigate(path);
