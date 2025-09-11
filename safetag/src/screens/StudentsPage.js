@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/StudentsPage.css';
 import '../css/AddStudentPage.css';
+import { fetchStudents } from '../lib/supabaseClient';
 
 function StudentsPage() {
   const navigate = useNavigate();
@@ -21,15 +22,26 @@ function StudentsPage() {
   };
 
   useEffect(() => {
-    const savedStudents = localStorage.getItem('students');
-    if (savedStudents) {
-      const studentsData = JSON.parse(savedStudents);
-      setStudents(studentsData);
-
-      if (studentsData.length > 0) {
-        setSelectedStudent({ ...studentsData[0], index: 0 });
+    (async () => {
+      try {
+        const studentsData = await fetchStudents();
+        setStudents(studentsData || []);
+        if (studentsData && studentsData.length > 0) {
+          setSelectedStudent({ ...studentsData[0], index: 0 });
+        }
+      } catch (err) {
+        console.error('Failed to fetch students', err);
+        // fallback to localStorage so the app still works offline
+        const savedStudents = localStorage.getItem('students');
+        if (savedStudents) {
+          const studentsData = JSON.parse(savedStudents);
+          setStudents(studentsData);
+          if (studentsData.length > 0) {
+            setSelectedStudent({ ...studentsData[0], index: 0 });
+          }
+        }
       }
-    }
+    })();
   }, []);
 
   const handleNavigation = (path) => {

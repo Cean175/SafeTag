@@ -12,6 +12,7 @@ import Documentations from './screens/Documentations';
 import Settings from './screens/Settings';
 import ContactPage from './screens/ContactPage';
 import Statistics from './screens/Statistics';
+import DocumentationsList from './screens/DocumentationsList';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -48,6 +49,9 @@ function App() {
         } />
         <Route path="/settings" element={
           <ProtectedRoute><Settings /></ProtectedRoute>
+        } />
+        <Route path="/documentations-list" element={
+          <ProtectedRoute><DocumentationsList /></ProtectedRoute>
         } />
       </Routes>
     </Router>

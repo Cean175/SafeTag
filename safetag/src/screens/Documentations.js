@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase, fetchStudents } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import '../css/Documentations.css';
 
@@ -28,10 +29,17 @@ function Documentations() {
   // Avatar state
   const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
   const [avatar, setAvatar] = useState(defaultAvatar);
+  const [students, setStudents] = useState([]);
+  const [selectedStudentUuid, setSelectedStudentUuid] = useState('');
 
   // Navigation
   const handleNavigation = (path) => {
     navigate(path);
+  };
+
+  // Go to documentation list
+  const goToList = () => {
+    navigate('/documentations-list');
   };
 
   // Input change
@@ -40,7 +48,7 @@ function Documentations() {
   };
 
   // Submit handler with validation
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (
       !form.name ||
       !form.id ||
@@ -57,11 +65,46 @@ function Documentations() {
       return;
     }
 
-    console.log("Form submitted:", form);
-    alert("Documentation submitted!");
-    setErrorMessage('');
+    let avatar_url = avatar;
+    // If avatar is a data URL (newly uploaded), upload to Supabase Storage
+    if (avatar && avatar.startsWith('data:')) {
+      try {
+        const fileName = `${form.id}_${Date.now()}.png`;
+        const res = await fetch(avatar);
+        const blob = await res.blob();
+        const { data, error } = await supabase.storage.from('avatars').upload(fileName, blob, { upsert: true });
+        if (error) throw error;
+        const { publicURL } = supabase.storage.from('avatars').getPublicUrl(fileName);
+        avatar_url = publicURL;
+      } catch (err) {
+        setErrorMessage('Failed to upload avatar.');
+        return;
+      }
+    }
 
-    // 🔄 Reset form and avatar after submit
+    // Insert into Supabase
+    const { error } = await supabase.from('documentations').insert([
+      {
+        student_name: form.name,
+        student_id: form.id,
+        age: parseInt(form.age, 10),
+        student_lvl: form.level,
+        incident_date: form.date,
+        incident_time: form.time,
+        location: form.location,
+        status: form.status,
+        medical_condition: form.medcondition,
+        description: form.description,
+        avatar_url: avatar_url,
+      },
+    ]);
+    if (error) {
+      setErrorMessage('Failed to submit documentation.');
+      return;
+    }
+
+    alert('Documentation submitted!');
+    setErrorMessage('');
     setForm(initialFormState);
     setAvatar(defaultAvatar);
   };
@@ -75,6 +118,40 @@ function Documentations() {
         setAvatar(reader.result); // Preview uploaded image
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  // Load students for dropdown
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const data = await fetchStudents();
+        setStudents(data || []);
+      } catch (err) {
+        console.error('Failed to load students', err);
+      }
+    })();
+  }, []);
+
+  const handleStudentSelect = (e) => {
+    const uuid = e.target.value;
+    setSelectedStudentUuid(uuid);
+    if (!uuid || uuid === '__other__') {
+      // allow manual entry
+      setForm({ ...form, name: '', id: '' });
+      setAvatar(defaultAvatar);
+      return;
+    }
+    const student = students.find((s) => s.id === uuid);
+    if (student) {
+      setForm({
+        ...form,
+        name: student.name || '',
+        id: student.student_id || '',
+        age: student.age ? String(student.age) : '',
+        level: student.level || '',
+      });
+      setAvatar(student.profile_picture || defaultAvatar);
     }
   };
 
@@ -110,7 +187,10 @@ function Documentations() {
 
       {/* Main content */}
       <main className="main-content user-page-content">
-        <h2 className="doc-title">DOCUMENTATION</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2 className="doc-title">DOCUMENTATION</h2>
+          <button className="confirm-btn" style={{ margin: 0 }} onClick={goToList}>View All</button>
+        </div>
         <div className="doc-card">
           <h3 className="section-title">DEMOGRAPHIC PROFILE</h3>
 
@@ -140,7 +220,14 @@ function Documentations() {
 
           {/* Inputs */}
           <div className="input-row">
-            <input type="text" name="name" placeholder="NAME" value={form.name} onChange={handleChange}/>
+            <select name="student_select" value={selectedStudentUuid} onChange={handleStudentSelect}>
+              <option value="">Select a student...</option>
+              {students.map((s) => (
+                <option key={s.id} value={s.id}>{s.name} — {s.student_id}</option>
+              ))}
+              <option value="__other__">Other / Manual entry</option>
+            </select>
+
             <input type="text" name="id" placeholder="STUDENT ID" value={form.id} onChange={handleChange}/>
           </div>
 

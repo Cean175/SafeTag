@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import '../css/UserPage.css';
 import '../css/AddStudentPage.css';
 import  { useState } from "react";
+import { createStudent, test as uploadFile } from '../lib/supabaseClient';
 
 
 function AddStudentPage() {
@@ -34,6 +35,7 @@ function AddStudentPage() {
     course: "",
     healthCondition: "",
     treatmentNeeds: "",
+  profileFile: null,
   });
 
   const handleChange = (e) => {
@@ -41,21 +43,43 @@ function AddStudentPage() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    setFormData({ ...formData, profileFile: file });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    (async () => {
+      try {
+        const payload = {
+          student_id: formData.studentId,
+          name: formData.name,
+          age: formData.age ? parseInt(formData.age, 10) : null,
+          level: formData.level,
+          course: formData.course || null,
+          health_condition: formData.healthCondition || null,
+          treatment_needs: formData.treatmentNeeds || null,
+        };
 
-    // Get saved students
-    const savedStudents = localStorage.getItem("students");
-    const students = savedStudents ? JSON.parse(savedStudents) : [];
+        // If a file input exists on the form (profilePicture), upload it first
+        if (formData.profileFile) {
+          const publicUrl = await uploadFile(formData.profileFile, { bucket: 'avatars' });
+          payload.profile_picture = publicUrl;
+        }
 
-    // Add new student
-    students.push(formData);
-
-    // Save back to localStorage
-    localStorage.setItem("students", JSON.stringify(students));
-
-    // Redirect back to students page
-    navigate("/students");
+        await createStudent(payload);
+        navigate('/students');
+      } catch (err) {
+        console.error('Failed to create student', err);
+        // fallback: still save locally so user doesn't lose data
+        const savedStudents = localStorage.getItem("students");
+        const students = savedStudents ? JSON.parse(savedStudents) : [];
+        students.push(formData);
+        localStorage.setItem("students", JSON.stringify(students));
+        navigate('/students');
+      }
+    })();
   };
   
   return (
@@ -142,6 +166,8 @@ function AddStudentPage() {
             value={formData.treatmentNeeds}
             onChange={handleChange}
           />
+
+          <input type="file" accept="image/*" onChange={handleFileChange} />
 
           <button type="submit" className="add-btn">ADD</button>
         </form>
