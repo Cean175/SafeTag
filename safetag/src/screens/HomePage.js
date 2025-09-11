@@ -24,19 +24,19 @@ function Homepage() {
 
           <div className="nav-icons">
             <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
-              <span>🏠</span>
+              <i className="fas fa-home"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/user')}>
-              <span>👤</span>
+              <i className="fas fa-user"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
-              <span>📊</span>
+              <i className="fas fa-chart-bar"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
-              <span>📞</span>
+              <i className="fas fa-phone"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
-              <span>⚙️</span>
+              <i className="fas fa-cog"></i>
             </div>
           </div>
         </div>
@@ -54,21 +54,24 @@ function Homepage() {
             and responding to distress signals triggered through their personal SAFE Tags.
           </div>
 
-          {/* Social Links as Buttons */}
+          {/* Social Links as Icons */}
+          <div className="contact">
+            <h4>| Contact Us |</h4>
+          </div>
           <div className="social-buttons">
             <a
-              href="https://web.facebook.com/dlsl.isseso" // example FB link
+              href="https://web.facebook.com/dlsl.isseso"
               target="_blank"
               rel="noopener noreferrer"
               className="social-btn"
             >
-              Facebook
+              <i className="fab fa-facebook-f"></i>
             </a>
             <a
               href="mailto:isesso@dlsl.edu.ph"
               className="social-btn"
             >
-              Email
+              <i className="fas fa-envelope"></i>
             </a>
           </div>
         </div>

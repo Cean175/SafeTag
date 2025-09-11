@@ -38,7 +38,7 @@ function Statistics({ documentationData }) {
   ];
 
   const actionData = [
-    { name: "Treatment only", value: 12.5 },
+    { name: "Treatment only", value: 30 },
     { name: "Clinic", value: 25 },
     { name: "Hospitalized", value: 62.5 },
   ];
@@ -55,31 +55,21 @@ function Statistics({ documentationData }) {
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
 
-          {/* Nav Icons */}
           <div className="nav-icons">
-            <div className="nav-icon" onClick={() => handleNavigation("/home")}>
-              <span>🏠</span>
+            <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
+              <i className="fas fa-home"></i>
             </div>
-            <div className="nav-icon" onClick={() => handleNavigation("/user")}>
-              <span>👤</span>
+            <div className="nav-icon" onClick={() => handleNavigation('/user')}>
+              <i className="fas fa-user"></i>
             </div>
-            <div
-              className="nav-icon active"
-              onClick={() => handleNavigation("/statistics")}
-            >
-              <span>📊</span>
+            <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
+              <i className="fas fa-chart-bar"></i>
             </div>
-            <div
-              className="nav-icon"
-              onClick={() => handleNavigation("/contact")}
-            >
-              <span>📞</span>
+            <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
+              <i className="fas fa-phone"></i>
             </div>
-            <div
-              className="nav-icon"
-              onClick={() => handleNavigation("/settings")}
-            >
-              <span>⚙️</span>
+            <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
+              <i className="fas fa-cog"></i>
             </div>
           </div>
         </div>

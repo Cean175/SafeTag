@@ -37,20 +37,20 @@ function UserPage() {
           </div>
 
           <div className="nav-icons">
-            <div className="nav-icon" onClick={() => handleNavigation('/home')}>
-              <span>🏠</span>
+            <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
+              <i className="fas fa-home"></i>
             </div>
-            <div className="nav-icon active" onClick={() => handleNavigation('/user')}>
-              <span>👤</span>
+            <div className="nav-icon" onClick={() => handleNavigation('/user')}>
+              <i className="fas fa-user"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
-              <span>📊</span>
+              <i className="fas fa-chart-bar"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
-              <span>📞</span>
+              <i className="fas fa-phone"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
-              <span>⚙️</span>
+              <i className="fas fa-cog"></i>
             </div>
           </div>
         </div>

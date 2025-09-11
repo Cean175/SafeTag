@@ -84,6 +84,15 @@
   margin-bottom: 0.5rem;
 }
 
+.contact h4 {
+  font-size: 12px;
+  color: black;
+  margin-bottom: 0.5rem;
+  margin-top: 5.5rem;
+  margin-right: 1rem;
+  text-align: center;
+}
+
 .info-box p {
   font-size: 1.25rem;
   align-content: center;

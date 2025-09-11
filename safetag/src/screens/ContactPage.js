@@ -48,25 +48,25 @@ function ContactPage() {
           </div>
 
           <div className="nav-icons">
-            <div className="nav-icon" onClick={() => handleNavigation('/home')}>
-              <span>🏠</span>
+            <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
+              <i className="fas fa-home"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/user')}>
-              <span>👤</span>
+              <i className="fas fa-user"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
-              <span>📊</span>
+              <i className="fas fa-chart-bar"></i>
             </div>
-            <div className="nav-icon active" onClick={() => handleNavigation('/contact')}>
-              <span>📞</span>
+            <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
+              <i className="fas fa-phone"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
-              <span>⚙️</span>
+              <i className="fas fa-cog"></i>
             </div>
           </div>
         </div>
       </header>
-
+      
       <main className="main-content contact-content">
         <div className="emergency-alert">
           <h2 className="alert-title">EMERGENCY ALERT</h2>
