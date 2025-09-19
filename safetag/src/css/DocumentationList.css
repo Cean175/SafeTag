@@ -18,11 +18,11 @@
   background: #7cd56d;
   border-radius: 20px;
   padding: 25px;
-  width: 450px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 1450px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 20px; 
+  align-items: start;
   box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
-
-  
+  grid-column: 2;
 }

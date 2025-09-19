@@ -97,7 +97,6 @@ function DocumentationsList() {
               }}
               onClick={() => handleCardClick(doc)}
             >
-              <h3 style={{ color: '#388e3c', marginBottom: '8px' }}>{doc.title || 'No Title'}</h3>
               <p style={{ color: '#333', marginBottom: '8px' }}>
                 <strong>Name:</strong> {doc.student_name}<br />
                 <strong>ID:</strong> {doc.student_id}<br />
