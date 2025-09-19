@@ -86,7 +86,7 @@ function DocumentationsList() {
               key={doc.id}
               className="doc-card"
               style={{
-                background: 'linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%)',
+                background: '#f9f9f9',
                 borderRadius: '12px',
                 boxShadow: '0 2px 8px rgba(34, 139, 34, 0.08)',
                 marginBottom: '20px',
