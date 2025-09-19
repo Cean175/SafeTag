@@ -62,8 +62,9 @@
   padding: 30px;
 }
 
-.doc-title {
+.user-page-container .doc-title {
   font-size: 50px;
+  margin-left: 140px;
   font-weight: 5000;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   margin-bottom: 10px;   
@@ -77,11 +78,11 @@
 }
 
 /* Documentation Card */
-.doc-card {
+.user-page-container .doc-card {
   background: #7cd56d;
   border-radius: 20px;
   padding: 25px;
-  width: 350px;
+  width: 450px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -137,9 +138,10 @@ select {
   cursor: pointer;
 }
 
-/* Confirm button */
+
 .confirm-btn {
-  margin-top: 15px;
+  margin-top: 120px;
+  margin-left: 40px;
   background: #008f39;
   color: white;
   border: none;

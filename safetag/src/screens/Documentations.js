@@ -185,11 +185,11 @@ function Documentations() {
         </div>
       </header>
 
-      {/* Main content */}
+      {}
       <main className="main-content user-page-content">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2 className="doc-title">DOCUMENTATION</h2>
-          <button className="confirm-btn" style={{ margin: 0 }} onClick={goToList}>View All</button>
+          <button className="confirm-btn" onClick={goToList}>View All</button>
         </div>
         <div className="doc-card">
           <h3 className="section-title">DEMOGRAPHIC PROFILE</h3>
@@ -221,7 +221,7 @@ function Documentations() {
           {/* Inputs */}
           <div className="input-row">
             <select name="student_select" value={selectedStudentUuid} onChange={handleStudentSelect}>
-              <option value="">Select a student...</option>
+              <option value="">Select a Student</option>
               {students.map((s) => (
                 <option key={s.id} value={s.id}>{s.name} — {s.student_id}</option>
               ))}

@@ -314,6 +314,7 @@
 .students-list-section {
   flex: 1;
   display: flex;
+  margin-top: 50px;
   flex-direction: column;
   gap: 1rem;
 }
@@ -402,6 +403,7 @@
   
   .profile-card {
     padding: 1.5rem;
+    margin-top: 200px;
   }
   
   .profile-avatar,

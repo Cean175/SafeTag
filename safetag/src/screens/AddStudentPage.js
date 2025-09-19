@@ -1,32 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import '../css/UserPage.css';
 import '../css/AddStudentPage.css';
-import  { useState } from "react";
+import { useState } from "react";
 import { createStudent, test as uploadFile } from '../lib/supabaseClient';
-
 
 function AddStudentPage() {
   const navigate = useNavigate();
-  
+
   const handleNavigation = (path) => {
     navigate(path);
   };
 
-  const handleEmergencies = () => {
-    navigate('/emergencies');
-  };
-
-  const handleStudents = () => {
-    navigate('/students');
-  };
-
-  const handleAddStudent = () => {
-    navigate('/addstudent');
-  };
-
-  const handleDocumentations = () => {
-    navigate('/documentations');
-  };
   const [formData, setFormData] = useState({
     name: "",
     studentId: "",
@@ -35,7 +19,7 @@ function AddStudentPage() {
     course: "",
     healthCondition: "",
     treatmentNeeds: "",
-  profileFile: null,
+    profileFile: null,
   });
 
   const handleChange = (e) => {
@@ -62,7 +46,6 @@ function AddStudentPage() {
           treatment_needs: formData.treatmentNeeds || null,
         };
 
-        // If a file input exists on the form (profilePicture), upload it first
         if (formData.profileFile) {
           const publicUrl = await uploadFile(formData.profileFile, { bucket: 'avatars' });
           payload.profile_picture = publicUrl;
@@ -72,7 +55,6 @@ function AddStudentPage() {
         navigate('/students');
       } catch (err) {
         console.error('Failed to create student', err);
-        // fallback: still save locally so user doesn't lose data
         const savedStudents = localStorage.getItem("students");
         const students = savedStudents ? JSON.parse(savedStudents) : [];
         students.push(formData);
@@ -81,7 +63,7 @@ function AddStudentPage() {
       }
     })();
   };
-  
+
   return (
     <div className="user-page-container">
       <header className="header">
@@ -112,7 +94,7 @@ function AddStudentPage() {
       </header>
 
       <main className="main-content user-page-content">
-         <form className="student-form" onSubmit={handleSubmit}>
+        <form className="student-form" onSubmit={handleSubmit}>
           <input
             type="text"
             name="name"
@@ -143,7 +125,7 @@ function AddStudentPage() {
           <input
             type="text"
             name="level"
-            placeholder="Student lvl/Course"
+            placeholder="Student Lvl & Course"
             value={formData.level}
             onChange={handleChange}
           />
@@ -166,8 +148,6 @@ function AddStudentPage() {
             value={formData.treatmentNeeds}
             onChange={handleChange}
           />
-
-          <input type="file" accept="image/*" onChange={handleFileChange} />
 
           <button type="submit" className="add-btn">ADD</button>
         </form>

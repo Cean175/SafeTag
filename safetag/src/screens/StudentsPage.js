@@ -6,8 +6,8 @@ import { fetchStudents } from '../lib/supabaseClient';
 
 function StudentsPage() {
   const navigate = useNavigate();
-  const [students, setStudents] = useState([]); // start as empty array
-  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [students, setStudents] = useState([]);
+  const [selectedStudentIndex, setSelectedStudentIndex] = useState(null);
   const [avatar, setAvatar] = useState(null);
 
   const handleAvatarChange = (e) => {
@@ -27,17 +27,16 @@ function StudentsPage() {
         const studentsData = await fetchStudents();
         setStudents(studentsData || []);
         if (studentsData && studentsData.length > 0) {
-          setSelectedStudent({ ...studentsData[0], index: 0 });
+          setSelectedStudentIndex(0); // default to first student
         }
       } catch (err) {
         console.error('Failed to fetch students', err);
-        // fallback to localStorage so the app still works offline
         const savedStudents = localStorage.getItem('students');
         if (savedStudents) {
           const studentsData = JSON.parse(savedStudents);
           setStudents(studentsData);
           if (studentsData.length > 0) {
-            setSelectedStudent({ ...studentsData[0], index: 0 });
+            setSelectedStudentIndex(0);
           }
         }
       }
@@ -48,9 +47,8 @@ function StudentsPage() {
     navigate(path);
   };
 
-  const handleStudentClick = (student, index) => {
-    const studentWithIndex = { ...student, index };
-    setSelectedStudent(studentWithIndex);
+  const handleStudentClick = (index) => {
+    setSelectedStudentIndex(index);
   };
 
   const handleAddStudent = () => {
@@ -58,10 +56,13 @@ function StudentsPage() {
   };
 
   const handleEditStudent = () => {
-    if (selectedStudent) {
-      navigate(`/editstudent/${selectedStudent.index}`);
+    if (selectedStudentIndex !== null) {
+      navigate(`/editstudent/${selectedStudentIndex}`);
     }
   };
+
+  const selectedStudent =
+    selectedStudentIndex !== null ? students[selectedStudentIndex] : null;
 
   return (
     <div className="students-page-container">
@@ -94,14 +95,11 @@ function StudentsPage() {
 
       <main className="main-content students-page-content">
         <div className="students-layout">
+          {/* Profile Section */}
           <div className="student-profile-section">
             {selectedStudent ? (
               <>
-                <div className="student-tab">
-                  STUDENT {selectedStudent.index + 1}
-                </div>
-
-                <div className="profile-card">
+                              <div className="profile-card">
                   <div className="profile-header-badge">DEMOGRAPHIC PROFILE</div>
 
                   <div className="profile-avatar-section">
@@ -146,7 +144,9 @@ function StudentsPage() {
                   <div className="health-section">
                     <div className="health-field">
                       <div className="health-label">Health condition</div>
-                      <div className="health-value">{selectedStudent.healthCondition || 'None'}</div>
+                      <div className="health-value">
+                        {selectedStudent.healthCondition || 'None'}
+                      </div>
                     </div>
                   </div>
 
@@ -176,6 +176,7 @@ function StudentsPage() {
             )}
           </div>
 
+          {/* Student List Section */}
           <div className="students-list-section">
             {students.length === 0 ? (
               <div className="no-students-message">
@@ -192,9 +193,9 @@ function StudentsPage() {
                   <div
                     key={student.id || index}
                     className={`student-list-item ${
-                      selectedStudent && selectedStudent.index === index ? 'selected' : ''
+                      selectedStudentIndex === index ? 'selected' : ''
                     }`}
-                    onClick={() => handleStudentClick(student, index)}
+                    onClick={() => handleStudentClick(index)}
                   >
                     Student {index + 1}
                   </div>
