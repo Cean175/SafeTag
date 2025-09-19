@@ -97,28 +97,43 @@ function DocumentationsList() {
               }}
               onClick={() => handleCardClick(doc)}
             >
-              <p style={{ color: '#333', marginBottom: '8px' }}>
-                <strong>Name:</strong> {doc.student_name}<br />
-                <strong>ID:</strong> {doc.student_id}<br />
-                <strong>Level:</strong> {doc.student_lvl || 'N/A'}<br />
-                <strong>Age:</strong> {doc.age || 'N/A'}
-              </p>
-              <p style={{ color: '#333', marginBottom: '8px' }}>
-                <strong>Date:</strong> {doc.incident_date || 'N/A'}<br />
-                <strong>Time:</strong> {doc.incident_time || 'N/A'}<br />
-                <strong>Location:</strong> {doc.location || 'N/A'}
-              </p>
-              <p style={{ color: '#333', marginBottom: '8px' }}>
-                <strong>Status:</strong> {doc.status || 'N/A'}<br />
-                <strong>Medical Condition:</strong> {doc.medical_condition || 'N/A'}
-              </p>
-              <p style={{ color: '#333', marginBottom: '12px' }}>
-                <strong>Description:</strong> {doc.description || 'N/A'}
-              </p>
-              <div style={{ fontSize: '0.9em', color: '#757575' }}>
-                Created: {doc.created_at ? new Date(doc.created_at).toLocaleString() : 'N/A'}
-              </div>
-            </div>
+          {/* Student Info */}
+<div style={{ marginBottom: "10px", lineHeight: "1.5" }}>
+  <div style={{ fontWeight: "600", color: "#2e7d32" }}>
+    {doc.student_name || "N/A"}
+  </div>
+  <div style={{ fontSize: "0.9em", color: "#444" }}>
+    ID: {doc.student_id || "N/A"} | Level: {doc.student_lvl || "N/A"} | Age:{" "}
+    {doc.age || "N/A"}
+  </div>
+</div>
+
+{/* Incident Info */}
+<div style={{ marginBottom: "10px", fontSize: "0.9em", color: "#333" }}>
+  <strong>Date:</strong> {doc.incident_date || "N/A"} <br />
+  <strong>Time:</strong> {doc.incident_time || "N/A"} <br />
+  <strong>Location:</strong> {doc.location || "N/A"}
+</div>
+
+{/* Status + Medical */}
+<div style={{ marginBottom: "10px", fontSize: "0.9em", color: "#333" }}>
+  <strong>Status:</strong> {doc.status || "N/A"} <br />
+  <strong>Medical Condition:</strong> {doc.medical_condition || "N/A"}
+</div>
+
+{/* Description */}
+<div style={{ marginBottom: "12px", fontSize: "0.9em", color: "#333" }}>
+  <strong>Description:</strong> {doc.description || "N/A"}
+</div>
+
+{/* System Info */}
+<div style={{ fontSize: "0.8em", color: "#757575" }}>
+  Created:{" "}
+  {doc.created_at
+    ? new Date(doc.created_at).toLocaleString()
+    : "N/A"}
+</div>
+        </div>
           ))
         )}
       </div>
