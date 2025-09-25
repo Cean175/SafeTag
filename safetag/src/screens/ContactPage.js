@@ -8,34 +8,49 @@ function ContactPage() {
   const [emergencyData, setEmergencyData] = useState(null);
 
   useEffect(() => {
-    
+    // Only set emergencyData if it's available in the state
     if (location.state && location.state.emergencyData) {
       setEmergencyData(location.state.emergencyData);
     }
   }, [location]);
-
- 
-
 
   const handleNavigation = (path) => {
     navigate(path);
   };
 
   const handleDone = () => {
-    
     navigate('/home');
   };
 
   const handleCall = () => {
-    if (emergencyData && emergencyData.phone) {
+    if (emergencyData?.phone) {
       window.open(`tel:${emergencyData.phone}`);
+    } else {
+      alert("No phone number available to call.");
     }
   };
 
   const handleMessage = () => {
-    if (emergencyData && emergencyData.phone) {
+    if (emergencyData?.phone) {
       window.open(`sms:${emergencyData.phone}`);
+    } else {
+      alert("No phone number available to message.");
     }
+  };
+
+  // Default values for rendering if no data is passed
+  const studentInfo = {
+    name: emergencyData?.name || 'Not available',
+    age: emergencyData?.age || 'Not available',
+    studentId: emergencyData?.studentId || 'Not available',
+    course: emergencyData?.course || 'Not available',
+    healthCondition: emergencyData?.Healthcondition || 'Not available', // Note: Corrected typo 'Healthcondition' to 'healthCondition' for consistency
+    avatarUrl: emergencyData?.avatarUrl || 'https://via.placeholder.com/80x80.png?text=Student', // Using a real placeholder URL
+  };
+
+  const contactInfo = {
+    name: emergencyData?.emergencyContactName || 'Not available',
+    phone: emergencyData?.phone || 'Not available',
   };
 
   return (
@@ -46,112 +61,106 @@ function ContactPage() {
             <h1 className="title">S.A.F.E</h1>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
-
-          <div className="nav-icons">
-            <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
+          <nav className="nav-icons" aria-label="Main navigation">
+            <button className="nav-icon" aria-label="Home" onClick={() => handleNavigation('/home')}>
               <i className="fas fa-home"></i>
-            </div>
-            <div className="nav-icon" onClick={() => handleNavigation('/user')}>
+            </button>
+            <button className="nav-icon" aria-label="User" onClick={() => handleNavigation('/user')}>
               <i className="fas fa-user"></i>
-            </div>
-            <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
+            </button>
+            <button className="nav-icon" aria-label="Statistics" onClick={() => handleNavigation('/statistics')}>
               <i className="fas fa-chart-bar"></i>
-            </div>
-            <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
+            </button>
+            <button className="nav-icon" aria-label="Contact" onClick={() => handleNavigation('/contact')}>
               <i className="fas fa-phone"></i>
-            </div>
-            <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
+            </button>
+            <button className="nav-icon" aria-label="Settings" onClick={() => handleNavigation('/settings')}>
               <i className="fas fa-cog"></i>
-            </div>
-          </div>
+            </button>
+          </nav>
         </div>
       </header>
       
-      <main className="main-content contact-content">
-        <div className="emergency-alert">
-          <h2 className="alert-title">EMERGENCY ALERT</h2>
-          <p className="alert-subtitle">Click button if accomplished</p>
+      <main className="contact-page main-content">
+        <section className="emergency-alert">
+          <h2 className="alert-title">🚨 Emergency Alert</h2>
+          <p className="alert-subtitle">If you have accomplished the emergency response, click below:</p>
           <button className="done-button" onClick={handleDone}>
             DONE
           </button>
-        </div>
+        </section>
 
-        <div className="student-card">
+        <section className="student-card">
           <div className="card-header">
-            <h3>STUDENT 1</h3>
+            <h3>Student Information</h3>
           </div>
-          
           <div className="card-body">
             <div className="profile-section">
-              <h4>DEMOGRAPHIC PROFILE</h4>
               <div className="profile-image">
-                <div className="avatar">
-                  <img src="/api/placeholder/80/80" alt="Student Avatar" />
-                </div>
+                <img src={studentInfo.avatarUrl} alt="Student profile avatar" className="avatar" />
               </div>
               <div className="student-info">
                 <div className="info-row">
-                  <span className="label">NAME:</span>
-                  <span className="value">{emergencyData?.name || 'John Doe'}</span>
+                  <span className="label">Name:</span>
+                  <span className="value">{studentInfo.name}</span>
                 </div>
                 <div className="info-row">
-                  <span className="label">AGE:</span>
-                  <span className="value">{emergencyData?.age || '20'}</span>
+                  <span className="label">Age:</span>
+                  <span className="value">{studentInfo.age}</span>
                 </div>
                 <div className="info-row">
-                  <span className="label">STUDENT ID NUMBER:</span>
-                  <span className="value">{emergencyData?.studentId || '2021-00123'}</span>
+                  <span className="label">Student ID:</span>
+                  <span className="value">{studentInfo.studentId}</span>
                 </div>
                 <div className="info-row">
-                  <span className="label">YEAR & COURSE:</span>
-                  <span className="value">{emergencyData?.course || '3rd Year BSIT'}</span>
+                  <span className="label">Year & Course:</span>
+                  <span className="value">{studentInfo.course}</span>
                 </div>
-                 <div className="info-row">
-                  <span className="label">Disease</span>
-                  <span className="value">{emergencyData?.Healthcondition || 'Congestive heart failure'}</span>
-                  </div>
+                <div className="info-row">
+                  <span className="label">Health Condition:</span>
+                  <span className="value">{studentInfo.healthCondition}</span>
+                </div>
               </div>
-              
-              <div className="emergency-contact">
-                <h5>EMERGENCY CONTACT</h5>
-                <div className="contact-info">
-                  <div className="contact-row">
-                    <span className="label">NAME:</span>
-                    <span className="value">{emergencyData?.emergencyContactName || ''}</span>
-                  </div>
-                  <div className="contact-row">
-                    <span className="label">PHONE:</span>
-                    <span className="value">{emergencyData?.phone || ''}</span>
-                  </div>
+            </div>
+            <div className="emergency-contact">
+              <h4>Emergency Contact</h4>
+              <div className="contact-info">
+                <div className="contact-row">
+                  <span className="label">Name:</span>
+                  <span className="value">{contactInfo.name}</span>
+                </div>
+                <div className="contact-row">
+                  <span className="label">Phone:</span>
+                  <span className="value">{contactInfo.phone}</span>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div className="location-section">
+        <section className="location-section">
           <h3>Location</h3>
           <div className="map-container">
             <img 
-              src="/api/placeholder/400/200" 
-              alt="Emergency Location Map" 
+              src="https://via.placeholder.com/400x200.png?text=Location+Map" 
+              alt="Emergency location map" 
               className="location-map"
             />
             <div className="location-marker">
-              <span>📍</span>
+              <span role="img" aria-label="Location marker">📍</span>
             </div>
-            <button className="click-button">Click</button>
+            <button className="click-button">View Location</button>
           </div>
-        </div>
+        </section>
 
-        <div className="action-buttons">
+        <section className="action-buttons">
           <button className="call-button" onClick={handleCall}>
-            📞 CALL
+            📞 Call
           </button>
           <button className="message-button" onClick={handleMessage}>
-            💬 MESSAGE
+            💬 Message
           </button>
-        </div>
+        </section>
       </main>
     </div>
   );

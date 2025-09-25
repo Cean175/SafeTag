@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/Statistics.css";
-
+import { supabase } from '../lib/supabaseClient';
 import {
   BarChart,
   Bar,
@@ -15,35 +15,77 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-function Statistics({ documentationData }) {
+function Statistics() {
   const navigate = useNavigate();
+  const [monthlyCases, setMonthlyCases] = useState([]);
+  const [statusData, setStatusData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const PIE_COLORS = ["#2563eb", "#10b981", "#facc15", "#ef4444", "#a855f7"];
+
+  useEffect(() => {
+    // Fetch data from Supabase
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      // Fetch data from the 'documentations' table and select 'created_at' and 'status'
+      const { data: documentations, error: fetchError } = await supabase
+        .from("documentations")
+        .select("created_at, status");
+
+      if (fetchError) {
+        setError("Failed to fetch documentation data.");
+        setLoading(false);
+        return;
+      }
+
+      // Monthly cases aggregation
+      const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      const monthlyCounts = Array(12).fill(0);
+      documentations.forEach((doc) => {
+        const date = new Date(doc.created_at);
+        const monthIdx = date.getMonth();
+        monthlyCounts[monthIdx]++;
+      });
+      const monthlyCasesData = months.map((month, idx) => ({
+        month,
+        Cases: monthlyCounts[idx],
+      }));
+      setMonthlyCases(monthlyCasesData);
+
+      // Status aggregation (replaces 'Action done' aggregation)
+      const statusMap = {};
+      documentations.forEach((doc) => {
+        const status = doc.status || "Unknown";
+        statusMap[status] = (statusMap[status] || 0) + 1;
+      });
+      const statusDataArr = Object.entries(statusMap).map(([name, value]) => ({
+        name,
+        value,
+      }));
+      setStatusData(statusDataArr);
+
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
 
   const handleNavigation = (path) => {
     navigate(path);
   };
 
-  const monthlyCases = [
-    { month: "January", January: 3 },
-    { month: "February", February: 7 },
-    { month: "March", March: 10 },
-    { month: "April", April: 20 },
-    { month: "May", May: 28 },
-    { month: "June", June: 5 },
-    { month: "July", July: 2 },
-    { month: "August", August: 12 },
-    { month: "September", September: 18 },
-    { month: "October", October: 20 },
-    { month: "November", November: 15 },
-    { month: "December", December: 10 },
-  ];
+  if (loading) {
+    return <div className="statistics-container"><h2>Loading statistics...</h2></div>;
+  }
 
-  const actionData = [
-    { name: "Treatment only", value: 30 },
-    { name: "Clinic", value: 25 },
-    { name: "Hospitalized", value: 62.5 },
-  ];
-
-  const COLORS = ["#2563eb", "#10b981", "#facc15"];
+  if (error) {
+    return <div className="statistics-container"><h2>{error}</h2></div>;
+  }
 
   return (
     <div className="statistics-container">
@@ -54,7 +96,6 @@ function Statistics({ documentationData }) {
             <h1 className="title">S.A.F.E</h1>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
-
           <div className="nav-icons">
             <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
               <i className="fas fa-home"></i>
@@ -78,9 +119,9 @@ function Statistics({ documentationData }) {
       {/* Filter buttons */}
       <div className="filter-buttons">
         <button className="filter-btn">Generate Reports</button>
-        <button className="filter-btn">Cases, Action</button>
+        <button className="filter-btn active">Cases by Status</button>
         <button className="filter-btn">Ailments, Location</button>
-        <button className="filter-btn active">Monthly</button>
+        <button className="filter-btn">Monthly</button>
         <button className="filter-btn">Weekly</button>
         <button className="filter-btn">Semester</button>
       </div>
@@ -91,45 +132,39 @@ function Statistics({ documentationData }) {
           <h2>Cases Monthly</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
-              layout="vertical"
               data={monthlyCases}
               margin={{ top: 20, right: 20, left: 50, bottom: 20 }}
             >
-              <XAxis type="number" />
-              <YAxis dataKey="month" type="category" />
+              <XAxis dataKey="month" />
+              <YAxis />
               <Tooltip />
               <Legend />
-              {Object.keys(monthlyCases[0])
-                .filter((key) => key !== "month")
-                .map((key, i) => (
-                  <Bar
-                    key={key}
-                    dataKey={key}
-                    stackId="a"
-                    fill={COLORS[i % COLORS.length]}
-                  />
-                ))}
+              <Bar
+                dataKey="Cases"
+                fill="#2563eb"
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         <div className="chart-card">
-          <h2>Action done</h2>
+          <h2>Cases by Status</h2>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
-                data={actionData}
+                data={statusData}
                 cx="50%"
                 cy="50%"
                 outerRadius={100}
                 dataKey="value"
-                label
+                label={({ name, value }) => `${name}: ${value}`}
               >
-                {actionData.map((entry, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                {statusData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip />
+              <Legend />
             </PieChart>
           </ResponsiveContainer>
         </div>

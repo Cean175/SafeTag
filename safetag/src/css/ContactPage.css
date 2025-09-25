@@ -1,18 +1,26 @@
 .contact-page-container {
   min-height: 100vh;
-  background:linear-gradient(135deg, #4CAF50, #45a049);
-  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  position: relative;
+  /* Add a subtle pattern overlay for depth */
+  background-image: url("https://www.transparenttextures.com/patterns/diamond-upholstery.png");
+  background-repeat: repeat;
+  background-size: auto;
 }
 
 .contact-page-container .header {
   background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
-  padding: 1rem 0;
+  padding: 1.5rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
 }
 
 .contact-page-container .header-content {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 2rem;
   display: flex;
@@ -21,85 +29,84 @@
 }
 
 .contact-page-container .branding .title {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: bold;
   color: white;
   margin: 0;
   letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(44, 62, 80, 0.15);
 }
 
 .contact-page-container .branding .subtitle {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.95);
   margin: 0;
   letter-spacing: 1px;
 }
 
 .contact-page-container .nav-icons {
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .contact-page-container .nav-icon {
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.2);
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.18);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 1.5rem;
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  font-size: 1.6rem;
   color: white;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
 }
 
 .contact-page-container .nav-icon:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.32);
+  transform: scale(1.08);
 }
 
 .contact-page-container .nav-icon.active {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.45);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-}
-
-.main-content {
-  height: 100vh;
-  width: 100vw;
-  margin: 0 auto;
-  padding: 2rem;
 }
 
 .contact-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 2.5rem;
   align-items: start;
+  max-width: 1100px;
+  margin: 2.5rem auto;
 }
 
 .emergency-alert {
   background: linear-gradient(135deg, #ce1d1d, #ee5a24);
   color: white;
-  padding: 1rem;
-  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  border-radius: 24px;
   text-align: center;
-  height: 50%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
   grid-column: 1 / -1;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  border: 2px solid #fff3;
 }
 
 .alert-title {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: bold;
   margin: 0 0 0.5rem 0;
   letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(44, 62, 80, 0.15);
 }
 
 .alert-subtitle {
   margin: 0 0 1.5rem 0;
-  opacity: 0.9;
+  opacity: 0.95;
+  font-size: 1.1rem;
 }
 
 .done-button {
@@ -111,22 +118,24 @@
   font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
   letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
 }
 
 .done-button:hover {
   background: #219a52;
-  transform: scale(1.05);
-  box-shadow: 0 5px 20px rgba(39, 174, 96, 0.4);
+  transform: scale(1.07);
+  box-shadow: 0 5px 20px rgba(39, 174, 96, 0.32);
 }
 
 .student-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 24px;
   padding: 0;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
   overflow: hidden;
+  border: 1px solid #eee;
 }
 
 .card-header {
@@ -134,13 +143,16 @@
   color: white;
   padding: 1.5rem;
   text-align: center;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
 }
 
 .card-header h3 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: bold;
   letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(44, 62, 80, 0.12);
 }
 
 .card-body {
@@ -152,8 +164,10 @@
   color: white;
   margin: 0 -2rem 1.5rem -2rem;
   padding: 1rem 2rem;
-  font-size: 1rem;
+  font-size: 1.1rem;
   letter-spacing: 1px;
+  border-radius: 12px;
+  text-align: center;
 }
 
 .profile-image {
@@ -162,13 +176,13 @@
 }
 
 .avatar {
-  width: 100px;
-  height: 100px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   overflow: hidden;
   margin: 0 auto;
-  border: 4px solid #2ecc71;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border: 5px solid #2ecc71;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
 }
 
 .avatar img {
@@ -203,24 +217,27 @@
 .emergency-contact {
   background: #f8f9fa;
   padding: 1.5rem;
-  border-radius: 10px;
+  border-radius: 16px;
   margin: -2rem -2rem 0 -2rem;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+  border: 1px solid #eee;
 }
 
 .emergency-contact h5 {
-background-color: #ff3742;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
-    height: 50%;
-    max-width: 600px;
-    margin-top: 60px;
-    padding: 10px;
-    border-radius: 50px;
-    color: white;
+  background-color: #ff3742;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 40px;
+  padding: 12px;
+  border-radius: 32px;
+  color: white;
+  font-size: 1.1rem;
+  text-shadow: 0 2px 8px rgba(44, 62, 80, 0.12);
 }
 
 .contact-row {
@@ -230,10 +247,11 @@ background-color: #ff3742;
 }
 
 .location-section {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 24px;
   padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  border: 1px solid #eee;
 }
 
 .location-section h3 {
@@ -241,13 +259,16 @@ background-color: #ff3742;
   color: #2c3e50;
   font-size: 1.5rem;
   text-align: center;
+  text-shadow: 0 2px 8px rgba(44, 62, 80, 0.12);
 }
 
 .map-container {
   position: relative;
-  border-radius: 15px;
+  border-radius: 18px;
   overflow: hidden;
   height: 300px;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+  border: 1px solid #eee;
 }
 
 .location-map {
@@ -261,7 +282,7 @@ background-color: #ff3742;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 2rem;
+  font-size: 2.2rem;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
@@ -276,13 +297,14 @@ background-color: #ff3742;
   border-radius: 25px;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
   letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
 }
 
 .click-button:hover {
   background: #27ae60;
-  transform: scale(1.05);
+  transform: scale(1.07);
 }
 
 .call-button,
@@ -293,9 +315,11 @@ background-color: #ff3742;
   font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
   letter-spacing: 1px;
   min-width: 150px;
+  margin: 0.5rem 0;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
 }
 
 .call-button {
@@ -305,8 +329,8 @@ background-color: #ff3742;
 
 .call-button:hover {
   background: linear-gradient(135deg, #2980b9, #21618c);
-  transform: scale(1.05);
-  box-shadow: 0 5px 20px rgba(52, 152, 219, 0.4);
+  transform: scale(1.07);
+  box-shadow: 0 5px 20px rgba(52, 152, 219, 0.32);
 }
 
 .message-button {
@@ -316,37 +340,54 @@ background-color: #ff3742;
 
 .message-button:hover {
   background: linear-gradient(135deg, #8e44ad, #7d3c98);
-  transform: scale(1.05);
-  box-shadow: 0 5px 20px rgba(155, 89, 182, 0.4);
+  transform: scale(1.07);
+  box-shadow: 0 5px 20px rgba(155, 89, 182, 0.32);
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .contact-content {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+    margin: 1.5rem auto;
   }
-  
+  .student-card,
+  .location-section {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
   .header-content {
-    padding: 0 1rem;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 0 0.5rem;
   }
-  
   .branding .title {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
-  
+  .contact-content {
+    gap: 1rem;
+    margin: 1rem auto;
+  }
   .main-content {
-    padding: 1rem;
+    padding: 0.5rem;
   }
-  
   .action-buttons {
     flex-direction: column;
     align-items: center;
   }
-  
   .call-button,
   .message-button {
     width: 100%;
     max-width: 300px;
+  }
+  .card-body,
+  .location-section {
+    padding: 1rem;
+  }
+  .emergency-alert {
+    padding: 1rem;
+    font-size: 1rem;
   }
 }
