@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { useNavigate } from 'react-router-dom';
 import '../css/DocumentationList.css';
 
 function DocumentationsList() {
@@ -12,9 +13,14 @@ function DocumentationsList() {
   const [showDelete, setShowDelete] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
+  const navigate = useNavigate();
 
   // Set your required password here
   const REQUIRED_PASSWORD = 'deletepermit2025';
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
   useEffect(() => {
     async function fetchDocs() {
@@ -114,8 +120,37 @@ function DocumentationsList() {
         alignItems: 'center',
         gap: '16px',
       }}
-    > 
-      <span>SafeTag Documentation </span>
+    >
+      <button
+        onClick={handleGoBack}
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          color: 'white',
+          fontSize: '1.2em',
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0',
+          marginRight: '8px'
+        }}
+        aria-label="Go back"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+      <span>SafeTag Documentation</span>
     </nav>
   );
 
@@ -133,7 +168,7 @@ function DocumentationsList() {
   );
 
   return (
-    <div className="main-content DL-page-content" style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="main-content DL-page-content" style={{ height: '100vh', display: 'flex', marginTop: '0', flexDirection: 'column' }}>
       <NavBar />
       <div
         className="doc-list"

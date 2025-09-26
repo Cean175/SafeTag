@@ -155,6 +155,30 @@ function Documentations() {
     }
   };
 
+  // Password state for "View All"
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  // Example password (replace with secure method in production)
+  const VIEW_ALL_PASSWORD = 'safetag123';
+
+  const handleViewAllClick = () => {
+    setShowPasswordPrompt(true);
+    setPasswordInput('');
+    setPasswordError('');
+  };
+
+  const handlePasswordConfirm = () => {
+    if (passwordInput === VIEW_ALL_PASSWORD) {
+      setShowPasswordPrompt(false);
+      setPasswordError('');
+      goToList();
+    } else {
+      setPasswordError('Incorrect password.');
+    }
+  };
+
   return (
     <div className="user-page-container">
       {/* Header */}
@@ -185,12 +209,8 @@ function Documentations() {
         </div>
       </header>
 
-      {}
       <main className="main-content user-page-content">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 className="doc-title">DOCUMENTATION</h2>
-          <button className="confirm-btn" onClick={goToList}>View All</button>
-        </div>
+        <h2 className="doc-title">DOCUMENTATION</h2>
         <div className="doc-card">
           <h3 className="section-title">DEMOGRAPHIC PROFILE</h3>
 
@@ -218,7 +238,6 @@ function Documentations() {
             />
           </div>
 
-          {/* Inputs */}
           <div className="input-row">
             <select name="student_select" value={selectedStudentUuid} onChange={handleStudentSelect}>
               <option value="">Select a Student</option>
@@ -227,6 +246,17 @@ function Documentations() {
               ))}
               <option value="__other__">Other / Manual entry</option>
             </select>
+
+            {/* Show manual name input if "Other / Manual entry" is selected */}
+            {selectedStudentUuid === "__other__" && (
+              <input
+                type="text"
+                name="name"
+                placeholder="Student Name"
+                value={form.name}
+                onChange={handleChange}
+              />
+            )}
 
             <input type="text" name="id" placeholder="STUDENT ID" value={form.id} onChange={handleChange}/>
           </div>
@@ -254,8 +284,66 @@ function Documentations() {
           <input type="text" name="medcondition" placeholder="Medical Condition" value={form.medcondition} onChange={handleChange}/>
           <input type="text" name="description" placeholder="Description of the Incident" value={form.description} onChange={handleChange}/>
 
-          {/* Confirm button */}
-          <button className="confirm-btn" onClick={handleSubmit}>SAVE</button>
+          {/* Action buttons at the bottom */}
+          <div className="action-buttons-container">
+            <button className="confirm-btn" onClick={handleSubmit}>SAVE</button>
+            <button className="confirm-btn" onClick={handleViewAllClick}>View All</button>
+          </div>
+
+          {/* Password Prompt Modal */}
+          {showPasswordPrompt && (
+            <div className="password-modal">
+              <div className="password-modal-content">
+                <h4>Enter Password to View All</h4>
+                <input
+                  type="password"
+                  value={passwordInput}
+                  onChange={e => setPasswordInput(e.target.value)}
+                  placeholder="Password"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handlePasswordConfirm();
+                    }}
+                  }
+                />
+                {passwordError && <div className="error-message">{passwordError}</div>}
+                <div className="modal-actions" style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "12px",
+                
+                }}>
+                  <button
+                    style={{
+                      padding: "8px 20px",
+                      background: "#007bff",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontWeight: "bold"
+                    }}
+                    onClick={handlePasswordConfirm}
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    style={{
+                      padding: "8px 20px",
+                      background: "#f5f5f5",
+                      color: "#333",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => setShowPasswordPrompt(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

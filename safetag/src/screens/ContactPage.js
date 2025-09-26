@@ -54,30 +54,32 @@ function ContactPage() {
   };
 
   return (
-    <div className="contact-page-container">
+    <div className="user-page-container">
+      {/* Header */}
       <header className="header">
         <div className="header-content">
           <div className="branding">
             <h1 className="title">S.A.F.E</h1>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
-          <nav className="nav-icons" aria-label="Main navigation">
-            <button className="nav-icon" aria-label="Home" onClick={() => handleNavigation('/home')}>
+
+          <div className="nav-icons">
+            <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
               <i className="fas fa-home"></i>
-            </button>
-            <button className="nav-icon" aria-label="User" onClick={() => handleNavigation('/user')}>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/user')}>
               <i className="fas fa-user"></i>
-            </button>
-            <button className="nav-icon" aria-label="Statistics" onClick={() => handleNavigation('/statistics')}>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
               <i className="fas fa-chart-bar"></i>
-            </button>
-            <button className="nav-icon" aria-label="Contact" onClick={() => handleNavigation('/contact')}>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
               <i className="fas fa-phone"></i>
-            </button>
-            <button className="nav-icon" aria-label="Settings" onClick={() => handleNavigation('/settings')}>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
               <i className="fas fa-cog"></i>
-            </button>
-          </nav>
+            </div>
+          </div>
         </div>
       </header>
       
