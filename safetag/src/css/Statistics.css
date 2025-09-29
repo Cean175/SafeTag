@@ -68,6 +68,7 @@ box-shadow:0 0 20px rgba(255,255,255,0.5);
 .filter-buttons{
 display:flex;
 justify-content:center;
+margin-top: 100px;
 gap:1rem;
 padding:1rem;
 flex-wrap:wrap;
@@ -84,9 +85,16 @@ cursor:pointer;
 transition:all 0.2s ease;
 }
 
-.filter-btn.active,
 .filter-btn:hover{
+    
 background:#047857;
+display: inline-block;
+}
+
+.filter-btn.active{
+background:#065f46;
+display:flex;
+
 }
 
 /* ------------------------------------------------------------------- */
@@ -97,7 +105,7 @@ background:#047857;
 display:flex;
 justify-content:center;
 gap:10px;
-margin:10px 0 20px 0;
+margin-top: 20px;
 padding:0 1rem;
 }
 
@@ -121,7 +129,7 @@ background-color:#e0e0e0;
 
 .active-time-frame{
 background-color:#2563eb;
-margin-top: 50px;
+margin-top: 10px;
 color:white;
 border-color:#2563eb;
 font-weight:bold;

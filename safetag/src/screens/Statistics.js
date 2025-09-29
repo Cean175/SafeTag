@@ -80,7 +80,7 @@ function Statistics() {
     const PIE_COLORS = ["#2563eb", "#10b981", "#facc15", "#ef4444", "#a855f7"];
     const [rawData, setRawData] = useState([]);
 
-    // Function to aggregate data based on time frame
+    // Function to aggregate data based on time frame (unchanged from last successful update)
     const aggregateCases = useCallback((data, frame) => {
         const aggregatedData = {};
         const months = [
@@ -252,6 +252,47 @@ function Statistics() {
 
     const chartProps = getChartProps();
 
+    // -------------------------------------------------------------------
+    // NEW: Export and Print Functions
+    // -------------------------------------------------------------------
+
+    const handleExport = () => {
+        if (!rawData || rawData.length === 0) {
+            alert("No data to export.");
+            return;
+        }
+
+        // Prepare the CSV content based on the raw data (simplest way)
+        const headers = ["Incident Date", "Status"];
+        const csvContent = rawData.map(doc => 
+            `${doc.incident_date || ''},${doc.status || 'Unknown'}`
+        ).join('\n');
+
+        const finalCSV = headers.join(',') + '\n' + csvContent;
+
+        // Create a temporary link element to trigger the download
+        const blob = new Blob([finalCSV], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `SAFE_Statistics_Export_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
+    const handlePrint = () => {
+        // Simple window print command
+        // Note: You may want to add specific print CSS to make the output look better
+        window.print();
+    };
+
+    // -------------------------------------------------------------------
+    // End NEW Functions
+    // -------------------------------------------------------------------
+
+
     if (loading) {
         return <div className="statistics-container"><h2>Loading statistics...</h2></div>;
     }
@@ -289,12 +330,16 @@ function Statistics() {
                 </div>
             </header>
 
-            {/* Filter buttons (unchanged) */}
+            {/* Filter buttons - ADDED EXPORT AND PRINT BUTTONS */}
             <div className="filter-buttons">
-                <button className="filter-btn">Generate Reports</button>
+                <button className="filter-btn" onClick={handleExport}>
+                    <i className="fas fa-file-csv"></i> Export CSV
+                </button>
+                <button className="filter-btn" onClick={handlePrint}>
+                    <i className="fas fa-print"></i> Print Report
+                </button>
+                {/* The rest of the original filter buttons */}
                 <button className="filter-btn active">Cases by Status</button>
-                <button className="filter-btn">Ailments, Location</button>
-                <button className="filter-btn">Semester</button>
             </div>
 
             {/* TIME FRAME FILTER BUTTONS (unchanged) */}
