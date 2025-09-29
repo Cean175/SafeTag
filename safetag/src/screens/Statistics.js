@@ -3,36 +3,24 @@ import { useNavigate } from "react-router-dom";
 import "../css/Statistics.css";
 import { supabase } from '../lib/supabaseClient';
 import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    Tooltip,
-    Legend,
-    PieChart,
-    Pie,
-    Cell,
-    ResponsiveContainer,
+    BarChart, Bar, XAxis, YAxis, Tooltip, Legend,
+    PieChart, Pie, Cell, ResponsiveContainer,
 } from "recharts";
 
 // Custom Tooltip component (unchanged)
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
-        // Access the data from the payload, which includes the list of dates
         const data = payload[0].payload;
         const dates = data.dates || [];
         return (
             <div className="custom-tooltip" style={{
-                backgroundColor: '#fff',
-                border: '1px solid #ccc',
-                padding: '10px',
-                borderRadius: '5px',
+                backgroundColor: '#fff', border: '1px solid #ccc',
+                padding: '10px', borderRadius: '5px',
                 boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
             }}>
                 <p className="label" style={{ fontWeight: 'bold' }}>{`${label}: ${data.Cases} Cases`}</p>
                 <p className="intro">Dates:</p>
                 <ul style={{ paddingLeft: '20px', margin: '0' }}>
-                    {/* For Daily view, the tooltip is a bit redundant, but we keep it generic */}
                     {dates.map((date, index) => (
                         <li key={index} style={{ fontSize: '12px', listStyleType: 'disc' }}>{date}</li>
                     ))}
@@ -43,28 +31,20 @@ const CustomTooltip = ({ active, payload, label }) => {
     return null;
 };
 
-// Helper function to get the start of the week (Monday)
+// Helper functions (getStartOfWeek, getWeekOfMonthLabel) remain unchanged
 const getStartOfWeek = (date) => {
     const d = new Date(date);
-    // Get the day of the week (0 for Sunday, 6 for Saturday)
     const day = d.getDay();
-    // Calculate difference to Monday (1)
     const diff = d.getDate() - day + (day === 0 ? -6 : 1);
     d.setDate(diff);
     d.setHours(0, 0, 0, 0);
     return d;
 };
 
-// Helper function to get the week number label for a specific month
 const getWeekOfMonthLabel = (date) => {
     const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
     const startOfWeek = getStartOfWeek(date);
-
-    // Calculate the difference in weeks
-    // We compare the start of the current week to the start of the month's week
     const weekNumber = Math.ceil(((startOfWeek.getTime() - getStartOfWeek(startOfMonth).getTime()) / 86400000) / 7) + 1;
-
-    // This provides a label like "Week 1", "Week 2", etc.
     return `Week ${weekNumber}`;
 };
 
@@ -76,23 +56,18 @@ function Statistics() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [timeFrame, setTimeFrame] = useState('monthly');
-
-    const PIE_COLORS = ["#2563eb", "#10b981", "#facc15", "#ef4444", "#a855f7"];
     const [rawData, setRawData] = useState([]);
+    const PIE_COLORS = ["#2563eb", "#10b981", "#facc15", "#ef4444", "#a855f7"];
 
-    // Function to aggregate data based on time frame (unchanged from last successful update)
+    // aggregateCases function remains unchanged
     const aggregateCases = useCallback((data, frame) => {
         const aggregatedData = {};
-        const months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const today = new Date();
         const currentYear = today.getFullYear();
         const currentMonth = today.getMonth();
 
         if (frame === 'monthly') {
-            // Initialize monthlyData based on your provided structure
             months.forEach(month => {
                 aggregatedData[month] = { label: month, Cases: 0, dates: [] };
             });
@@ -105,31 +80,22 @@ function Statistics() {
             const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
             if (frame === 'daily') {
-                // Filter: Only include cases from today
                 if (date.toISOString().split('T')[0] === today.toISOString().split('T')[0]) {
-                    key = date.toISOString().split('T')[0]; // YYYY-MM-DD
+                    key = date.toISOString().split('T')[0];
                     label = "Today";
-                } else {
-                    return; // Skip non-today entries
-                }
+                } else { return; }
             } else if (frame === 'weekly') {
-                // Filter: Only include cases from the current month
                 if (date.getFullYear() === currentYear && date.getMonth() === currentMonth) {
-                    key = getWeekOfMonthLabel(date); // "Week 1", "Week 2", etc.
+                    key = getWeekOfMonthLabel(date);
                     label = key;
-                } else {
-                    return; // Skip non-current month entries
-                }
+                } else { return; }
             } else if (frame === 'monthly') {
-                // All months are included using month name as key/label
                 label = months[date.getMonth()];
-                key = label; // Use month name as the key
+                key = label;
             }
 
             if (key) {
-                // Use label/key for aggregation
                 if (!aggregatedData[key]) {
-                    // This is mainly for Daily and Weekly aggregation before we order it
                     aggregatedData[key] = { key, label, Cases: 0, dates: [] };
                 }
                 aggregatedData[key].Cases++;
@@ -140,12 +106,10 @@ function Statistics() {
         let finalData = Object.values(aggregatedData);
 
         if (frame === 'daily') {
-             // If there's no data for today, show 0
-             if (finalData.length === 0) {
-                 finalData = [{ key: 'today', label: 'Today', Cases: 0, dates: [] }];
-             }
-             // Daily view should be sorted for consistency, though there's usually only one item
-             return finalData.sort((a, b) => new Date(a.key) - new Date(b.key));
+            if (finalData.length === 0) {
+                finalData = [{ key: 'today', label: 'Today', Cases: 0, dates: [] }];
+            }
+            return finalData.sort((a, b) => new Date(a.key) - new Date(b.key));
         }
 
         if (frame === 'weekly') {
@@ -153,35 +117,29 @@ function Statistics() {
                 const existing = finalData.find(d => d.label === weekLabel);
                 return existing || { key: weekLabel, label: weekLabel, Cases: 0, dates: [] };
             });
-            // Filter out empty weeks beyond the current week of the month
             return weeklyOrder.filter(d => d.Cases > 0 || weeklyOrder.indexOf(d) < 4);
         }
 
         if (frame === 'monthly') {
-             // Re-order by month name array, which maintains the January-December order
-             const monthlyCasesData = months.map(month => ({
-                month, // Use 'month' as the key for Recharts YAxis
+            const monthlyCasesData = months.map(month => ({
+                month,
                 Cases: aggregatedData[month] ? aggregatedData[month].Cases : 0,
                 dates: aggregatedData[month] ? aggregatedData[month].dates : [],
-                label: month // Keep label for custom tooltip compatibility
+                label: month
             }));
-            
-            // Set the final data using the new structure
             return monthlyCasesData;
         }
 
         return finalData;
-
     }, []);
 
-    // Effect to fetch initial data once (unchanged)
     useEffect(() => {
         const fetchInitialData = async () => {
             setLoading(true);
             setError(null);
             const { data: documentations, error: fetchError } = await supabase
                 .from("documentations")
-                .select("incident_date, status");
+                .select("*");
 
             if (fetchError) {
                 setError("Failed to fetch documentation data.");
@@ -191,7 +149,6 @@ function Statistics() {
 
             setRawData(documentations);
 
-            // Status aggregation (unchanged)
             const statusMap = {};
             documentations.forEach((doc) => {
                 const status = doc.status || "Unknown";
@@ -209,7 +166,6 @@ function Statistics() {
         fetchInitialData();
     }, []);
 
-    // Effect to re-aggregate data when rawData or timeFrame changes (unchanged)
     useEffect(() => {
         if (rawData.length > 0 || timeFrame === 'daily') {
             const aggregated = aggregateCases(rawData, timeFrame);
@@ -219,42 +175,29 @@ function Statistics() {
         }
     }, [rawData, timeFrame, loading, error, aggregateCases]);
 
-
     const handleNavigation = (path) => {
         navigate(path);
     };
 
-    // Function to determine dataKey and layout for the chart
     const getChartProps = () => {
         if (timeFrame === 'daily') {
-            return {
-                title: "Cases Today",
-                layout: "horizontal",
-                yKey: "Cases",
-                xKey: "label" // "Today"
-            };
+            return { title: "Cases Today", layout: "horizontal", yKey: "Cases", xKey: "label" };
         }
         if (timeFrame === 'weekly') {
-            return {
-                title: `Cases in ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`,
-                layout: "vertical",
-                yKey: "label", // "Week 1", "Week 2", etc.
-                xKey: "Cases"
-            };
+            return { title: `Cases in ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`, layout: "vertical", yKey: "label", xKey: "Cases" };
         }
-        return { // monthly
-            title: "Cases Monthly",
-            layout: "vertical",
-            yKey: "month", // The key specific to the monthly data structure
-            xKey: "Cases"
-        };
+        return { title: "Cases Monthly", layout: "vertical", yKey: "month", xKey: "Cases" };
     };
 
     const chartProps = getChartProps();
 
-    // -------------------------------------------------------------------
-    // NEW: Export and Print Functions
-    // -------------------------------------------------------------------
+    const sanitizeCSVField = (field) => {
+        const str = String(field || '');
+        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+    };
 
     const handleExport = () => {
         if (!rawData || rawData.length === 0) {
@@ -262,15 +205,31 @@ function Statistics() {
             return;
         }
 
-        // Prepare the CSV content based on the raw data (simplest way)
-        const headers = ["Incident Date", "Status"];
-        const csvContent = rawData.map(doc => 
-            `${doc.incident_date || ''},${doc.status || 'Unknown'}`
-        ).join('\n');
+        // Updated Headers
+        const headers = [
+            "ID", "Student ID", "Name", "Age", "Level", 
+            "Incident Date", "Status", // Added here
+            "Medical Condition", "Created At"
+        ];
+        
+        // Updated Row Data
+        const csvContent = rawData.map(doc => {
+            const row = [
+                doc.id,                
+                doc.student_id,        
+                doc.student_name,      
+                doc.age,               
+                doc.student_lvl,       
+                doc.incident_date,  
+                doc.status,         
+                doc.medical_condition,         
+                doc.created_at         
+            ];
+            return row.map(sanitizeCSVField).join(',');
+        }).join('\n');
 
         const finalCSV = headers.join(',') + '\n' + csvContent;
 
-        // Create a temporary link element to trigger the download
         const blob = new Blob([finalCSV], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -283,15 +242,8 @@ function Statistics() {
     };
 
     const handlePrint = () => {
-        // Simple window print command
-        // Note: You may want to add specific print CSS to make the output look better
         window.print();
     };
-
-    // -------------------------------------------------------------------
-    // End NEW Functions
-    // -------------------------------------------------------------------
-
 
     if (loading) {
         return <div className="statistics-container"><h2>Loading statistics...</h2></div>;
@@ -303,7 +255,6 @@ function Statistics() {
 
     return (
         <div className="statistics-container">
-            {/* Header (omitted for brevity) */}
             <header className="header">
                 <div className="header-content">
                     <div className="branding">
@@ -330,7 +281,6 @@ function Statistics() {
                 </div>
             </header>
 
-            {/* Filter buttons - ADDED EXPORT AND PRINT BUTTONS */}
             <div className="filter-buttons">
                 <button className="filter-btn" onClick={handleExport}>
                     <i className="fas fa-file-csv"></i> Export CSV
@@ -338,11 +288,9 @@ function Statistics() {
                 <button className="filter-btn" onClick={handlePrint}>
                     <i className="fas fa-print"></i> Print Report
                 </button>
-                {/* The rest of the original filter buttons */}
                 <button className="filter-btn active">Cases by Status</button>
             </div>
 
-            {/* TIME FRAME FILTER BUTTONS (unchanged) */}
             <div className="time-frame-filters">
                 <button
                     className={`time-frame-btn ${timeFrame === 'daily' ? 'active-time-frame' : ''}`}
@@ -363,21 +311,16 @@ function Statistics() {
                     Monthly
                 </button>
             </div>
-            {/* END TIME FRAME FILTER BUTTONS */}
-
-            {/* Main Content */}
+            
             <main className="stats-content">
                 <div className="chart-card">
-                    {/* Use dynamic title */}
                     <h2>{chartProps.title}</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart
-                            // Use dynamic layout
                             layout={chartProps.layout}
                             data={chartData}
                             margin={{ top: 20, right: 20, left: 50, bottom: 20 }}
                         >
-                            {/* XAxis and YAxis change based on layout */}
                             {chartProps.layout === 'vertical' ? (
                                 <>
                                     <XAxis type="number" dataKey="Cases" />
@@ -389,13 +332,9 @@ function Statistics() {
                                     <YAxis type="number" dataKey="Cases" />
                                 </>
                             )}
-
                             <Tooltip content={<CustomTooltip />} />
                             <Legend />
-                            <Bar
-                                dataKey="Cases"
-                                fill="#2563eb"
-                            />
+                            <Bar dataKey="Cases" fill="#2563eb" />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

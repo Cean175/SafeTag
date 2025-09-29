@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase, fetchStudents } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import '../css/Documentations.css';
@@ -6,9 +6,9 @@ import '../css/Documentations.css';
 function Documentations() {
     const navigate = useNavigate();
 
-    // --- NEW CONSTANTS FOR YEAR VALIDATION ---
-    const CURRENT_YEAR = new Date().getFullYear(); // This will be 2025
-    const LAST_YEAR = CURRENT_YEAR - 1; // This will be 2024
+    // --- CONSTANTS FOR YEAR VALIDATION ---
+    const CURRENT_YEAR = new Date().getFullYear();
+    const LAST_YEAR = CURRENT_YEAR - 1;
     // ------------------------------------------
 
     // Default form values
@@ -20,8 +20,9 @@ function Documentations() {
         date: '',
         time: '',
         location: '',
-        status: 'Action Done',
+        status: '',
         medcondition: '',
+        otherMedCondition: '', // Added state for the "Other" condition
         description: '',
     };
 
@@ -42,9 +43,10 @@ function Documentations() {
         navigate(path);
     };
 
-    // Go to documentation list
+    // Go to documentation list with security
     const goToList = () => {
-        navigate('/documentations-list');
+        // Use replace: true to prevent going back to this page from the list
+        navigate('/documentations-list', { replace: true });
     };
 
     // Input change with year validation
@@ -57,7 +59,7 @@ function Documentations() {
                 setErrorMessage(`⚠️ Incident date must be in the year ${LAST_YEAR} or ${CURRENT_YEAR}.`);
                 return;
             } else {
-                setErrorMessage(''); // Clear error if validation passes
+                setErrorMessage('');
             }
         }
         
@@ -66,7 +68,6 @@ function Documentations() {
 
     // Submit handler with validation
     const handleSubmit = async () => {
-        // --- NEW: YEAR VALIDATION BEFORE SUBMISSION ---
         if (form.date) {
             const dateYear = new Date(form.date).getFullYear();
             if (dateYear !== CURRENT_YEAR && dateYear !== LAST_YEAR) {
@@ -74,7 +75,6 @@ function Documentations() {
                 return;
             }
         }
-        // ----------------------------------------------
 
         if (
             !form.name ||
@@ -84,8 +84,9 @@ function Documentations() {
             !form.date ||
             !form.time ||
             !form.location ||
-            form.status === 'Action Done' ||
+            !form.status ||
             !form.medcondition ||
+            (form.medcondition === 'Other' && !form.otherMedCondition) ||
             !form.description
         ) {
             setErrorMessage('⚠️ Please fill up all needed information.');
@@ -93,13 +94,12 @@ function Documentations() {
         }
 
         let avatar_url = avatar;
-        // If avatar is a data URL (newly uploaded), upload to Supabase Storage
         if (avatar && avatar.startsWith('data:')) {
             try {
                 const fileName = `${form.id}_${Date.now()}.png`;
                 const res = await fetch(avatar);
                 const blob = await res.blob();
-                const { data, error } = await supabase.storage.from('avatars').upload(fileName, blob, { upsert: true });
+                const { error } = await supabase.storage.from('avatars').upload(fileName, blob, { upsert: true });
                 if (error) throw error;
                 const { publicURL } = supabase.storage.from('avatars').getPublicUrl(fileName);
                 avatar_url = publicURL;
@@ -109,7 +109,10 @@ function Documentations() {
             }
         }
 
-        // Insert into Supabase
+        const medicalConditionForDb = form.medcondition === 'Other'
+            ? form.otherMedCondition
+            : form.medcondition;
+
         const { error } = await supabase.from('documentations').insert([
             {
                 student_name: form.name,
@@ -120,7 +123,7 @@ function Documentations() {
                 incident_time: form.time,
                 location: form.location,
                 status: form.status,
-                medical_condition: form.medcondition,
+                medical_condition: medicalConditionForDb,
                 description: form.description,
                 avatar_url: avatar_url,
             },
@@ -142,14 +145,14 @@ function Documentations() {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setAvatar(reader.result); // Preview uploaded image
+                setAvatar(reader.result);
             };
             reader.readAsDataURL(file);
         }
     };
 
     // Load students for dropdown
-    React.useEffect(() => {
+    useEffect(() => {
         (async () => {
             try {
                 const data = await fetchStudents();
@@ -164,7 +167,6 @@ function Documentations() {
         const uuid = e.target.value;
         setSelectedStudentUuid(uuid);
         if (!uuid || uuid === '__other__') {
-            // allow manual entry
             setForm({ ...form, name: '', id: '' });
             setAvatar(defaultAvatar);
             return;
@@ -187,7 +189,6 @@ function Documentations() {
     const [passwordInput, setPasswordInput] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
-    // Example password (replace with secure method in production)
     const VIEW_ALL_PASSWORD = 'safetag123';
 
     const handleViewAllClick = () => {
@@ -200,6 +201,7 @@ function Documentations() {
         if (passwordInput === VIEW_ALL_PASSWORD) {
             setShowPasswordPrompt(false);
             setPasswordError('');
+            sessionStorage.setItem('isAuthenticatedToList', 'true');
             goToList();
         } else {
             setPasswordError('Incorrect password.');
@@ -208,14 +210,12 @@ function Documentations() {
 
     return (
         <div className="user-page-container">
-            {/* Header */}
             <header className="header">
                 <div className="header-content">
                     <div className="branding">
                         <h1 className="title">S.A.F.E</h1>
                         <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
                     </div>
-
                     <div className="nav-icons">
                         <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
                             <i className="fas fa-home"></i>
@@ -239,19 +239,12 @@ function Documentations() {
             <main className="main-content user-page-content">
                 <h2 className="doc-title">DOCUMENTATION</h2>
                 
-                {/* NEW WRAPPER for horizontal layout */}
                 <div className="doc-layout-wrapper" style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-
-                    {/* Original Documentation Card (Left Side) */}
-                    <div className="doc-card" style={{ flex: '2', minWidth: '400px' }}> {/* Add flex property to control size */}
+                    <div className="doc-card" style={{ flex: '2', minWidth: '400px' }}>
                         <h3 className="section-title">DEMOGRAPHIC PROFILE</h3>
 
-                        {/* Error Message */}
-                        {errorMessage && (
-                            <div className="error-message">{errorMessage}</div>
-                        )}
+                        {errorMessage && (<div className="error-message">{errorMessage}</div>)}
 
-                        {/* Avatar */}
                         <div className="avatar-section">
                             <label htmlFor="avatarUpload">
                                 <img
@@ -278,8 +271,6 @@ function Documentations() {
                                 ))}
                                 <option value="__other__">Other / Manual entry</option>
                             </select>
-
-                            {/* Show manual name input if "Other / Manual entry" is selected */}
                             {selectedStudentUuid === "__other__" && (
                                 <input
                                     type="text"
@@ -289,7 +280,6 @@ function Documentations() {
                                     onChange={handleChange}
                                 />
                             )}
-
                             <input type="text" name="id" placeholder="STUDENT ID" value={form.id} onChange={handleChange}/>
                         </div>
 
@@ -302,33 +292,54 @@ function Documentations() {
                         <input type="time" name="time" value={form.time} onChange={handleChange}/>
                         <input type="text" name="location" placeholder="Student location (Building, floor, room)" value={form.location} onChange={handleChange}/>
 
-                        {/* Dropdown */}
-                        <select name="status" value={form.status} onChange={handleChange}>
-                            <option value="Action Done" disabled style={{ color: "gray" }}>
-                                Action Done
-                            </option>
-                            <option>Hospitalized</option>
-                            <option>Clinic</option>
-                            <option>Treatment only</option>
-                            <option>Others</option>
-                        </select>
-
-                        <input type="text" name="medcondition" placeholder="Medical Condition" value={form.medcondition} onChange={handleChange}/>
+                        <div className="input-row">
+                            <select name="status" value={form.status} onChange={handleChange}>
+                                <option value="" disabled>Select Action</option>
+                                <option>Hospitalized</option>
+                                <option>Clinic</option>
+                                <option>Treatment only</option>
+                                <option>Others</option>
+                            </select>
+                            <select name="medcondition" value={form.medcondition} onChange={handleChange}>
+                                <option value="" disabled>Select Medical Condition</option>
+                                <option>Asthma</option>
+                                <option>Diabetes</option>
+                                <option>Heart Condition</option>
+                                <option>Lung Condition</option>
+                                <option>Pneumonia</option>
+                                <option>Stroke</option>
+                                <option>Epilepsy</option>
+                                <option>Gout</option>
+                                <option>Skin Condition</option>
+                                <option>Tubercolosis</option>
+                                <option>Migraine</option>
+                                <option>Hypertension</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        
+                        {form.medcondition === "Other" && (
+                             <input
+                                type="text"
+                                name="otherMedCondition"
+                                placeholder="Specify health condition"
+                                value={form.otherMedCondition}
+                                onChange={handleChange}
+                                required
+                            />
+                        )}
+                        
                         <input type="text" name="description" placeholder="Description of the Incident" value={form.description} onChange={handleChange}/>
 
-                        {/* Action buttons at the bottom */}
                         <div className="action-buttons-container">
                             <button className="confirm-btn" onClick={handleSubmit}>SAVE</button>
                             <button className="confirm-btn" onClick={handleViewAllClick}>View All</button>
                         </div>
                     </div>
-                    {/* End of Original Documentation Card */}
-                    
-                    {/* Password Prompt (Right Side) */}
+
                     {showPasswordPrompt && (
-                        // Use inline styles to make this look like a card next to the form
                         <div className="password-prompt-sidebar" style={{
-                            flex: '1', // Takes remaining space
+                            flex: '1',
                             padding: '20px',
                             backgroundColor: '#fff',
                             borderRadius: '8px',
@@ -349,8 +360,8 @@ function Documentations() {
                                 onKeyPress={(e) => {
                                     if (e.key === 'Enter') {
                                         handlePasswordConfirm();
-                                    }}
-                                }
+                                    }
+                                }}
                             />
                             {passwordError && <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>{passwordError}</div>}
                             <div className="modal-actions" style={{
@@ -388,7 +399,6 @@ function Documentations() {
                             </div>
                         </div>
                     )}
-                    {/* End of Password Prompt */}
                 </div>
             </main>
         </div>
