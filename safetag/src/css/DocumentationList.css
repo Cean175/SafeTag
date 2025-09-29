@@ -34,3 +34,13 @@
   box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
   grid-column: 2;
 }
+
+.DL-page-content .doc-card {
+  background: #e0f7e9;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-left: -15px;
+  gap: 2rem;
+}

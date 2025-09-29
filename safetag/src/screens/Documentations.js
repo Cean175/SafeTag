@@ -238,139 +238,157 @@ function Documentations() {
 
             <main className="main-content user-page-content">
                 <h2 className="doc-title">DOCUMENTATION</h2>
-                <div className="doc-card">
-                    <h3 className="section-title">DEMOGRAPHIC PROFILE</h3>
+                
+                {/* NEW WRAPPER for horizontal layout */}
+                <div className="doc-layout-wrapper" style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
 
-                    {/* Error Message */}
-                    {errorMessage && (
-                        <div className="error-message">{errorMessage}</div>
-                    )}
+                    {/* Original Documentation Card (Left Side) */}
+                    <div className="doc-card" style={{ flex: '2', minWidth: '400px' }}> {/* Add flex property to control size */}
+                        <h3 className="section-title">DEMOGRAPHIC PROFILE</h3>
 
-                    {/* Avatar */}
-                    <div className="avatar-section">
-                        <label htmlFor="avatarUpload">
-                            <img
-                                src={avatar}
-                                alt="Student Avatar"
-                                className="avatar"
-                                style={{ cursor: "pointer" }}
-                            />
-                        </label>
-                        <input
-                            type="file"
-                            id="avatarUpload"
-                            accept="image/*"
-                            style={{ display: "none" }}
-                            onChange={handleAvatarChange}
-                        />
-                    </div>
-
-                    <div className="input-row">
-                        <select name="student_select" value={selectedStudentUuid} onChange={handleStudentSelect}>
-                            <option value="">Select a Student</option>
-                            {students.map((s) => (
-                                <option key={s.id} value={s.id}>{s.name} — {s.student_id}</option>
-                            ))}
-                            <option value="__other__">Other / Manual entry</option>
-                        </select>
-
-                        {/* Show manual name input if "Other / Manual entry" is selected */}
-                        {selectedStudentUuid === "__other__" && (
-                            <input
-                                type="text"
-                                name="name"
-                                placeholder="Student Name"
-                                value={form.name}
-                                onChange={handleChange}
-                            />
+                        {/* Error Message */}
+                        {errorMessage && (
+                            <div className="error-message">{errorMessage}</div>
                         )}
 
-                        <input type="text" name="id" placeholder="STUDENT ID" value={form.id} onChange={handleChange}/>
-                    </div>
-
-                    <div className="input-row">
-                        <input type="text" name="age" placeholder="AGE" value={form.age} onChange={handleChange}/>
-                        <input type="text" name="level" placeholder="STUDENT LVL" value={form.level} onChange={handleChange}/>
-                    </div>
-
-                    <input type="date" name="date" value={form.date} onChange={handleChange}/>
-                    <input type="time" name="time" value={form.time} onChange={handleChange}/>
-                    <input type="text" name="location" placeholder="Student location (Building, floor, room)" value={form.location} onChange={handleChange}/>
-
-                    {/* Dropdown */}
-                    <select name="status" value={form.status} onChange={handleChange}>
-                        <option value="Action Done" disabled style={{ color: "gray" }}>
-                            Action Done
-                        </option>
-                        <option>Hospitalized</option>
-                        <option>Clinic</option>
-                        <option>Treatment only</option>
-                        <option>Others</option>
-                    </select>
-
-                    <input type="text" name="medcondition" placeholder="Medical Condition" value={form.medcondition} onChange={handleChange}/>
-                    <input type="text" name="description" placeholder="Description of the Incident" value={form.description} onChange={handleChange}/>
-
-                    {/* Action buttons at the bottom */}
-                    <div className="action-buttons-container">
-                        <button className="confirm-btn" onClick={handleSubmit}>SAVE</button>
-                        <button className="confirm-btn" onClick={handleViewAllClick}>View All</button>
-                    </div>
-
-                    {/* Password Prompt Modal */}
-                    {showPasswordPrompt && (
-                        <div className="password-modal">
-                            <div className="password-modal-content">
-                                <h4>Enter Password to View All</h4>
-                                <input
-                                    type="password"
-                                    value={passwordInput}
-                                    onChange={e => setPasswordInput(e.target.value)}
-                                    placeholder="Password"
-                                    onKeyPress={(e) => {
-                                        if (e.key === 'Enter') {
-                                            handlePasswordConfirm();
-                                        }}
-                                    }
+                        {/* Avatar */}
+                        <div className="avatar-section">
+                            <label htmlFor="avatarUpload">
+                                <img
+                                    src={avatar}
+                                    alt="Student Avatar"
+                                    className="avatar"
+                                    style={{ cursor: "pointer" }}
                                 />
-                                {passwordError && <div className="error-message">{passwordError}</div>}
-                                <div className="modal-actions" style={{
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    gap: "12px",
-                                
-                                }}>
-                                    <button
-                                        style={{
-                                            padding: "8px 20px",
-                                            background: "#007bff",
-                                            color: "#fff",
-                                            border: "none",
-                                            borderRadius: "4px",
-                                            cursor: "pointer",
-                                            fontWeight: "bold"
-                                        }}
-                                        onClick={handlePasswordConfirm}
-                                    >
-                                        Confirm
-                                    </button>
-                                    <button
-                                        style={{
-                                            padding: "8px 20px",
-                                            background: "#f5f5f5",
-                                            color: "#333",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "4px",
-                                            cursor: "pointer"
-                                        }}
-                                        onClick={() => setShowPasswordPrompt(false)}
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
+                            </label>
+                            <input
+                                type="file"
+                                id="avatarUpload"
+                                accept="image/*"
+                                style={{ display: "none" }}
+                                onChange={handleAvatarChange}
+                            />
+                        </div>
+
+                        <div className="input-row">
+                            <select name="student_select" value={selectedStudentUuid} onChange={handleStudentSelect}>
+                                <option value="">Select a Student</option>
+                                {students.map((s) => (
+                                    <option key={s.id} value={s.id}>{s.name} — {s.student_id}</option>
+                                ))}
+                                <option value="__other__">Other / Manual entry</option>
+                            </select>
+
+                            {/* Show manual name input if "Other / Manual entry" is selected */}
+                            {selectedStudentUuid === "__other__" && (
+                                <input
+                                    type="text"
+                                    name="name"
+                                    placeholder="Student Name"
+                                    value={form.name}
+                                    onChange={handleChange}
+                                />
+                            )}
+
+                            <input type="text" name="id" placeholder="STUDENT ID" value={form.id} onChange={handleChange}/>
+                        </div>
+
+                        <div className="input-row">
+                            <input type="text" name="age" placeholder="AGE" value={form.age} onChange={handleChange}/>
+                            <input type="text" name="level" placeholder="STUDENT LVL" value={form.level} onChange={handleChange}/>
+                        </div>
+
+                        <input type="date" name="date" value={form.date} onChange={handleChange}/>
+                        <input type="time" name="time" value={form.time} onChange={handleChange}/>
+                        <input type="text" name="location" placeholder="Student location (Building, floor, room)" value={form.location} onChange={handleChange}/>
+
+                        {/* Dropdown */}
+                        <select name="status" value={form.status} onChange={handleChange}>
+                            <option value="Action Done" disabled style={{ color: "gray" }}>
+                                Action Done
+                            </option>
+                            <option>Hospitalized</option>
+                            <option>Clinic</option>
+                            <option>Treatment only</option>
+                            <option>Others</option>
+                        </select>
+
+                        <input type="text" name="medcondition" placeholder="Medical Condition" value={form.medcondition} onChange={handleChange}/>
+                        <input type="text" name="description" placeholder="Description of the Incident" value={form.description} onChange={handleChange}/>
+
+                        {/* Action buttons at the bottom */}
+                        <div className="action-buttons-container">
+                            <button className="confirm-btn" onClick={handleSubmit}>SAVE</button>
+                            <button className="confirm-btn" onClick={handleViewAllClick}>View All</button>
+                        </div>
+                    </div>
+                    {/* End of Original Documentation Card */}
+                    
+                    {/* Password Prompt (Right Side) */}
+                    {showPasswordPrompt && (
+                        // Use inline styles to make this look like a card next to the form
+                        <div className="password-prompt-sidebar" style={{
+                            flex: '1', // Takes remaining space
+                            padding: '20px',
+                            backgroundColor: '#fff',
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                            marginTop: '480px',
+                            minWidth: '250px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '15px',
+                        }}>
+                            <h4>Enter Password to View All</h4>
+                            <input
+                                type="password"
+                                value={passwordInput}
+                                onChange={e => setPasswordInput(e.target.value)}
+                                placeholder="Password"
+                                style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handlePasswordConfirm();
+                                    }}
+                                }
+                            />
+                            {passwordError && <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>{passwordError}</div>}
+                            <div className="modal-actions" style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                gap: "12px",
+                            }}>
+                                <button
+                                    style={{
+                                        padding: "8px 20px",
+                                        background: "#007bff",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "4px",
+                                        cursor: "pointer",
+                                        fontWeight: "bold"
+                                    }}
+                                    onClick={handlePasswordConfirm}
+                                >
+                                    Confirm
+                                </button>
+                                <button
+                                    style={{
+                                        padding: "8px 20px",
+                                        background: "#f5f5f5",
+                                        color: "#333",
+                                        border: "1px solid #ccc",
+                                        borderRadius: "4px",
+                                        cursor: "pointer"
+                                    }}
+                                    onClick={() => setShowPasswordPrompt(false)}
+                                >
+                                    Cancel
+                                </button>
                             </div>
                         </div>
                     )}
+                    {/* End of Password Prompt */}
                 </div>
             </main>
         </div>

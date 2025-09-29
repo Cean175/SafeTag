@@ -177,7 +177,8 @@ function DocumentationsList() {
           overflowY: 'auto',
           paddingRight: '8px',
           marginTop: '16px',
-          marginBottom: '16px'
+          marginBottom: '16px',
+          
         }}
       >
         {docs.length === 0 ? (
@@ -198,7 +199,9 @@ function DocumentationsList() {
                 transition: 'box-shadow 0.2s',
                 borderLeft: '6px solid #43a047',
                 cursor: 'pointer',
-                position: 'relative'
+                position: 'relative',
+                marginLeft: '10px',
+                marginRight: '20px',
               }}
               onClick={() => handleCardClick(doc)}
             >
