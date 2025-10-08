@@ -5,40 +5,10 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Renamed 'test' to 'uploadFile' for clarity and correct usage
-export async function uploadFile(file, options = {}) {
-  if (!file) return null;
-  const bucket = options.bucket || 'avatars';
-  const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
-  const path = `${fileName}`;
 
-  const { data, error } = await supabase.storage.from(bucket).upload(path, file, {
-    cacheControl: '3600',
-    upsert: false,
-  });
-
-  if (error) {
-    console.error('Upload error', error);
-    throw error;
-  }
-
-  // If bucket is public, you can construct the public URL
-  // Otherwise use createSignedUrl
-  const { publicUrl, error: urlError } = supabase.storage.from(bucket).getPublicUrl(path);
-  if (urlError) {
-    console.warn('Could not get public URL', urlError);
-    // fallback to signed url
-    const { data: signed, error: signedErr } = await supabase.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24); // 24h
-    if (signedErr) throw signedErr;
-    return signed.signedUrl;
-  }
-
-  return publicUrl;
-}
 
 // -------------------- Documentations API --------------------
 export async function createDocumentation(payload) {
-  // payload: { student_name, student_id, age, student_lvl, incident_date, incident_time, location, status, medical_condition, description, avatar_url }
   const { data, error } = await supabase.from('documentations').insert([payload]).select();
   if (error) throw error;
   return data[0];
@@ -70,8 +40,7 @@ export async function deleteDocumentation(id) {
 
 // -------------------- Students API --------------------
 export async function createStudent(payload) {
-  // payload: { student_id, name, age, level, course, health_condition, treatment_needs, profile_picture }
-  const { data, error } = await supabase.from('students').insert([payload]).select();
+  const { data, error } = await supabase.from('students').insert([payload]).select("*");
   if (error) throw error;
   return data[0];
 }
@@ -98,4 +67,36 @@ export async function deleteStudent(id) {
   const { data, error } = await supabase.from('students').delete().eq('id', id).select();
   if (error) throw error;
   return data[0];
+}
+
+export async function uploadFile(file, { bucket = 'ava tars' } = {}) {
+  if (!file) return null;
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${Math.random().toString(36).slice(2,9)}.${fileExt}`;
+
+  // Upload
+  const { data: uploadData, error: uploadError } = await supabase
+    .storage
+    .from(bucket)
+    .upload(fileName, file, { upsert: false });
+
+  if (uploadError) {
+    console.error('Supabase storage upload error:', uploadError);
+    throw uploadError;
+  }
+
+  // Get public URL
+  const { data: publicData, error: publicError } = await supabase
+    .storage
+    .from(bucket)
+    .getPublicUrl(fileName);
+
+  if (publicError) {
+    console.error('Supabase getPublicUrl error:', publicError);
+    throw publicError;
+  }
+
+  // compatibility: publicData may contain publicUrl or publicURL
+  const url = publicData?.publicUrl ?? publicData?.publicURL ?? null;
+  return url;
 }

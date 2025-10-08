@@ -2,11 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import '../css/UserPage.css';
 import '../css/AddStudentPage.css';
 import { useState } from "react";
-// Assuming 'createStudent' and 'uploadFile' are properly exported from your supabaseClient file
-import { createStudent, uploadFile } from '../lib/supabaseClient';
+import { createStudent } from '../lib/supabaseClient';
 
 function AddStudentPage() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -14,14 +14,14 @@ function AddStudentPage() {
 
   const [formData, setFormData] = useState({
     name: "",
-    studentId: "",
+    student_id: "",
     age: "",
+    sex: "",
     level: "",
-    course: "", // Note: 'level' and 'course' are separate fields in the form but seem to be combined in the placeholder
-    healthCondition: "", // This will hold the selected value or "Other"
-    otherHealthCondition: "", // This will hold the text for "Other"
+    course: "",
+    healthCondition: "",
+    otherHealthCondition: "",
     treatmentNeeds: "",
-    profileFile: null,
   });
 
   const handleChange = (e) => {
@@ -29,41 +29,31 @@ function AddStudentPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files && e.target.files[0];
-    setFormData({ ...formData, profileFile: file });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const finalHealthCondition = formData.healthCondition === "Other" ? formData.otherHealthCondition : formData.healthCondition;
+    setIsLoading(true);
 
+    try {
+      // This payload object's keys now match your actual database columns.
       const payload = {
-        student_id: formData.studentId,
+        student_id: formData.student_id, // send the form's ID to the 'student_id' text column
         name: formData.name,
         age: formData.age ? parseInt(formData.age, 10) : null,
-        student_lvl: formData.level,
-        course: formData.course || null,
-        health_condition: finalHealthCondition,
+        sex: formData.sex,
+        level: formData.level,
+        course: formData.course,
+        health_condition: formData.healthCondition === "Other" ? formData.otherHealthCondition : formData.healthCondition || null,
         treatment_needs: formData.treatmentNeeds || null,
       };
 
-      if (formData.profileFile) {
-        // Assuming your 'uploadFile' function handles the bucket and returns the public URL
-        const publicUrl = await uploadFile(formData.profileFile, { bucket: 'avatars' });
-        payload.profile_picture = publicUrl;
-      }
-
       await createStudent(payload);
       alert("Student added successfully!");
-      navigate('/students'); // Redirect to students list after success
+      navigate('/user'); // Or whichever page lists the students
     } catch (err) {
       console.error('Failed to create student:', err);
       alert("Failed to add student. Please check the console for details.");
-      // The original code tried to use localStorage as a fallback.
-      // This is generally not a good practice for a database-backed app,
-      // as it creates data inconsistencies. It has been removed.
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -99,6 +89,7 @@ function AddStudentPage() {
       {/* Main Content */}
       <main className="main-content user-page-content">
         <form className="student-form" onSubmit={handleSubmit}>
+          {/* Student Name */}
           <div className="form-group">
             <input
               type="text"
@@ -107,20 +98,24 @@ function AddStudentPage() {
               value={formData.name}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
 
+          {/* Student ID */}
           <div className="form-group">
             <input
               type="text"
-              name="studentId"
+              name="student_id"
               placeholder="Student Id"
-              value={formData.studentId}
+              value={formData.student_id}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
 
+          {/* Student Age */}
           <div className="form-group">
             <input
               type="number"
@@ -129,37 +124,60 @@ function AddStudentPage() {
               value={formData.age}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
           </div>
-
+          {/* Student Sex */}
+          <div className="form-group">
+            <select
+              name="sex"
+              value={formData.sex}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+            >
+              <option value="">Select Sex</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          
+          {/* Student Level */}
           <div className="form-group">
             <input
               type="text"
               name="level"
-              placeholder="Student Lvl & Course"
+              placeholder="Student Level (e.g., 1st Year)"
               value={formData.level}
               onChange={handleChange}
+              required
+              disabled={isLoading}
             />
           </div>
-
-          {/* New form field for profile picture upload */}
+          
+          {/* Student Course */}
           <div className="form-group">
-            <label htmlFor="profileFile">Profile Picture</label>
             <input
-              type="file"
-              id="profileFile"
-              name="profileFile"
-              onChange={handleFileChange}
-              accept="image/*"
+              type="text"
+              name="course"
+              placeholder="Student Course (e.g., BSIT)"
+              value={formData.course}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
             />
           </div>
 
-          {/* Health Condition Select */}
+          {/* Profile picture removed */}
+
+          {/* Health Condition Dropdown */}
           <div className="form-group">
             <select
               name="healthCondition"
               value={formData.healthCondition}
               onChange={handleChange}
+              disabled={isLoading}
             >
               <option value="">Select Health Conditions</option>
               <option value="Asthma">Asthma</option>
@@ -178,7 +196,7 @@ function AddStudentPage() {
             </select>
           </div>
 
-          {/* Show input for specific condition if "Other" is selected */}
+          {/* "Other" Health Condition Text Input */}
           {formData.healthCondition === "Other" && (
             <div className="form-group">
               <input
@@ -188,20 +206,25 @@ function AddStudentPage() {
                 value={formData.otherHealthCondition}
                 onChange={handleChange}
                 required
+                disabled={isLoading}
               />
             </div>
           )}
 
+          {/* Treatment Needs Textarea */}
           <div className="form-group">
             <textarea
               name="treatmentNeeds"
               placeholder="Treatment/Needs"
               value={formData.treatmentNeeds}
               onChange={handleChange}
+              disabled={isLoading}
             />
           </div>
           
-          <button type="submit" className="add-btn">ADD</button>
+          <button type="submit" className="add-btn" disabled={isLoading}>
+            {isLoading ? "Adding..." : "ADD"}
+          </button>
         </form>
       </main>
     </div>

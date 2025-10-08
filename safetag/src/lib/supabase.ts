@@ -9,21 +9,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-// You can use these interfaces to define the shape of your tables.
-// This is the correct place to define the type for your 'documentations' table.
 export interface Documentation {
-  id?: number; // Optional because Supabase auto-generates it
+  id?: number;
   student_name: string;
   student_id: string;
   age: number | null;
   student_lvl: string;
-  incident_date: string; // The type is a string because that's what you're sending to the database
+  incident_date: string; // The time is missing
   location: string;
   status: string;
   medical_condition: string;
   description: string;
   avatar_url: string | null;
-  created_at?: string; // Optional, as it's typically handled by the database
+  created_at?: string;
 }
 
 // Keep your other interfaces here for completeness

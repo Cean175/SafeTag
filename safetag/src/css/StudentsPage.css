@@ -68,8 +68,8 @@
 }
 
 .students-page-container .nav-icon.active {
-  background: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+  background:rgba(255,255,255,0.4);
+  box-shadow:0 0 20px rgba(255,255,255,0.5); 
 }
 
 .students-page-content {
@@ -248,20 +248,26 @@
 }
 
 .treatment-field {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background: #4CAF50;
+  color: white;
+  padding: 0.4rem 1.2rem;
+  border-radius: 15px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
 }
 
 .treatment-value {
-  background: #f0f0f0;
-  color: #1B5E20;
-  padding: 1rem 1.5rem;
-  border-radius: 20px;
+  background: #A5D6A7;
+  color: #2E7D32;
+  padding: 0.5rem 1.5rem;
+  border-radius: 15px;
   font-size: 0.8rem;
   font-weight: 600;
   text-align: center;
-  min-height: 2rem;
+  min-height: 1.2rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -362,8 +368,7 @@
 }
 
 .students-list {
-  display: flex;
-  flex-direction: column;
+  color: #2E7D32;
   gap: 1rem;
 }
 
@@ -379,6 +384,54 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(139, 195, 74, 0.3);
   letter-spacing: 0.5px;
+}
+
+.student-dropdown {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #8BC34A, #7CB342;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 8px 26px rgba(76,175,80,0.16);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 48px; /* room for custom arrow */
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  background-image: linear-gradient(135deg, #8BC34A, #7CB342);
+  background-blend-mode: overlay;
+}
+
+.student-dropdown:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(76,175,80,0.2);
+}
+
+.student-dropdown::placeholder {
+  color: #2E7D32);
+}
+
+/* custom arrow using background SVG positioned to the right */
+.student-dropdown {
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 18px 18px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+}
+
+.student-dropdown option {
+  color: #1B5E20; /* dark text for options */
+  font-weight: 600;
+}
+
+.student-dropdown:focus {
+  outline: none;
+  box-shadow: 0 12px 36px rgba(76,175,80,0.28);
 }
 
 .student-list-item:hover {

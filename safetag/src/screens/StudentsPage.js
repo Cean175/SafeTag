@@ -95,28 +95,27 @@ function StudentsPage() {
 
       <main className="main-content students-page-content">
         <div className="students-layout">
-          {/* Profile Section */}
-          <div className="student-profile-section">
-            {selectedStudent ? (
-              <>
-                              <div className="profile-card">
-                  <div className="profile-header-badge">DEMOGRAPHIC PROFILE</div>
+                <div className="student-profile-section">
+                {selectedStudent ? (
+                  <>
+                  <div className="profile-card">
+                    <div className="profile-header-badge">DEMOGRAPHIC PROFILE</div>
 
-                  <div className="profile-avatar-section">
+                    <div className="profile-avatar-section">
                     {selectedStudent.profilePicture ? (
                       <img
-                        src={selectedStudent.profilePicture}
-                        alt={selectedStudent.name}
-                        className="profile-avatar"
+                      src={selectedStudent.profilePicture}
+                      alt={selectedStudent.name}
+                      className="profile-avatar"
                       />
                     ) : (
                       <div className="profile-avatar default-avatar">
-                        <div className="avatar-icon">👤</div>
+                      <div className="avatar-icon">👤</div>
                       </div>
                     )}
-                  </div>
+                    </div>
 
-                  <div className="profile-details-grid">
+                    <div className="profile-details-grid">
                     <div className="profile-field">
                       <div className="field-label">NAME</div>
                       <div className="field-value">{selectedStudent.name || 'N/A'}</div>
@@ -126,57 +125,61 @@ function StudentsPage() {
                       <div className="field-value">{selectedStudent.age || 'N/A'}</div>
                     </div>
                     <div className="profile-field">
+                      <div className="field-label">SEX</div>
+                      <div className="field-value">{selectedStudent.sex || 'N/A'}</div>
+                    </div>
+                    <div className="profile-field">
                       <div className="field-label">ID</div>
                       <div className="field-value">
-                        {selectedStudent.id || selectedStudent.studentId || 'N/A'}
+                      {selectedStudent.id || selectedStudent.studentId || 'N/A'}
                       </div>
                     </div>
                     <div className="profile-field">
                       <div className="field-label">STUDENT LVL/COURSE</div>
                       <div className="field-value">
-                        {(selectedStudent.level || selectedStudent.yearLevel || '') +
-                          (selectedStudent.course ? ' - ' + selectedStudent.course : '') ||
-                          'N/A'}
+                      {(selectedStudent.level || selectedStudent.yearLevel || '') +
+                        (selectedStudent.course ? ' - ' + selectedStudent.course : '') ||
+                        'N/A'}
                       </div>
                     </div>
-                  </div>
+                    </div>
 
-                  <div className="health-section">
+                    <div className="health-section">
                     <div className="health-field">
                       <div className="health-label">Health condition</div>
                       <div className="health-value">
-                        {selectedStudent.healthCondition || 'None'}
+                      {selectedStudent.health_condition || 'None'}
                       </div>
                     </div>
-                  </div>
+                    </div>
 
-                  <div className="treatment-section">
+                    <div className="treatment-section">
                     <div className="treatment-field">
+                      <div className="treatment-label">Treatment/Needs</div>
                       <div className="treatment-value">
-                        {selectedStudent.treatmentNeeds ||
-                          selectedStudent.treatment ||
-                          'Treatment/needs'}
+                      {selectedStudent.treatment_needs ||
+                        'None'}
                       </div>
                     </div>
+                    </div>
                   </div>
-                </div>
-              </>
-            ) : (
-              <div className="no-selection">
-                <div className="student-tab">SELECT A STUDENT</div>
-                <div className="profile-card empty-card">
-                  <div className="empty-message">
+                  </>
+                ) : (
+                  <div className="no-selection">
+                  <div className="student-tab">SELECT A STUDENT</div>
+                  <div className="profile-card empty-card">
+                    <div className="empty-message">
                     <p>No student selected</p>
                     <button className="add-student-btn" onClick={handleAddStudent}>
                       Add New Student
                     </button>
+                    </div>
                   </div>
+                  </div>
+                )}
                 </div>
-              </div>
-            )}
-          </div>
 
-          {/* Student List Section */}
+                {/* Student List Section */}
           <div className="students-list-section">
             {students.length === 0 ? (
               <div className="no-students-message">
@@ -189,17 +192,20 @@ function StudentsPage() {
               </div>
             ) : (
               <div className="students-list">
-                {students.map((student, index) => (
-                  <div
-                    key={student.id || index}
-                    className={`student-list-item ${
-                      selectedStudentIndex === index ? 'selected' : ''
-                    }`}
-                    onClick={() => handleStudentClick(index)}
-                  >
-                    Student {index + 1}
-                  </div>
-                ))}
+                <label htmlFor="student-select" className="sr-only">Select student</label>
+                <select
+                  id="student-select"
+                  value={selectedStudentIndex ?? ''}
+                  onChange={(e) => setSelectedStudentIndex(e.target.value === '' ? null : Number(e.target.value))}
+                  className="student-dropdown"
+                >
+                  <option value="">-- Select a student --</option>
+                  {students.map((student, index) => (
+                    <option key={student.id || index} value={index}>
+                      {student.name ? `${student.name} — ${student.student_id || student.id || index + 1}` : `Student ${index + 1}`}
+                    </option>
+                  ))}
+                </select>
               </div>
             )}
           </div>

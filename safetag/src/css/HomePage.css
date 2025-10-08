@@ -136,12 +136,6 @@
   flex-direction: column;
 }
 
-.title {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 0.25rem;
-}
-
 .subtitle {
   font-size: 0.875rem;
   opacity: 0.9;

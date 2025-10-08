@@ -16,6 +16,7 @@ function Documentations() {
         name: '',
         id: '',
         age: '',
+        sex: '',
         level: '',
         date: '',
         time: '',
@@ -93,20 +94,10 @@ function Documentations() {
             return;
         }
 
-        let avatar_url = avatar;
-        if (avatar && avatar.startsWith('data:')) {
-            try {
-                const fileName = `${form.id}_${Date.now()}.png`;
-                const res = await fetch(avatar);
-                const blob = await res.blob();
-                const { error } = await supabase.storage.from('avatars').upload(fileName, blob, { upsert: true });
-                if (error) throw error;
-                const { publicURL } = supabase.storage.from('avatars').getPublicUrl(fileName);
-                avatar_url = publicURL;
-            } catch (err) {
-                setErrorMessage('Failed to upload avatar.');
-                return;
-            }
+        // Determine avatar_url: if the avatar is a URL (from selected student), use it; otherwise keep null
+        let avatar_url = null;
+        if (avatar && typeof avatar === 'string' && !avatar.startsWith('data:') && avatar !== defaultAvatar) {
+            avatar_url = avatar;
         }
 
         const medicalConditionForDb = form.medcondition === 'Other'
@@ -139,17 +130,7 @@ function Documentations() {
         setAvatar(defaultAvatar);
     };
 
-    // Handle avatar upload
-    const handleAvatarChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setAvatar(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    // Avatar is read-only on this form (taken from selected student)
 
     // Load students for dropdown
     useEffect(() => {
@@ -178,9 +159,12 @@ function Documentations() {
                 name: student.name || '',
                 id: student.student_id || '',
                 age: student.age ? String(student.age) : '',
+                sex: student.sex || '',
                 level: student.level || '',
             });
-            setAvatar(student.profile_picture || defaultAvatar);
+            // student.profile_picture may be an array or string
+            const pic = Array.isArray(student.profile_picture) ? (student.profile_picture[0] || null) : student.profile_picture;
+            setAvatar(pic || defaultAvatar);
         }
     };
 
@@ -246,20 +230,10 @@ function Documentations() {
                         {errorMessage && (<div className="error-message">{errorMessage}</div>)}
 
                         <div className="avatar-section">
-                            <label htmlFor="avatarUpload">
-                                <img
-                                    src={avatar}
-                                    alt="Student Avatar"
-                                    className="avatar"
-                                    style={{ cursor: "pointer" }}
-                                />
-                            </label>
-                            <input
-                                type="file"
-                                id="avatarUpload"
-                                accept="image/*"
-                                style={{ display: "none" }}
-                                onChange={handleAvatarChange}
+                            <img
+                                src={avatar}
+                                alt="Student Avatar"
+                                className="avatar"
                             />
                         </div>
 
@@ -285,6 +259,15 @@ function Documentations() {
 
                         <div className="input-row">
                             <input type="text" name="age" placeholder="AGE" value={form.age} onChange={handleChange}/>
+                            <select name="sex" value={form.sex} onChange={handleChange}>
+                                <option value="">Select Sex</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            {form.sex === 'Other' && (
+                                <input type="text" name="sex" placeholder="Specify sex" value={form.sex} onChange={handleChange} />
+                            )}
                             <input type="text" name="level" placeholder="STUDENT LVL" value={form.level} onChange={handleChange}/>
                         </div>
 

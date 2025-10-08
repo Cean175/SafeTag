@@ -166,6 +166,45 @@ function Statistics() {
         fetchInitialData();
     }, []);
 
+    // Update statusData (pie chart) based on selected timeFrame
+    const filterByTimeFrame = (data, frame) => {
+        if (!data) return [];
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth();
+
+        if (frame === 'daily') {
+            return data.filter(doc => {
+                if (!doc.incident_date) return false;
+                const d = new Date(doc.incident_date);
+                return d.toISOString().split('T')[0] === today.toISOString().split('T')[0];
+            });
+        }
+
+        if (frame === 'weekly') {
+            // For weekly view we consider entries in the current month (consistent with bar weekly aggregation)
+            return data.filter(doc => {
+                if (!doc.incident_date) return false;
+                const d = new Date(doc.incident_date);
+                return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+            });
+        }
+
+        // monthly (default): include all data
+        return data;
+    };
+
+    useEffect(() => {
+        const filtered = filterByTimeFrame(rawData, timeFrame);
+        const map = {};
+        (filtered || []).forEach(doc => {
+            const status = doc.status || 'Unknown';
+            map[status] = (map[status] || 0) + 1;
+        });
+        const arr = Object.entries(map).map(([name, value]) => ({ name, value }));
+        setStatusData(arr);
+    }, [rawData, timeFrame]);
+
     useEffect(() => {
         if (rawData.length > 0 || timeFrame === 'daily') {
             const aggregated = aggregateCases(rawData, timeFrame);
