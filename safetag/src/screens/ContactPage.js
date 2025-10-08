@@ -44,8 +44,8 @@ function ContactPage() {
     age: emergencyData?.age || 'Not available',
     studentId: emergencyData?.studentId || 'Not available',
     course: emergencyData?.course || 'Not available',
-    healthCondition: emergencyData?.Healthcondition || 'Not available', // Note: Corrected typo 'Healthcondition' to 'healthCondition' for consistency
-    avatarUrl: emergencyData?.avatarUrl || 'https://via.placeholder.com/80x80.png?text=Student', // Using a real placeholder URL
+    healthCondition: emergencyData?.Healthcondition || 'Not available',
+    avatarUrl: emergencyData?.avatarUrl || 'https://via.placeholder.com/100x100.png?text=Student',
   };
 
   const contactInfo = {
@@ -64,7 +64,7 @@ function ContactPage() {
           </div>
 
           <div className="nav-icons">
-            <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
+            <div className="nav-icon" onClick={() => handleNavigation('/home')}>
               <i className="fas fa-home"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/user')}>
@@ -73,7 +73,7 @@ function ContactPage() {
             <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
               <i className="fas fa-chart-bar"></i>
             </div>
-            <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
+            <div className="nav-icon active" onClick={() => handleNavigation('/contact')}>
               <i className="fas fa-phone"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
@@ -83,9 +83,9 @@ function ContactPage() {
         </div>
       </header>
       
-      <main className="contact-page main-content">
+      <main className="main-content">
         <section className="emergency-alert">
-          <h2 className="alert-title">🚨 Emergency Alert</h2>
+          <h2 className="alert-title"><i className="fas fa-triangle-exclamation"></i> Emergency Alert</h2>
           <p className="alert-subtitle">If you have accomplished the emergency response, click below:</p>
           <button className="done-button" onClick={handleDone}>
             DONE
@@ -143,24 +143,33 @@ function ContactPage() {
         <section className="location-section">
           <h3>Location</h3>
           <div className="map-container">
-            <img 
-              src="https://via.placeholder.com/400x200.png?text=Location+Map" 
-              alt="Emergency location map" 
-              className="location-map"
-            />
-            <div className="location-marker">
-              <span role="img" aria-label="Location marker">📍</span>
-            </div>
-            <button className="click-button">View Location</button>
+            <iframe
+              title="Live Google Map of emergency location"
+              src="https://maps.google.com/maps?q=Lipa%20City,%20Batangas&t=&z=15&ieUTF8&iwloc=&output=embed"
+              width="100%"
+              height="100%"
+              style={{ border: 0, borderRadius: '10px' }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
           </div>
+          <a 
+            href="https://www.google.com/maps/search/?api=1&query=Lipa+City,Batangas" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="click-button"
+          >
+            View Location
+          </a>
         </section>
 
         <section className="action-buttons">
           <button className="call-button" onClick={handleCall}>
-            📞 Call
+            <i className="fas fa-phone"></i> Call
           </button>
           <button className="message-button" onClick={handleMessage}>
-            💬 Message
+            <i className="fas fa-comment-dots"></i> Message
           </button>
         </section>
       </main>

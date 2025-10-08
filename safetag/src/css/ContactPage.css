@@ -91,12 +91,13 @@
   text-align: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
   grid-column: 1 / -1;
+  margin-top: 120px;
   margin-bottom: 1.5rem;
   border: 2px solid #fff3;
 }
 
 .alert-title {
-  font-size: 2.2rem;
+  font-size: 1.7rem;
   font-weight: bold;
   margin: 0 0 0.5rem 0;
   letter-spacing: 2px;
@@ -106,14 +107,14 @@
 .alert-subtitle {
   margin: 0 0 1.5rem 0;
   opacity: 0.95;
-  font-size: 1.1rem;
+  font-size: .8rem;
 }
 
 .done-button {
   background: #27ae60;
   color: white;
   border: none;
-  padding: 1rem 3rem;
+  padding: 1rem 2rem;
   border-radius: 50px;
   font-size: 1.2rem;
   font-weight: bold;
@@ -132,7 +133,9 @@
 .student-card {
   background: rgba(255, 255, 255, 0.98);
   border-radius: 24px;
-  padding: 0;
+  margin-right: 500px;
+  margin-top: 20px;
+  padding: ;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
   overflow: hidden;
   border: 1px solid #eee;
@@ -250,6 +253,9 @@
   background: rgba(255, 255, 255, 0.98);
   border-radius: 24px;
   padding: 2rem;
+  margin-left: 500px;
+  margin-top: -580px;
+  padding: 50px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
   border: 1px solid #eee;
 }
@@ -287,7 +293,7 @@
 }
 
 .click-button {
-  position: absolute;
+  position: fixed;
   bottom: 1rem;
   right: 1rem;
   background: #2ecc71;
@@ -324,6 +330,7 @@
 
 .call-button {
   background: linear-gradient(135deg, #3498db, #2980b9);
+  margin-top: 100px;
   color: white;
 }
 
@@ -385,9 +392,6 @@
   .card-body,
   .location-section {
     padding: 1rem;
-  }
-  .emergency-alert {
-    padding: 1rem;
-    font-size: 1rem;
+  
   }
 }
