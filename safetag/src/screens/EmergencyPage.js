@@ -28,7 +28,7 @@ function EmergencyPage() {
   };
 
   return (
-    <div className="user-page-container">
+    <div className="emergency-page-container">
       <header className="header">
         <div className="header-content">
           <div className="branding">
@@ -43,7 +43,7 @@ function EmergencyPage() {
             <div className="nav-icon active" onClick={() => handleNavigation('/user')}>
               <span>👤</span>
             </div>
-            <div className="nav-icon" onClick={() => handleNavigation('/stats')}>
+            <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
               <span>📊</span>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
@@ -56,7 +56,7 @@ function EmergencyPage() {
         </div>
       </header>
 
-      <main className="main-content user-page-content">
+      <main className="emergency-title">
         <div className="Emergency-List">
           <h1>Emergencies</h1>
         </div>
