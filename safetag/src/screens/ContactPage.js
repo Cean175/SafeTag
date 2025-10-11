@@ -92,79 +92,77 @@ function ContactPage() {
           </button>
         </section>
 
-        <div className="content-wrapper">
-          <section className="student-card">
-            <div className="card-header">
-              <h3>Student Information</h3>
-            </div>
-            <div className="card-body">
-              <div className="profile-section">
-                <div className="profile-image">
-                  <img src={studentInfo.avatarUrl} alt="Student profile avatar" className="avatar" />
-                </div>
-                <div className="student-info">
-                  <div className="info-row">
-                    <span className="label">Name:</span>
-                    <span className="value">{studentInfo.name}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="label">Age:</span>
-                    <span className="value">{studentInfo.age}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="label">Student ID:</span>
-                    <span className="value">{studentInfo.studentId}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="label">Year & Course:</span>
-                    <span className="value">{studentInfo.course}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="label">Health Condition:</span>
-                    <span className="value">{studentInfo.healthCondition}</span>
-                  </div>
-                </div>
+        <section className="student-card">
+          <div className="card-header">
+            <h3>Student Information</h3>
+          </div>
+          <div className="card-body">
+            <div className="profile-section">
+              <div className="profile-image">
+                <img src={studentInfo.avatarUrl} alt="Student profile avatar" className="avatar" />
               </div>
-              <div className="emergency-contact">
-                <h4>Emergency Contact</h4>
-                <div className="contact-info">
-                  <div className="contact-row">
-                    <span className="label">Name:</span>
-                    <span className="value">{contactInfo.name}</span>
-                  </div>
-                  <div className="contact-row">
-                    <span className="label">Phone:</span>
-                    <span className="value">{contactInfo.phone}</span>
-                  </div>
+              <div className="student-info">
+                <div className="info-row">
+                  <span className="label">Name:</span>
+                  <span className="value">{studentInfo.name}</span>
+                </div>
+                <div className="info-row">
+                  <span className="label">Age:</span>
+                  <span className="value">{studentInfo.age}</span>
+                </div>
+                <div className="info-row">
+                  <span className="label">Student ID:</span>
+                  <span className="value">{studentInfo.studentId}</span>
+                </div>
+                <div className="info-row">
+                  <span className="label">Year & Course:</span>
+                  <span className="value">{studentInfo.course}</span>
+                </div>
+                <div className="info-row">
+                  <span className="label">Health Condition:</span>
+                  <span className="value">{studentInfo.healthCondition}</span>
                 </div>
               </div>
             </div>
-          </section>
+            <div className="emergency-contact">
+              <h4>Emergency Contact</h4>
+              <div className="contact-info">
+                <div className="contact-row">
+                  <span className="label">Name:</span>
+                  <span className="value">{contactInfo.name}</span>
+                </div>
+                <div className="contact-row">
+                  <span className="label">Phone:</span>
+                  <span className="value">{contactInfo.phone}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-          <section className="location-section">
-            <h3>Location</h3>
-            <div className="map-container">
-              <iframe
-                title="Live Google Map of emergency location"
-                src="https://maps.google.com/maps?q=Lipa%20City,%20Batangas&t=&z=15&ieUTF8&iwloc=&output=embed"
-                width="100%"
-                height="100%"
-                style={{ border: 0, borderRadius: '10px' }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
-            </div>
-            <a 
-              href="https://www.google.com/maps/search/?api=1&query=Lipa+City,Batangas" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="click-button"
-            >
-              View Location
-            </a>
-          </section>
-        </div>
+        <section className="location-section">
+          <h3>Location</h3>
+          <div className="map-container">
+            <iframe
+              title="Live Google Map of emergency location"
+              src="https://maps.google.com/maps?q=Lipa%20City,%20Batangas&t=&z=15&ieUTF8&iwloc=&output=embed"
+              width="100%"
+              height="100%"
+              style={{ border: 0, borderRadius: '10px' }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+          <a 
+            href="https://www.google.com/maps/search/?api=1&query=Lipa+City,Batangas" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="click-button"
+          >
+            View Location
+          </a>
+        </section>
 
         <section className="action-buttons">
           <button className="call-button" onClick={handleCall}>
