@@ -6,6 +6,16 @@
   flex-direction: column;
 }
 
+.password-modal-content
+{
+margin-top: 20px;
+}
+
+.action-buttons-container
+  {
+    gap: 10px;
+    margin-left: 40px;
+  }
 /* Header */
 .header {
   background-color: #2e7d32;
@@ -62,12 +72,12 @@
   padding: 30px;
 }
 
-.doc-title {
+.user-page-container .doc-title {
   font-size: 50px;
-  font-weight: 5000;
+  margin-top: 100px;
+  font-weight: 500;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   margin-bottom: 10px;   
-  margin-top: 70px;
 }
 
 .doc-note {
@@ -77,15 +87,15 @@
 }
 
 /* Documentation Card */
-.doc-card {
+.user-page-container .doc-card {
   background: #7cd56d;
   border-radius: 20px;
   padding: 25px;
-  width: 350px;
-  display: flex;
+  width: 450px;
+  display: grid;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  grid-column: 3;
 }
 
 .section-title {
@@ -132,18 +142,16 @@ input, select {
   outline: none;
 }
 
-input:focus, select:focus {
-  background: #dcd9d3;
-}
-
 /* Dropdown */
 select {
   cursor: pointer;
 }
 
-/* Confirm button */
+
 .confirm-btn {
-  margin-top: 15px;
+  margin-top: 10px;
+  margin-left: 40px;
+  margin-right: 40px;
   background: #008f39;
   color: white;
   border: none;
@@ -156,4 +164,8 @@ select {
 
 .confirm-btn:hover {
   background: #006d2d;
+}
+
+.password-prompt-sidebar {
+  
 }

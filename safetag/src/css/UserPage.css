@@ -1,7 +1,7 @@
-
 .user-page-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #4CAF50, #45a049);
+  background:linear-gradient(135deg, #4CAF50, #45a049);
+  font-family: 'Arial', sans-serif;
 }
 
 .user-page-content {
@@ -10,6 +10,66 @@
   align-items: flex-start;
   padding: 80px 20px 20px;
   min-height: calc(100vh - 120px);
+}
+
+.user-page-container .header {
+  background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-page-container .header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-page-container .branding .title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.user-page-container .branding .subtitle {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.user-page-container .nav-icons {
+  display: flex;
+  gap: 1rem;
+}
+
+.user-page-container .nav-icon {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.user-page-container .nav-icon:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.user-page-container .nav-icon.active {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
 }
 
 .action-buttons {
@@ -139,7 +199,7 @@
 
 .nav-icon.active {
   background: rgba(255, 255, 255, 0.4);
-  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
 }
 
 .nav-icon span {

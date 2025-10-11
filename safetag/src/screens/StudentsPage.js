@@ -1,15 +1,13 @@
-//StudentsPage.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/StudentsPage.css';
-import '../css/AddStudentPage.css'
+import '../css/AddStudentPage.css';
+import { fetchStudents } from '../lib/supabaseClient';
 
 function StudentsPage() {
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-
-function StudentsPage() {
+  const [selectedStudentIndex, setSelectedStudentIndex] = useState(null);
   const [avatar, setAvatar] = useState(null);
 
   const handleAvatarChange = (e) => {
@@ -17,32 +15,40 @@ function StudentsPage() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatar(reader.result); 
+        setAvatar(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-
   useEffect(() => {
-    const savedStudents = localStorage.getItem('students');
-    if (savedStudents) {
-      const studentsData = JSON.parse(savedStudents);
-      setStudents(studentsData);
-      
-      if (studentsData.length > 0) {
-        setSelectedStudent({ ...studentsData[0], index: 0 });
+    (async () => {
+      try {
+        const studentsData = await fetchStudents();
+        setStudents(studentsData || []);
+        if (studentsData && studentsData.length > 0) {
+          setSelectedStudentIndex(0); // default to first student
+        }
+      } catch (err) {
+        console.error('Failed to fetch students', err);
+        const savedStudents = localStorage.getItem('students');
+        if (savedStudents) {
+          const studentsData = JSON.parse(savedStudents);
+          setStudents(studentsData);
+          if (studentsData.length > 0) {
+            setSelectedStudentIndex(0);
+          }
+        }
       }
-    }
+    })();
   }, []);
 
   const handleNavigation = (path) => {
     navigate(path);
   };
 
-  const handleStudentClick = (student, index) => {
-    const studentWithIndex = { ...student, index };
-    setSelectedStudent(studentWithIndex);
+  const handleStudentClick = (index) => {
+    setSelectedStudentIndex(index);
   };
 
   const handleAddStudent = () => {
@@ -50,10 +56,13 @@ function StudentsPage() {
   };
 
   const handleEditStudent = () => {
-    if (selectedStudent) {
-      navigate(`/editstudent/${selectedStudent.index}`);
+    if (selectedStudentIndex !== null) {
+      navigate(`/editstudent/${selectedStudentIndex}`);
     }
   };
+
+  const selectedStudent =
+    selectedStudentIndex !== null ? students[selectedStudentIndex] : null;
 
   return (
     <div className="students-page-container">
@@ -65,20 +74,20 @@ function StudentsPage() {
           </div>
 
           <div className="nav-icons">
-            <div className="nav-icon" onClick={() => handleNavigation('/home')}>
-              <span>🏠</span>
+            <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
+              <i className="fas fa-home"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/user')}>
-              <span>👤</span>
+              <i className="fas fa-user"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
-              <span>📊</span>
+              <i className="fas fa-chart-bar"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
-              <span>📞</span>
+              <i className="fas fa-phone"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
-              <span>⚙️</span>
+              <i className="fas fa-cog"></i>
             </div>
           </div>
         </div>
@@ -86,32 +95,27 @@ function StudentsPage() {
 
       <main className="main-content students-page-content">
         <div className="students-layout">
-         
-          <div className="student-profile-section">
-            {selectedStudent ? (
-              <>
-              
-                <div className="student-tab">
-                  STUDENT {selectedStudent.index + 1}
-                </div>
+                <div className="student-profile-section">
+                {selectedStudent ? (
+                  <>
+                  <div className="profile-card">
+                    <div className="profile-header-badge">DEMOGRAPHIC PROFILE</div>
 
-               
-                <div className="profile-card">
-                  <div className="profile-header-badge">
-                    DEMOGRAPHIC PROFILE
-                  </div>
-
-                  <div className="profile-avatar-section">
+                    <div className="profile-avatar-section">
                     {selectedStudent.profilePicture ? (
-                      <img src={selectedStudent.profilePicture} alt={selectedStudent.name} className="profile-avatar" />
+                      <img
+                      src={selectedStudent.profilePicture}
+                      alt={selectedStudent.name}
+                      className="profile-avatar"
+                      />
                     ) : (
                       <div className="profile-avatar default-avatar">
-                        <div className="avatar-icon">👤</div>
+                      <div className="avatar-icon">👤</div>
                       </div>
                     )}
-                  </div>
+                    </div>
 
-                  <div className="profile-details-grid">
+                    <div className="profile-details-grid">
                     <div className="profile-field">
                       <div className="field-label">NAME</div>
                       <div className="field-value">{selectedStudent.name || 'N/A'}</div>
@@ -121,47 +125,61 @@ function StudentsPage() {
                       <div className="field-value">{selectedStudent.age || 'N/A'}</div>
                     </div>
                     <div className="profile-field">
+                      <div className="field-label">SEX</div>
+                      <div className="field-value">{selectedStudent.sex || 'N/A'}</div>
+                    </div>
+                    <div className="profile-field">
                       <div className="field-label">ID</div>
-                      <div className="field-value">{selectedStudent.id || selectedStudent.studentId || 'N/A'}</div>
+                      <div className="field-value">
+                      {selectedStudent.id || selectedStudent.studentId || 'N/A'}
+                      </div>
                     </div>
                     <div className="profile-field">
                       <div className="field-label">STUDENT LVL/COURSE</div>
-                      <div className="field-value">{(selectedStudent.level || selectedStudent.yearLevel || '') + (selectedStudent.course ? ' - ' + selectedStudent.course : '') || 'N/A'}</div>
+                      <div className="field-value">
+                      {(selectedStudent.level || selectedStudent.yearLevel || '') +
+                        (selectedStudent.course ? ' - ' + selectedStudent.course : '') ||
+                        'N/A'}
+                      </div>
                     </div>
-                  </div>
+                    </div>
 
-                  <div className="health-section">
+                    <div className="health-section">
                     <div className="health-field">
                       <div className="health-label">Health condition</div>
-                      <div className="health-value">{selectedStudent.healthCondition || 'None'}</div>
+                      <div className="health-value">
+                      {selectedStudent.health_condition || 'None'}
+                      </div>
                     </div>
-                  </div>
+                    </div>
 
-                  <div className="treatment-section">
+                    <div className="treatment-section">
                     <div className="treatment-field">
-                      <div className="treatment-value">{selectedStudent.treatmentNeeds || selectedStudent.treatment || 'Treatment/needs'}</div>
+                      <div className="treatment-label">Treatment/Needs</div>
+                      <div className="treatment-value">
+                      {selectedStudent.treatment_needs ||
+                        'None'}
+                      </div>
+                    </div>
                     </div>
                   </div>
-                </div>
-              </>
-            ) : (
-              <div className="no-selection">
-                <div className="student-tab">
-                  SELECT A STUDENT
-                </div>
-                <div className="profile-card empty-card">
-                  <div className="empty-message">
+                  </>
+                ) : (
+                  <div className="no-selection">
+                  <div className="student-tab">SELECT A STUDENT</div>
+                  <div className="profile-card empty-card">
+                    <div className="empty-message">
                     <p>No student selected</p>
                     <button className="add-student-btn" onClick={handleAddStudent}>
                       Add New Student
                     </button>
+                    </div>
                   </div>
+                  </div>
+                )}
                 </div>
-              </div>
-            )}
-          </div>
 
-     
+                {/* Student List Section */}
           <div className="students-list-section">
             {students.length === 0 ? (
               <div className="no-students-message">
@@ -174,15 +192,20 @@ function StudentsPage() {
               </div>
             ) : (
               <div className="students-list">
-                {students.map((student, index) => (
-                  <div 
-                    key={student.id || index} 
-                    className={`student-list-item ${selectedStudent && selectedStudent.index === index ? 'selected' : ''}`}
-                    onClick={() => handleStudentClick(student, index)}
-                  >
-                    Student {index + 1}
-                  </div>
-                ))}
+                <label htmlFor="student-select" className="sr-only">Select student</label>
+                <select
+                  id="student-select"
+                  value={selectedStudentIndex ?? ''}
+                  onChange={(e) => setSelectedStudentIndex(e.target.value === '' ? null : Number(e.target.value))}
+                  className="student-dropdown"
+                >
+                  <option value="">-- Select a student --</option>
+                  {students.map((student, index) => (
+                    <option key={student.id || index} value={index}>
+                      {student.name ? `${student.name} — ${student.student_id || student.id || index + 1}` : `Student ${index + 1}`}
+                    </option>
+                  ))}
+                </select>
               </div>
             )}
           </div>
@@ -190,7 +213,6 @@ function StudentsPage() {
       </main>
     </div>
   );
-}
 }
 
 export default StudentsPage;

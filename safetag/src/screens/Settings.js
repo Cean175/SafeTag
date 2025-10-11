@@ -5,10 +5,13 @@ import '../css/Settings.css';
 function Settings() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // You can also clear auth/session storage here if needed
+const handleLogout = () => {
+  const confirmLogout = window.confirm("Are you sure you want to log out?");
+  if (confirmLogout) {
+    localStorage.removeItem('isLoggedIn'); // ✅ clear login session
     navigate('/');
-  };
+  }
+};
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -24,22 +27,21 @@ function Settings() {
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
 
-          {/* Nav Icons */}
           <div className="nav-icons">
-            <div className="nav-icon" onClick={() => handleNavigation('/home')}>
-              <span>🏠</span>
+            <div className="nav-icon active" onClick={() => handleNavigation('/home')}>
+              <i className="fas fa-home"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/user')}>
-              <span>👤</span>
+              <i className="fas fa-user"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
-              <span>📊</span>
+              <i className="fas fa-chart-bar"></i>
             </div>
             <div className="nav-icon" onClick={() => handleNavigation('/contact')}>
-              <span>📞</span>
+              <i className="fas fa-phone"></i>
             </div>
-            <div className="nav-icon active" onClick={() => handleNavigation('/settings')}>
-              <span>⚙️</span>
+            <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
+              <i className="fas fa-cog"></i>
             </div>
           </div>
         </div>
