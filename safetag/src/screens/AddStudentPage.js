@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import '../css/UserPage.css';
 import '../css/AddStudentPage.css';
-import { useState } from "react";
-import { createStudent } from '../lib/supabaseClient';
+import { useState, useEffect } from "react";
+import { createStudent, uploadFile } from '../lib/supabaseClient';
 
 function AddStudentPage() {
   const navigate = useNavigate();
@@ -24,16 +24,61 @@ function AddStudentPage() {
     treatmentNeeds: "",
   });
 
+  // Profile picture (file upload) state
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
+  const [profilePreview, setProfilePreview] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      setProfilePictureFile(file);
+      const objectUrl = URL.createObjectURL(file);
+      setProfilePreview(objectUrl);
+    } else {
+      setProfilePictureFile(null);
+      setProfilePreview("");
+    }
+  };
+
+  // Revoke object URL when preview changes or component unmounts
+  useEffect(() => {
+    return () => {
+      if (profilePreview) URL.revokeObjectURL(profilePreview);
+    };
+  }, [profilePreview]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      // Upload profile picture if provided
+      let uploadedUrl = null;
+      if (profilePictureFile) {
+        try {
+          console.log('Attempting to upload file:', profilePictureFile.name);
+          uploadedUrl = await uploadFile(profilePictureFile, { bucket: 'avatars' });
+          console.log('Upload successful! URL:', uploadedUrl);
+        } catch (uploadErr) {
+          console.error('Image upload failed:', uploadErr);
+          const errorMsg = uploadErr?.message || String(uploadErr);
+          if (errorMsg.includes('row-level security') || errorMsg.includes('policy')) {
+            alert('⚠️ Storage upload blocked by security policy.\n\nPlease configure storage policies in Supabase:\n1. Go to Storage > avatars > Policies\n2. Add INSERT and SELECT policies\n\nSee SETUP_STORAGE_STEP_BY_STEP.md for detailed instructions.');
+          } else if (errorMsg.includes('404') || errorMsg.includes('not found')) {
+            alert('⚠️ Storage bucket "avatars" not found.\n\nPlease create the bucket in Supabase:\n1. Go to Storage\n2. Create bucket named "avatars"\n3. Make it public\n\nSee SETUP_STORAGE_STEP_BY_STEP.md for instructions.');
+          } else {
+            alert(`⚠️ Image upload failed: ${errorMsg}\n\nContinuing without profile picture.\nCheck console for details.`);
+          }
+          // continue without profile picture URL
+          uploadedUrl = null;
+        }
+      }
+
       // This payload object's keys now match your actual database columns.
       const payload = {
         student_id: formData.student_id, // send the form's ID to the 'student_id' text column
@@ -42,6 +87,7 @@ function AddStudentPage() {
         sex: formData.sex,
         level: formData.level,
         course: formData.course,
+        avatar_url: uploadedUrl,
         health_condition: formData.healthCondition === "Other" ? formData.otherHealthCondition : formData.healthCondition || null,
         treatment_needs: formData.treatmentNeeds || null,
       };
@@ -51,14 +97,19 @@ function AddStudentPage() {
       navigate('/user'); // Or whichever page lists the students
     } catch (err) {
       console.error('Failed to create student:', err);
-      alert("Failed to add student. Please check the console for details.");
+      const msg = typeof err?.message === 'string' ? err.message : String(err);
+      if (msg.toLowerCase().includes('row-level security')) {
+        alert('Action blocked by Supabase Row Level Security. Please enable insert/select policies for the students table and storage bucket. See console and README for details.');
+      } else {
+        alert("Failed to add student. Please check the console for details.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="user-page-container">
+    <div className="add-student-container">
       {/* Header */}
       <header className="header">
         <div className="header-content">
@@ -87,8 +138,8 @@ function AddStudentPage() {
       </header>
 
       {/* Main Content */}
-      <main className="main-content user-page-content">
-        <form className="student-form" onSubmit={handleSubmit}>
+      <main className="main-content add-student-content">
+        <form className="student-form" onSubmit={handleSubmit} encType="multipart/form-data" aria-label="Add student form">
           {/* Student Name */}
           <div className="form-group">
             <input
@@ -169,7 +220,27 @@ function AddStudentPage() {
             />
           </div>
 
-          {/* Profile picture removed */}
+          {/* Profile Picture Upload (optional) */}
+          <div className="form-group">
+            <input
+              type="file"
+              name="profilePicture"
+              accept="image/*"
+              onChange={handleFileChange}
+              disabled={isLoading}
+            />
+          </div>
+
+          {/* Preview when file selected */}
+          {profilePreview && (
+            <div className="form-group">
+              <img
+                className="profile-picture-preview"
+                src={profilePreview}
+                alt="Profile preview"
+              />
+            </div>
+          )}
 
           {/* Health Condition Dropdown */}
           <div className="form-group">

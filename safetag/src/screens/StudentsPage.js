@@ -102,15 +102,15 @@ function StudentsPage() {
                     <div className="profile-header-badge">DEMOGRAPHIC PROFILE</div>
 
                     <div className="profile-avatar-section">
-                    {selectedStudent.profilePicture ? (
+                    {selectedStudent.avatar_url || selectedStudent.profilePicture || selectedStudent.profile_picture ? (
                       <img
-                      src={selectedStudent.profilePicture}
+                      src={selectedStudent.avatar_url || selectedStudent.profilePicture || selectedStudent.profile_picture}
                       alt={selectedStudent.name}
                       className="profile-avatar"
                       />
                     ) : (
                       <div className="profile-avatar default-avatar">
-                      <div className="avatar-icon">ðŸ‘¤</div>
+                      <i className="fas fa-user avatar-icon"></i>
                       </div>
                     )}
                     </div>
@@ -202,7 +202,7 @@ function StudentsPage() {
                   <option value="">-- Select a student --</option>
                   {students.map((student, index) => (
                     <option key={student.id || index} value={index}>
-                      {student.name ? `${student.name} â€” ${student.student_id || student.id || index + 1}` : `Student ${index + 1}`}
+                      {student.name || `Student ${index + 1}`}
                     </option>
                   ))}
                 </select>

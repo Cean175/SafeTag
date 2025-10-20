@@ -3,7 +3,20 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = 'https://smoyoszfxvzlrapabhsc.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtb3lvc3pmeHZ6bHJhcGFiaHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0MTMxNjMsImV4cCI6MjA3Mjk4OTE2M30.1A-hrThccZPjoqezsUw4HItbwKQSbN4kPqynae5d6Eg';
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let globalRef;
+if (typeof globalThis !== 'undefined') {
+  globalRef = globalThis;
+} else if (typeof window !== 'undefined') {
+  globalRef = window;
+} else if (typeof global !== 'undefined') {
+  globalRef = global;
+} else {
+  globalRef = {};
+}
+export const supabase = globalRef.__supabase__ ?? createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (!globalRef.__supabase__) {
+  globalRef.__supabase__ = supabase;
+}
 
 
 
@@ -69,7 +82,7 @@ export async function deleteStudent(id) {
   return data[0];
 }
 
-export async function uploadFile(file, { bucket = 'ava tars' } = {}) {
+export async function uploadFile(file, { bucket = 'avatars' } = {}) {
   if (!file) return null;
   const fileExt = file.name.split('.').pop();
   const fileName = `${Date.now()}_${Math.random().toString(36).slice(2,9)}.${fileExt}`;
@@ -78,7 +91,7 @@ export async function uploadFile(file, { bucket = 'ava tars' } = {}) {
   const { data: uploadData, error: uploadError } = await supabase
     .storage
     .from(bucket)
-    .upload(fileName, file, { upsert: false });
+    .upload(fileName, file, { upsert: false, contentType: file.type || 'application/octet-stream' });
 
   if (uploadError) {
     console.error('Supabase storage upload error:', uploadError);
