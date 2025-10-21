@@ -9,6 +9,9 @@ function StudentsPage() {
   const [students, setStudents] = useState([]);
   const [selectedStudentIndex, setSelectedStudentIndex] = useState(null);
   const [avatar, setAvatar] = useState(null);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [editPassword, setEditPassword] = useState('');
+    const [editError, setEditError] = useState('');
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -56,9 +59,7 @@ function StudentsPage() {
   };
 
   const handleEditStudent = () => {
-    if (selectedStudentIndex !== null) {
-      navigate(`/editstudent/${selectedStudentIndex}`);
-    }
+    setShowPasswordModal(true);
   };
 
   const selectedStudent =
@@ -98,71 +99,116 @@ function StudentsPage() {
                 <div className="student-profile-section">
                 {selectedStudent ? (
                   <>
-                  <div className="profile-card">
-                    <div className="profile-header-badge">DEMOGRAPHIC PROFILE</div>
-
-                    <div className="profile-avatar-section">
-                    {selectedStudent.avatar_url || selectedStudent.profilePicture || selectedStudent.profile_picture ? (
-                      <img
-                      src={selectedStudent.avatar_url || selectedStudent.profilePicture || selectedStudent.profile_picture}
-                      alt={selectedStudent.name}
-                      className="profile-avatar"
-                      />
-                    ) : (
-                      <div className="profile-avatar default-avatar">
-                      <i className="fas fa-user avatar-icon"></i>
+                    {showPasswordModal && (
+                      <div className="modal-overlay">
+                        <div className="modal-content">
+                          <h3>Enter your password to edit</h3>
+                          <input
+                            type="password"
+                            value={editPassword}
+                            onChange={e => setEditPassword(e.target.value)}
+                            placeholder="Password"
+                            className="modal-input"
+                          />
+                          {editError && <div className="modal-error">{editError}</div>}
+                          <div className="modal-actions">
+                            <button
+                              className="modal-confirm-btn"
+                              onClick={() => {
+                                const storedPassword = localStorage.getItem('password');
+                                const validPassword = 'test1234';
+                                const isValid = (editPassword === storedPassword) || (editPassword === validPassword);
+                                if (isValid) {
+                                  setShowPasswordModal(false);
+                                  setEditPassword('');
+                                  setEditError('');
+                                  if (selectedStudentIndex !== null) {
+                                    navigate(`/editstudent/${selectedStudentIndex}`);
+                                  }
+                                } else {
+                                  setEditError('Incorrect password.');
+                                }
+                              }}
+                            >Confirm</button>
+                            <button
+                              className="modal-cancel-btn"
+                              onClick={() => {
+                                setShowPasswordModal(false);
+                                setEditPassword('');
+                                setEditError('');
+                              }}
+                            >Cancel</button>
+                          </div>
+                        </div>
                       </div>
                     )}
-                    </div>
-
-                    <div className="profile-details-grid">
-                    <div className="profile-field">
-                      <div className="field-label">NAME</div>
-                      <div className="field-value">{selectedStudent.name || 'N/A'}</div>
-                    </div>
-                    <div className="profile-field">
-                      <div className="field-label">AGE</div>
-                      <div className="field-value">{selectedStudent.age || 'N/A'}</div>
-                    </div>
-                    <div className="profile-field">
-                      <div className="field-label">SEX</div>
-                      <div className="field-value">{selectedStudent.sex || 'N/A'}</div>
-                    </div>
-                    <div className="profile-field">
-                      <div className="field-label">ID</div>
-                      <div className="field-value">
-                      {selectedStudent.id || selectedStudent.studentId || 'N/A'}
+                    <div className="profile-card">
+                      <div className="profile-header-badge">DEMOGRAPHIC PROFILE</div>
+                      <div className="profile-avatar-section">
+                        <div className="avatar-edit-container">
+                          {selectedStudent.avatar_url || selectedStudent.profilePicture || selectedStudent.profile_picture ? (
+                            <img
+                              src={selectedStudent.avatar_url || selectedStudent.profilePicture || selectedStudent.profile_picture}
+                              alt={selectedStudent.name}
+                              className="profile-avatar"
+                            />
+                          ) : (
+                            <div className="profile-avatar default-avatar improved-avatar">
+                              <i className="fas fa-user avatar-icon"></i>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="profile-details-grid">
+                        <div className="profile-field">
+                          <div className="field-label">NAME</div>
+                          <div className="field-value">{selectedStudent.name || 'N/A'}</div>
+                        </div>
+                        <div className="profile-field">
+                          <div className="field-label">AGE</div>
+                          <div className="field-value">{selectedStudent.age || 'N/A'}</div>
+                        </div>
+                        <div className="profile-field">
+                          <div className="field-label">SEX</div>
+                          <div className="field-value">{selectedStudent.sex || 'N/A'}</div>
+                        </div>
+                        <div className="profile-field">
+                          <div className="field-label">ID</div>
+                          <div className="field-value">
+                            {selectedStudent.id || selectedStudent.studentId || 'N/A'}
+                          </div>
+                        </div>
+                        <div className="profile-field">
+                          <div className="field-label">STUDENT LVL/COURSE</div>
+                          <div className="field-value">
+                            {(selectedStudent.level || selectedStudent.yearLevel || '') +
+                              (selectedStudent.course ? ' - ' + selectedStudent.course : '') ||
+                              'N/A'}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="health-section">
+                        <div className="health-field">
+                          <div className="health-label">Health condition</div>
+                          <div className="health-value">
+                            {selectedStudent.health_condition || 'None'}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="treatment-section">
+                        <div className="treatment-field">
+                          <div className="treatment-label">Treatment/Needs</div>
+                          <div className="treatment-value">
+                            {selectedStudent.treatment_needs || 'None'}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="profile-field">
-                      <div className="field-label">STUDENT LVL/COURSE</div>
-                      <div className="field-value">
-                      {(selectedStudent.level || selectedStudent.yearLevel || '') +
-                        (selectedStudent.course ? ' - ' + selectedStudent.course : '') ||
-                        'N/A'}
-                      </div>
+                    <div className="edit-profile-btn-container improved-edit-btn">
+                      <button className="edit-profile-btn" onClick={handleEditStudent}>
+                        <i className="fas fa-edit"></i> Edit Profile
+                      </button>
                     </div>
-                    </div>
-
-                    <div className="health-section">
-                    <div className="health-field">
-                      <div className="health-label">Health condition</div>
-                      <div className="health-value">
-                      {selectedStudent.health_condition || 'None'}
-                      </div>
-                    </div>
-                    </div>
-
-                    <div className="treatment-section">
-                    <div className="treatment-field">
-                      <div className="treatment-label">Treatment/Needs</div>
-                      <div className="treatment-value">
-                      {selectedStudent.treatment_needs ||
-                        'None'}
-                      </div>
-                    </div>
-                    </div>
-                  </div>
                   </>
                 ) : (
                   <div className="no-selection">

@@ -138,14 +138,11 @@
   position: relative;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-height: 85vh;
+  min-height: 600px;
+  height: auto;
   overflow-y: auto;
-  margin-top: 50px;
+  margin-top: 90px;
 }
-
-/* ============================================
-   PROFILE CARD COMPONENTS
-   ============================================ */
 
 .profile-header-badge {
   background: #4CAF50;
@@ -661,4 +658,157 @@
   .students-layout {
     gap: 1rem;
   }
+}
+
+.avatar-edit-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.improved-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e0e0e0 60%, #bdbdbd 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  border: 3px solid #4CAF50;
+  margin-bottom: 0.7rem;
+}
+
+.improved-avatar .avatar-icon {
+  font-size: 3rem;
+  color: #7e7e7e;
+}
+
+.improved-edit-btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.edit-profile-btn {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(67,233,123,0.15); 
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.edit-profile-btn:hover {
+  background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+  box-shadow: 0 4px 16px rgba(67,233,123,0.25);
+}
+
+/* Modal overlay and content for password prompt */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(76,175,80,0.18);
+  padding: 2rem 2.5rem 1.5rem 2.5rem;
+  min-width: 320px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.modal-content h3 {
+  color: #388e3c;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border-radius: 15px;
+  border: 1.5px solid #8BC34A;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.modal-input:focus {
+  border-color: #388e3c;
+}
+
+.modal-error {
+  color: #d32f2f;
+  font-size: 0.95rem;
+  margin-bottom: -0.5rem;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.modal-confirm-btn {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(67,233,123,0.15);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-confirm-btn:hover {
+  background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+  box-shadow: 0 4px 16px rgba(67,233,123,0.25);
+}
+
+.modal-cancel-btn {
+  background: #eee;
+  color: #388e3c;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-cancel-btn:hover {
+  background: #c8e6c9;
 }

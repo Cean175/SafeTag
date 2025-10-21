@@ -162,8 +162,11 @@ function Documentations() {
                 sex: student.sex || '',
                 level: student.level || '',
             });
-            // student.profile_picture may be an array or string
-            const pic = Array.isArray(student.profile_picture) ? (student.profile_picture[0] || null) : student.profile_picture;
+            // Prefer avatar_url, then profile_picture (array or string)
+            const picFromProfile = Array.isArray(student.profile_picture)
+              ? (student.profile_picture[0] || null)
+              : student.profile_picture;
+            const pic = student.avatar_url || picFromProfile || null;
             setAvatar(pic || defaultAvatar);
         }
     };
@@ -246,30 +249,40 @@ function Documentations() {
                                 <option value="__other__">Other / Manual entry</option>
                             </select>
                             {selectedStudentUuid === "__other__" && (
-                                <input
+                                <>
+                                  <input
                                     type="text"
                                     name="name"
                                     placeholder="Student Name"
                                     value={form.name}
                                     onChange={handleChange}
-                                />
+                                  />
+                                  <input
+                                    type="text"
+                                    name="id"
+                                    placeholder="STUDENT ID"
+                                    value={form.id}
+                                    onChange={handleChange}
+                                  />
+                                </>
                             )}
-                            <input type="text" name="id" placeholder="STUDENT ID" value={form.id} onChange={handleChange}/>
                         </div>
 
-                        <div className="input-row">
-                            <input type="text" name="age" placeholder="AGE" value={form.age} onChange={handleChange}/>
-                            <select name="sex" value={form.sex} onChange={handleChange}>
-                                <option value="">Select Sex</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                            {form.sex === 'Other' && (
-                                <input type="text" name="sex" placeholder="Specify sex" value={form.sex} onChange={handleChange} />
-                            )}
-                            <input type="text" name="level" placeholder="STUDENT LVL" value={form.level} onChange={handleChange}/>
-                        </div>
+                        {selectedStudentUuid === "__other__" && (
+                          <div className="input-row">
+                              <input type="text" name="age" placeholder="AGE" value={form.age} onChange={handleChange}/>
+                              <select name="sex" value={form.sex} onChange={handleChange}>
+                                  <option value="">Select Sex</option>
+                                  <option value="Male">Male</option>
+                                  <option value="Female">Female</option>
+                                  <option value="Other">Other</option>
+                              </select>
+                              {form.sex === 'Other' && (
+                                  <input type="text" name="sex" placeholder="Specify sex" value={form.sex} onChange={handleChange} />
+                              )}
+                              <input type="text" name="level" placeholder="STUDENT LVL" value={form.level} onChange={handleChange}/>
+                          </div>
+                        )}
 
                         <input type="date" name="date" value={form.date} onChange={handleChange}/>
                         <input type="time" name="time" value={form.time} onChange={handleChange}/>
