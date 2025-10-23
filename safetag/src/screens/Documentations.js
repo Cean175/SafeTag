@@ -27,30 +27,30 @@ function Documentations() {
         description: '',
     };
 
-    // Form state
+    
     const [form, setForm] = useState(initialFormState);
 
-    // Error message state
+    
     const [errorMessage, setErrorMessage] = useState('');
 
-    // Avatar state
+    
     const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
     const [avatar, setAvatar] = useState(defaultAvatar);
     const [students, setStudents] = useState([]);
     const [selectedStudentUuid, setSelectedStudentUuid] = useState('');
 
-    // Navigation
+    
     const handleNavigation = (path) => {
         navigate(path);
     };
 
-    // Go to documentation list with security
+    
     const goToList = () => {
-        // Use replace: true to prevent going back to this page from the list
+        
         navigate('/documentations-list', { replace: true });
     };
 
-    // Input change with year validation
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -67,7 +67,7 @@ function Documentations() {
         setForm({ ...form, [name]: value });
     };
 
-    // Submit handler with validation
+    
     const handleSubmit = async () => {
         if (form.date) {
             const dateYear = new Date(form.date).getFullYear();
@@ -94,7 +94,7 @@ function Documentations() {
             return;
         }
 
-        // Determine avatar_url: if the avatar is a URL (from selected student), use it; otherwise keep null
+       
         let avatar_url = null;
         if (avatar && typeof avatar === 'string' && !avatar.startsWith('data:') && avatar !== defaultAvatar) {
             avatar_url = avatar;
@@ -130,9 +130,7 @@ function Documentations() {
         setAvatar(defaultAvatar);
     };
 
-    // Avatar is read-only on this form (taken from selected student)
-
-    // Load students for dropdown
+   
     useEffect(() => {
         (async () => {
             try {
@@ -162,13 +160,13 @@ function Documentations() {
                 sex: student.sex || '',
                 level: student.level || '',
             });
-            // student.profile_picture may be an array or string
+            
             const pic = Array.isArray(student.profile_picture) ? (student.profile_picture[0] || null) : student.profile_picture;
             setAvatar(pic || defaultAvatar);
         }
     };
 
-    // Password state for "View All"
+   
     const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
     const [passwordInput, setPasswordInput] = useState('');
     const [passwordError, setPasswordError] = useState('');

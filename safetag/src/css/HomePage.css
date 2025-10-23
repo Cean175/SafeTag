@@ -40,7 +40,9 @@
   font-weight: bold;
   color: white;
   margin: 0;
-  letter-spacing: 2px;
+  padding: 5;
+  letter-spacing: 3px;
+
 }
 
 .homepage-container .branding .subtitle {
