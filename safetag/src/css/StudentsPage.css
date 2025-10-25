@@ -1,16 +1,41 @@
+/* ============================================
+   GENERAL LAYOUT & CONTAINER STYLES
+   ============================================ */
+
 .students-page-container {
-  min-height: 100vh;
-  background:linear-gradient(135deg, #4CAF50, #45a049);
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
   font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
 .students-page-content {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 80px 20px 20px;
-  min-height: calc(100vh - 120px);
+  align-items: center;
+  padding: 1rem 2rem;
+  flex: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  overflow: hidden;
 }
+
+.students-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-height: calc(100vh - 140px);
+}
+
+/* ============================================
+   HEADER STYLES
+   ============================================ */
 
 .students-page-container .header {
   background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
@@ -43,6 +68,10 @@
   letter-spacing: 1px;
 }
 
+/* ============================================
+   NAVIGATION ICONS
+   ============================================ */
+
 .students-page-container .nav-icons {
   display: flex;
   gap: 1rem;
@@ -68,25 +97,13 @@
 }
 
 .students-page-container .nav-icon.active {
-  background:rgba(255,255,255,0.4);
-  box-shadow:0 0 20px rgba(255,255,255,0.5); 
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); 
 }
 
-.students-page-content {
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  margin-top: 1rem;
-  padding-top: 1rem;
-}
-
-.students-layout {
-  display: flex;
-  margin-top: 100px;
-  gap: 2rem;
-  align-items: flex-start;
-}
-
+/* ============================================
+   STUDENT PROFILE SECTION
+   ============================================ */
 
 .student-profile-section {
   flex: 0 0 400px;
@@ -94,82 +111,93 @@
   align-items: center;
   flex-direction: column;
   gap: 0;
+  height: 100%;
+  justify-content: center;
 }
 
 .student-tab {
   background: #8BC34A;
   color: #2E7D32;
-  padding: 0.75rem 2rem;
+  padding: 0.5rem 1.5rem;
   border-radius: 25px;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-align: center;
   margin-bottom: -10px;
-  margin-top: 90px;
   z-index: 10;
   position: relative;
   letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
 }
 
 .profile-card {
   background: linear-gradient(135deg, #8BC34A, #7CB342);
   border-radius: 30px;
-  margin-top: 20px;
-  padding: 2rem;
+  padding: 1.5rem;
   color: #2E7D32;
   position: relative;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  min-height: 600px;
+  height: auto;
+  overflow-y: auto;
+  margin-top: 90px;
 }
 
 .profile-header-badge {
   background: #4CAF50;
   color: white;
-  padding: 0.5rem 1.5rem;
+  padding: 0.4rem 1.2rem;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   letter-spacing: 1px;
+  box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
 }
 
 .profile-avatar-section {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .profile-avatar {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #4CAF50;
+  border: 3px solid #4CAF50;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .default-avatar {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: #4CAF50;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 4px solid #2E7D32;
+  border: 3px solid #2E7D32;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .avatar-icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   color: white;
 }
+
+/* ============================================
+   PROFILE DETAILS GRID
+   ============================================ */
 
 .profile-details-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .profile-field {
@@ -181,33 +209,38 @@
 .field-label {
   background: #4CAF50;
   color: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 15px;
-  font-size: 0.7rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.65rem;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   letter-spacing: 0.5px;
-  min-width: 80px;
+  min-width: 70px;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.25);
 }
 
 .field-value {
   background: #A5D6A7;
   color: #2E7D32;
-  padding: 0.5rem 1rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   text-align: center;
-  min-height: 1.2rem;
-  min-width: 100px;
+  min-height: 1rem;
+  min-width: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* ============================================
+   HEALTH & TREATMENT SECTIONS
+   ============================================ */
+
 .health-section {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .health-field {
@@ -219,24 +252,25 @@
 .health-label {
   background: #4CAF50;
   color: white;
-  padding: 0.4rem 1.2rem;
-  border-radius: 15px;
-  font-size: 0.7rem;
+  padding: 0.3rem 1rem;
+  border-radius: 12px;
+  font-size: 0.65rem;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.25);
 }
 
 .health-value {
   background: #A5D6A7;
   color: #2E7D32;
-  padding: 0.5rem 1.5rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
+  padding: 0.4rem 1.2rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   text-align: center;
-  min-height: 1.2rem;
+  min-height: 1rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -244,36 +278,39 @@
 }
 
 .treatment-section {
-  margin-top: 1rem;
+  margin-top: 0.75rem;
 }
 
 .treatment-field {
   background: #4CAF50;
   color: white;
-  padding: 0.4rem 1.2rem;
-  border-radius: 15px;
-  font-size: 0.7rem;
+  padding: 0.3rem 1rem;
+  border-radius: 12px;
+  font-size: 0.65rem;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.25);
 }
 
 .treatment-value {
   background: #A5D6A7;
   color: #2E7D32;
-  padding: 0.5rem 1.5rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
+  padding: 0.4rem 1.2rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   text-align: center;
-  min-height: 1.2rem;
+  min-height: 1rem;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
+/* ============================================
+   EMPTY STATE STYLES
+   ============================================ */
 
 .no-selection .student-tab {
   background: #A5D6A7;
@@ -316,35 +353,39 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(123, 237, 159, 0.4);
 }
-
+/* ============================================
+   STUDENTS LIST SECTION
+   ============================================ */
 
 .students-list-section {
   flex: 1;
   display: flex;
-  margin-top: 50px;
   flex-direction: column;
   gap: 1rem;
+  height: 100%;
+  justify-content: center;
+  max-width: 600px;
 }
 
 .no-students-message {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 400px;
+  height: 100%;
 }
 
 .empty-list-card {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 25px;
-  padding: 3rem;
+  padding: 2rem;
   text-align: center;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .empty-list-card p {
   color: #4CAF50;
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
   font-weight: 600;
 }
 
@@ -352,9 +393,9 @@
   background: #FF9800;
   color: white;
   border: none;
-  padding: 1rem 2rem;
+  padding: 0.85rem 1.75rem;
   border-radius: 25px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -386,54 +427,6 @@
   letter-spacing: 0.5px;
 }
 
-.student-dropdown {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 30px;
-  background: linear-gradient(135deg, #8BC34A, #7CB342);
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 700;
-  border: none;
-  box-shadow: 0 8px 26px rgba(76,175,80,0.16);
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  padding-right: 48px; /* room for custom arrow */
-  position: relative;
-  cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
-  background-image: linear-gradient(135deg, #8BC34A, #7CB342);
-  background-blend-mode: overlay;
-}
-
-.student-dropdown:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 36px rgba(76,175,80,0.2);
-}
-
-.student-dropdown::placeholder {
-  color: #2E7D32;
-}
-
-/* custom arrow using background SVG positioned to the right */
-.student-dropdown {
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  background-size: 18px 18px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-}
-
-.student-dropdown option {
-  color: #1B5E20; /* dark text for options */
-  font-weight: 600;
-}
-
-.student-dropdown:focus {
-  outline: none;
-  box-shadow: 0 12px 36px rgba(76,175,80,0.28);
-}
-
 .student-list-item:hover {
   background: #7CB342;
   transform: translateY(-2px);
@@ -449,6 +442,93 @@
   transform: translateY(-2px);
 }
 
+/* ============================================
+   STUDENT DROPDOWN (IMPROVED DESIGN)
+   ============================================ */
+
+.student-dropdown {
+  width: 100%;
+  padding: 14px 44px 14px 18px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #8BC34A, #7CB342);
+  color: #1B5E20;
+  font-size: 1rem;
+  font-weight: 700;
+  border: 3px solid #6BA54D;
+  box-shadow: 0 8px 24px rgba(46, 125, 50, 0.3), 
+              0 4px 10px rgba(0, 0, 0, 0.15);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.5px;
+  position: relative;
+  
+  /* Custom dropdown arrow */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%231B5E20' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 18px 18px;
+}
+
+.student-dropdown:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 38px rgba(46, 125, 50, 0.4), 
+              0 6px 14px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #9CCC65, #8BC34A);
+  border-color: #5D9741;
+}
+
+.student-dropdown:focus {
+  outline: none;
+  box-shadow: 0 14px 38px rgba(46, 125, 50, 0.45),
+              0 0 0 4px rgba(139, 195, 74, 0.4);
+  border-color: #5D9741;
+  background: linear-gradient(135deg, #9CCC65, #8BC34A);
+}
+
+.student-dropdown:active {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(46, 125, 50, 0.35),
+              0 0 0 4px rgba(139, 195, 74, 0.3);
+}
+
+/* Dropdown options styling */
+.student-dropdown option {
+  background: #C5E1A5;
+  color: #1B5E20;
+  font-weight: 600;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+}
+
+.student-dropdown option:hover {
+  background: #AED581;
+  color: #1B5E20;
+}
+
+.student-dropdown option:checked {
+  background: #7CB342;
+  color: #1B5E20;
+  font-weight: 700;
+}
+
+/* Hidden label for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+/* ============================================
+   RESPONSIVE DESIGN - MEDIA QUERIES
+   ============================================ */
 
 @media (max-width: 1024px) {
   .student-profile-section {
@@ -456,43 +536,64 @@
   }
   
   .profile-card {
-    padding: 1.5rem;
-    margin-top: 200px;
+    padding: 1.25rem;
   }
   
   .profile-avatar,
   .default-avatar {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
   }
   
   .avatar-icon {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
+  }
+  
+  .student-dropdown {
+    font-size: 0.95rem;
+    padding: 12px 40px 12px 16px;
   }
 }
 
 @media (max-width: 768px) {
+  .students-page-container {
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+  }
+  
   .students-page-content {
     padding: 1rem;
+    overflow: auto;
   }
   
   .students-layout {
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
+    max-height: none;
+    align-items: stretch;
   }
   
   .student-profile-section {
     flex: none;
     width: 100%;
+    height: auto;
   }
   
   .students-list-section {
     flex: none;
+    height: auto;
+    max-width: 100%;
+  }
+  
+  .profile-card {
+    max-height: none;
+    overflow-y: visible;
   }
   
   .profile-details-grid {
     grid-template-columns: 1fr;
-    gap: 0.8rem;
+    gap: 0.6rem;
   }
   
   .profile-field {
@@ -505,6 +606,13 @@
     margin-bottom: 0;
     margin-right: 1rem;
   }
+  
+  .student-dropdown {
+    font-size: 0.9rem;
+    padding: 12px 40px 12px 16px;
+    background-size: 16px 16px;
+    background-position: right 12px center;
+  }
 }
 
 @media (max-width: 480px) {
@@ -514,16 +622,193 @@
   
   .profile-avatar,
   .default-avatar {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
   }
   
   .avatar-icon {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
   
   .student-list-item {
-    padding: 1rem;
-    font-size: 1rem;
+    padding: 0.85rem;
+    font-size: 0.95rem;
   }
+  
+  .student-dropdown {
+    font-size: 0.85rem;
+    padding: 10px 36px 10px 14px;
+    border-width: 2px;
+  }
+  
+  .students-page-container .branding .title {
+    font-size: 1.5rem;
+  }
+  
+  .students-page-container .branding .subtitle {
+    font-size: 0.65rem;
+  }
+  
+  .students-page-container .nav-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+  
+  .students-layout {
+    gap: 1rem;
+  }
+}
+
+.avatar-edit-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.improved-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e0e0e0 60%, #bdbdbd 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  border: 3px solid #4CAF50;
+  margin-bottom: 0.7rem;
+}
+
+.improved-avatar .avatar-icon {
+  font-size: 3rem;
+  color: #7e7e7e;
+}
+
+.improved-edit-btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.edit-profile-btn {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(67,233,123,0.15); 
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.edit-profile-btn:hover {
+  background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+  box-shadow: 0 4px 16px rgba(67,233,123,0.25);
+}
+
+/* Modal overlay and content for password prompt */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(76,175,80,0.18);
+  padding: 2rem 2.5rem 1.5rem 2.5rem;
+  min-width: 320px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.modal-content h3 {
+  color: #388e3c;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border-radius: 15px;
+  border: 1.5px solid #8BC34A;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.modal-input:focus {
+  border-color: #388e3c;
+}
+
+.modal-error {
+  color: #d32f2f;
+  font-size: 0.95rem;
+  margin-bottom: -0.5rem;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.modal-confirm-btn {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(67,233,123,0.15);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-confirm-btn:hover {
+  background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+  box-shadow: 0 4px 16px rgba(67,233,123,0.25);
+}
+
+.modal-cancel-btn {
+  background: #eee;
+  color: #388e3c;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-cancel-btn:hover {
+  background: #c8e6c9;
 }

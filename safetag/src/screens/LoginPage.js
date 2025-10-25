@@ -46,14 +46,6 @@ function LoginPage() {
             <h1 className="title">S.A.F.E</h1>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
-
-          <div className="nav-icons">
-            <div className="nav-icon"><span>🏠</span></div>
-            <div className="nav-icon"><span>👤</span></div>
-            <div className="nav-icon"><span>📊</span></div>
-            <div className="nav-icon"><span>📞</span></div>
-            <div className="nav-icon"><span>⚙️</span></div>
-          </div>
         </div>
       </header>
 

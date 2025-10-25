@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS public.students (
   course text,
   health_condition text,
   treatment_needs text,
-  profile_picture text,
+  avatar_url text,
   created_at timestamptz DEFAULT now()
 );
 
