@@ -71,8 +71,14 @@
   font-weight: bold;
   color: #2e7d32;
   margin: 0;
+<<<<<<< HEAD
   letter-spacing: 2px;
   text-shadow: 0 2px 4px rgba(46, 125, 50, 0.1);
+=======
+  padding: 5;
+  letter-spacing: 3px;
+
+>>>>>>> e447c1987ae1efbe7ee0d2bafd23398c0fb8c0ee
 }
 
 .homepage-container .branding .subtitle {
