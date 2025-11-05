@@ -1,5 +1,6 @@
-.user-page-container {
-  font-family: Arial, sans-serif;
+/* Universal Glassmorphism Background - Import this in all page CSS */
+
+.glass-background {
   background: 
     linear-gradient(135deg, rgba(200, 230, 201, 0.4) 0%, rgba(225, 245, 254, 0.3) 100%),
     linear-gradient(45deg, transparent 30%, rgba(129, 199, 132, 0.15) 30%, rgba(129, 199, 132, 0.15) 70%, transparent 70%),
@@ -7,13 +8,10 @@
     #f0f4f8;
   background-size: 100% 100%, 50px 50px, 50px 50px;
   background-position: 0 0, 0 0, 25px 25px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
   position: relative;
 }
 
-.user-page-container::before {
+.glass-background::before {
   content: '';
   position: absolute;
   top: 0;
@@ -33,53 +31,23 @@
   50% { opacity: 0.9; }
 }
 
-.main-content {
-  flex: 1;
-  padding: 0px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.DL-page-content .doc-title{
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  margin-top: -240px;
-}
-
-.DL-page-content .doc-list {
+/* Universal Glass Card Style */
+.glass-card {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(30px) saturate(180%);
   -webkit-backdrop-filter: blur(30px) saturate(180%);
   border: 2px solid rgba(255, 255, 255, 0.5);
-  border-radius: 20px;
-  padding: 25px;
-  width: 1450px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); 
-  gap: 20px; 
-  align-items: start;
   box-shadow: 
     0 8px 32px rgba(76, 175, 80, 0.15),
     0 2px 8px rgba(0, 0, 0, 0.08),
     inset 0 1px 1px rgba(255, 255, 255, 0.9);
-  grid-column: 2;
 }
 
-.DL-page-content .doc-card {
-  background: rgba(255, 255, 255, 0.7);
+/* Universal Glass Header */
+.glass-header {
+  background: rgba(255, 255, 255, 0.7) !important;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 
-    0 4px 16px rgba(76, 175, 80, 0.1),
-    0 2px 8px rgba(0, 0, 0, 0.05),
-    inset 0 1px 1px rgba(255, 255, 255, 0.8);
-  transition: transform 0.2s, box-shadow 0.2s;
-  margin-left: -15px;
-  gap: 2rem;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  box-shadow: 0 8px 32px rgba(76, 175, 80, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
 }
