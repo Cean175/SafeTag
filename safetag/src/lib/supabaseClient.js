@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = 'https://smoyoszfxvzlrapabhsc.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtb3lvc3pmeHZ6bHJhcGFiaHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0MTMxNjMsImV4cCI6MjA3Mjk4OTE2M30.1A-hrThccZPjoqezsUw4HItbwKQSbN4kPqynae5d6Eg';
 
+/* eslint-disable no-undef */
 let globalRef;
 if (typeof globalThis !== 'undefined') {
   globalRef = globalThis;
@@ -13,6 +14,8 @@ if (typeof globalThis !== 'undefined') {
 } else {
   globalRef = {};
 }
+/* eslint-enable no-undef */
+
 export const supabase = globalRef.__supabase__ ?? createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 if (!globalRef.__supabase__) {
   globalRef.__supabase__ = supabase;
@@ -112,4 +115,121 @@ export async function uploadFile(file, { bucket = 'avatars' } = {}) {
   // compatibility: publicData may contain publicUrl or publicURL
   const url = publicData?.publicUrl ?? publicData?.publicURL ?? null;
   return url;
+}
+
+// -------------------- Ongoing Emergencies API --------------------
+export async function fetchOngoingEmergencies() {
+  // First, fetch the emergencies
+  const { data: emergencies, error: emergencyError } = await supabase
+    .from('ongoing_emergencies')
+    .select('*')
+    .eq('is_resolved', false)
+    .order('reported_at', { ascending: false });
+  
+  console.log('Fetch emergencies - data:', emergencies);
+  console.log('Fetch emergencies - error:', emergencyError);
+  
+  if (emergencyError) {
+    console.error('Supabase error:', emergencyError);
+    throw emergencyError;
+  }
+
+  if (!emergencies || emergencies.length === 0) {
+    return [];
+  }
+
+  // Then fetch the student details for each emergency
+  const emergenciesWithStudents = await Promise.all(
+    emergencies.map(async (emergency) => {
+      if (emergency.student_id) {
+        const { data: student, error: studentError } = await supabase
+          .from('students')
+          .select('first_name, middle_name, last_name, student_id, avatar_url')
+          .eq('student_id', emergency.student_id)
+          .single();
+        
+        if (!studentError && student) {
+          return { ...emergency, students: student };
+        }
+      }
+      return { ...emergency, students: null };
+    })
+  );
+
+  console.log('Emergencies with students:', emergenciesWithStudents);
+  return emergenciesWithStudents;
+}
+
+export async function markEmergencyAsResolved(id) {
+  console.log('Attempting to resolve emergency with ID:', id);
+  
+  const { data, error } = await supabase
+    .from('ongoing_emergencies')
+    .update({ is_resolved: true })
+    .eq('id', id)
+    .select();
+  
+  console.log('Resolve emergency - Response data:', data);
+  console.log('Resolve emergency - Error:', error);
+  
+  if (error) {
+    console.error('Failed to resolve emergency:', error);
+    console.error('Error details:', {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code
+    });
+    throw error;
+  }
+  
+  if (!data || data.length === 0) {
+    console.warn('No data returned after update. Emergency might not exist or RLS policy blocking.');
+    throw new Error('Failed to update emergency. No data returned.');
+  }
+  
+  console.log('Successfully resolved emergency:', data[0]);
+  return data[0];
+}
+
+export async function fetchResolvedEmergencies() {
+  // First, fetch the resolved emergencies
+  const { data: emergencies, error: emergencyError } = await supabase
+    .from('ongoing_emergencies')
+    .select('*')
+    .eq('is_resolved', true)
+    .order('reported_at', { ascending: false });
+  
+  console.log('Fetch resolved emergencies - data:', emergencies);
+  console.log('Fetch resolved emergencies - error:', emergencyError);
+  
+  if (emergencyError) {
+    console.error('Supabase error:', emergencyError);
+    throw emergencyError;
+  }
+
+  if (!emergencies || emergencies.length === 0) {
+    return [];
+  }
+
+  // Then fetch the student details for each emergency
+  const emergenciesWithStudents = await Promise.all(
+    emergencies.map(async (emergency) => {
+      if (emergency.student_id) {
+        const { data: student, error: studentError } = await supabase
+          .from('students')
+          .select('first_name, middle_name, last_name, student_id, avatar_url')
+          .eq('student_id', emergency.student_id)
+          .single();
+        
+        if (!studentError && student) {
+          return { ...emergency, students: student };
+        }
+      }
+      return { ...emergency, students: null };
+    })
+  );
+
+  console.log('Resolved emergencies with students:', emergenciesWithStudents);
+  return emergenciesWithStudents;
 }
