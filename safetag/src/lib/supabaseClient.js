@@ -3,20 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://smoyoszfxvzlrapabhsc.supabase.co';
 const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtb3lvc3pmeHZ6bHJhcGFiaHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0MTMxNjMsImV4cCI6MjA3Mjk4OTE2M30.1A-hrThccZPjoqezsUw4HItbwKQSbN4kPqynae5d6Eg';
 
-// Get global reference safely
-function getGlobalRef() {
-  if (typeof window !== 'undefined') {
-    return window;
-  }
-  return {};
-}
-
-const globalRef = getGlobalRef();
-
-export const supabase = globalRef.__supabase__ ?? createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-if (!globalRef.__supabase__) {
-  globalRef.__supabase__ = supabase;
-}
+// Create a single supabase client instance
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 
 
