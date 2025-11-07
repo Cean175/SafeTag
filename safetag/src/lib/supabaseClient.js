@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Environment variables with fallback values
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://smoyoszfxvzlrapabhsc.supabase.co';
 const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtb3lvc3pmeHZ6bHJhcGFiaHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0MTMxNjMsImV4cCI6MjA3Mjk4OTE2M30.1A-hrThccZPjoqezsUw4HItbwKQSbN4kPqynae5d6Eg';
 
