@@ -13,7 +13,6 @@ import Settings from './screens/Settings';
 import ContactPage from './screens/ContactPage';
 import Statistics from './screens/Statistics';
 import DocumentationsList from './screens/DocumentationsList';
-import ProtectedRoute from './components/ProtectedRoute';
 
 
 function App() {

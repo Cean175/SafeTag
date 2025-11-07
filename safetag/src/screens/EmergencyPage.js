@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchOngoingEmergencies, fetchResolvedEmergencies, markEmergencyAsResolved } from '../lib/supabaseClient';
 import '../css/EmergencyPage.css';
@@ -11,11 +11,7 @@ function EmergencyPage() {
   const [resolvingId, setResolvingId] = useState(null);
   const [viewMode, setViewMode] = useState('ongoing'); // 'ongoing' or 'resolved'
 
-  useEffect(() => {
-    loadEmergencies();
-  }, [viewMode]);
-
-  const loadEmergencies = async () => {
+  const loadEmergencies = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -33,7 +29,11 @@ function EmergencyPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [viewMode]);
+
+  useEffect(() => {
+    loadEmergencies();
+  }, [loadEmergencies]);
 
   const handleMarkAsResolved = async (emergencyId) => {
     console.log('handleMarkAsResolved called with ID:', emergencyId);

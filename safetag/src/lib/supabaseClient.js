@@ -76,7 +76,7 @@ export async function uploadFile(file, { bucket = 'avatars' } = {}) {
     const fileName = `${Date.now()}_${Math.random().toString(36).slice(2,9)}.${fileExt}`;
 
     // Upload
-    const { data: uploadData, error: uploadError } = await supabase
+    const { error: uploadError } = await supabase
         .storage
         .from(bucket)
         .upload(fileName, file, { upsert: false, contentType: file.type || 'application/octet-stream' });
