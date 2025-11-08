@@ -1,5 +1,3 @@
-
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import LoginPage from './screens/LoginPage';
@@ -13,13 +11,15 @@ import Settings from './screens/Settings';
 import ContactPage from './screens/ContactPage';
 import Statistics from './screens/Statistics';
 import DocumentationsList from './screens/DocumentationsList';
-
+import ProtectedRoute from './components/ProtectedRoute';
+import AlertMonitor from './screens/AlertMonitor';
 
 function App() {
   return (
     <Router>
+      <AlertMonitor />
+      
       <Routes>
-        {/* Login Page - redirect if already logged in */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/home" element={<Homepage />} />
         <Route path="/user" element={<UserPage />} />
@@ -28,7 +28,6 @@ function App() {
         <Route path="/addstudent" element={<AddStudentPage />} />
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/documentations" element={<Documentations />} />
-        <Route path="/documentations-list" element={<DocumentationsList />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>

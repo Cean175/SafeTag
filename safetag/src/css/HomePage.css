@@ -74,7 +74,15 @@
   letter-spacing: 2px;
   text-shadow: 0 2px 4px rgba(46, 125, 50, 0.1);
 }
+.navbar {
+  position: relative;
+  z-index: 1000; /* ensures icons are above everything */
+}
 
+.alert-container {
+  position: relative;
+  z-index: 1; /* ensures alerts don’t overlap navbar */
+}
 .homepage-container .branding .subtitle {
   font-size: 0.8rem;
   color: #388e3c;

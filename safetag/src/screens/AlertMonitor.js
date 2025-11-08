@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import '../css/AlertMonitor.css';
@@ -8,13 +8,10 @@ function AlertMonitor() {
   const [alerts, setAlerts] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
-  const [lastAlertTime, setLastAlertTime] = useState(null);
 
-  // Initialize audio element
+ 
   useEffect(() => {
-    // Create audio element for alert sound
     audioRef.current = new Audio();
-    // Using a emergency siren sound from a CDN
     audioRef.current.src = 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3';
     audioRef.current.loop = true;
     audioRef.current.volume = 0.7;
@@ -27,50 +24,71 @@ function AlertMonitor() {
     };
   }, []);
 
-  // Function to play alert sound
-  const playAlertSound = () => {
+
+  const playAlertSound = useCallback(() => {
     if (audioRef.current && !isPlaying) {
       audioRef.current.play().catch(err => {
         console.error('Failed to play alert sound:', err);
       });
       setIsPlaying(true);
     }
-  };
+  }, [isPlaying]);
 
-  // Function to stop alert sound
-  const stopAlertSound = () => {
+  const stopAlertSound = useCallback(() => {
     if (audioRef.current && isPlaying) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
       setIsPlaying(false);
     }
+  }, [isPlaying]);
+
+  // Fetch student details for an emergency
+  const fetchStudentDetails = async (studentId) => {
+    if (!studentId) return null;
+
+    const { data, error } = await supabase
+      .from('students')
+      .select('first_name, middle_name, last_name, student_id, avatar_url')
+      .eq('student_id', studentId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching student:', error);
+      return null;
+    }
+    return data;
   };
 
-  // Subscribe to real-time emergency alerts from database
+  // Subscribe to real-time emergency alerts
   useEffect(() => {
-    // Fetch initial emergency alerts (created in last 24 hours)
     const fetchRecentAlerts = async () => {
       const twentyFourHoursAgo = new Date();
       twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
 
       const { data, error } = await supabase
-        .from('emergencies')
+        .from('ongoing_emergencies')
         .select('*')
-        .eq('status', 'active')
-        .gte('created_at', twentyFourHoursAgo.toISOString())
-        .order('created_at', { ascending: false });
+        .eq('is_resolved', false)
+        .gte('reported_at', twentyFourHoursAgo.toISOString())
+        .order('reported_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching alerts:', error);
       } else if (data && data.length > 0) {
-        setAlerts(data);
+        const alertsWithStudents = await Promise.all(
+          data.map(async (emergency) => {
+            const student = await fetchStudentDetails(emergency.student_id);
+            return { ...emergency, students: student };
+          })
+        );
+        setAlerts(alertsWithStudents);
         playAlertSound();
       }
     };
 
     fetchRecentAlerts();
 
-    // Set up real-time subscription for new emergencies
+    // Real-time subscription for new emergencies
     const channel = supabase
       .channel('emergency-alerts')
       .on(
@@ -78,29 +96,34 @@ function AlertMonitor() {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'emergencies'
+          table: 'ongoing_emergencies',
         },
-        (payload) => {
-          console.log('New emergency alert received:', payload);
+        async (payload) => {
+          console.log('🚨 New emergency alert received:', payload);
           const newAlert = payload.new;
-          
-          setAlerts(prev => [newAlert, ...prev]);
-          setLastAlertTime(new Date());
+          const student = await fetchStudentDetails(newAlert.student_id);
+          const alertWithStudent = { ...newAlert, students: student };
+
+          setAlerts((prev) => [alertWithStudent, ...prev]);
           playAlertSound();
 
-          // Show browser notification if permitted
+          // Browser notification
           if ('Notification' in window && Notification.permission === 'granted') {
+            const studentName = student
+              ? `${student.first_name} ${student.last_name}`
+              : 'Unknown Student';
+
             new Notification('🚨 EMERGENCY ALERT', {
-              body: `Emergency from ${newAlert.student_name || 'Unknown Student'}`,
+              body: `Emergency from ${studentName} at ${newAlert.location || 'Unknown location'}`,
               icon: '/emergency-icon.png',
-              tag: 'emergency-alert'
+              tag: 'emergency-alert',
             });
           }
         }
       )
       .subscribe();
 
-    // Request notification permission
+    // Ask for notification permission
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }
@@ -109,61 +132,29 @@ function AlertMonitor() {
       supabase.removeChannel(channel);
       stopAlertSound();
     };
-  }, []);
+  }, [playAlertSound, stopAlertSound]); // ✅ Added dependencies here
 
-  // Handle alert acknowledgment
+  // Handle acknowledgment
   const handleAcknowledge = async (alertId) => {
     stopAlertSound();
 
     const { error } = await supabase
-      .from('emergencies')
-      .update({ 
-        status: 'acknowledged',
-        acknowledged_at: new Date().toISOString()
-      })
+      .from('ongoing_emergencies')
+      .update({ is_resolved: true })
       .eq('id', alertId);
 
     if (error) {
       console.error('Error acknowledging alert:', error);
       alert('Failed to acknowledge alert');
     } else {
-      setAlerts(prev => prev.filter(alert => alert.id !== alertId));
+      setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
     }
   };
 
-  // Handle responding to alert
+  // Handle respond
   const handleRespond = async (alert) => {
     stopAlertSound();
-
-    // Update status to responding
-    const { error } = await supabase
-      .from('emergencies')
-      .update({ 
-        status: 'responding',
-        responded_at: new Date().toISOString()
-      })
-      .eq('id', alert.id);
-
-    if (error) {
-      console.error('Error updating alert status:', error);
-    }
-
-    // Navigate to contact page with emergency data
-    navigate('/contact', {
-      state: {
-        emergencyData: {
-          name: alert.student_name,
-          age: alert.age,
-          studentId: alert.student_id,
-          course: alert.course,
-          Healthcondition: alert.health_condition,
-          avatarUrl: alert.avatar_url,
-          emergencyContactName: alert.emergency_contact_name,
-          phone: alert.emergency_contact_phone,
-          location: alert.location
-        }
-      }
-    });
+    navigate('/contact', { state: { emergency: alert } });
   };
 
   // Dismiss all alerts
@@ -172,9 +163,19 @@ function AlertMonitor() {
     setAlerts([]);
   };
 
-  if (alerts.length === 0) {
-    return null; // Don't show anything if no alerts
-  }
+  if (alerts.length === 0) return null;
+
+  const formatDateTime = (timestamp) => {
+    if (!timestamp) return 'N/A';
+    const date = new Date(timestamp);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   return (
     <div className="alert-monitor-overlay">
@@ -185,7 +186,7 @@ function AlertMonitor() {
             <h2>EMERGENCY ALERTS</h2>
           </div>
           <div className="alert-actions-header">
-            <button 
+            <button
               className="sound-toggle-btn"
               onClick={isPlaying ? stopAlertSound : playAlertSound}
             >
@@ -202,33 +203,27 @@ function AlertMonitor() {
             <div key={alert.id} className="alert-card">
               <div className="alert-card-header">
                 <div className="alert-status-badge">ACTIVE EMERGENCY</div>
-                <div className="alert-time">
-                  {new Date(alert.created_at).toLocaleTimeString()}
-                </div>
+                <div className="alert-time">{formatDateTime(alert.reported_at)}</div>
               </div>
 
               <div className="alert-content">
                 <div className="alert-student-info">
-                  {alert.avatar_url && (
-                    <img 
-                      src={alert.avatar_url} 
-                      alt={alert.student_name}
+                  {alert.students?.avatar_url && (
+                    <img
+                      src={alert.students.avatar_url}
+                      alt={`${alert.students.first_name} ${alert.students.last_name}`}
                       className="alert-avatar"
                     />
                   )}
                   <div className="alert-details">
-                    <h3>{alert.student_name || 'Unknown Student'}</h3>
-                    <p className="student-id">ID: {alert.student_id || 'N/A'}</p>
-                    <p className="student-info">
-                      {alert.age && `Age: ${alert.age}`}
-                      {alert.course && ` | ${alert.course}`}
+                    <h3>
+                      {alert.students
+                        ? `${alert.students.first_name} ${alert.students.middle_name || ''} ${alert.students.last_name}`.trim()
+                        : 'Unknown Student'}
+                    </h3>
+                    <p className="student-id">
+                      ID: {alert.students?.student_id || alert.student_id || 'N/A'}
                     </p>
-                    {alert.health_condition && (
-                      <p className="health-warning">
-                        <i className="fas fa-heartbeat"></i>
-                        Health Condition: {alert.health_condition}
-                      </p>
-                    )}
                     {alert.location && (
                       <p className="location-info">
                         <i className="fas fa-map-marker-alt"></i>
@@ -239,14 +234,14 @@ function AlertMonitor() {
                 </div>
 
                 <div className="alert-actions">
-                  <button 
+                  <button
                     className="respond-btn"
                     onClick={() => handleRespond(alert)}
                   >
                     <i className="fas fa-ambulance"></i>
                     RESPOND
                   </button>
-                  <button 
+                  <button
                     className="acknowledge-btn"
                     onClick={() => handleAcknowledge(alert.id)}
                   >

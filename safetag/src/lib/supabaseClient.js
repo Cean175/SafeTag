@@ -104,7 +104,7 @@ export async function uploadFile(file, { bucket = 'avatars' } = {}) {
 
 // -------------------- Ongoing Emergencies API --------------------
 export async function fetchOngoingEmergencies() {
-    // First, fetch the emergencies
+    
     const { data: emergencies, error: emergencyError } = await supabase
         .from('ongoing_emergencies')
         .select('*')
@@ -197,7 +197,7 @@ export async function fetchResolvedEmergencies() {
         return [];
     }
 
-    // Then fetch the student details for each emergency
+
     const emergenciesWithStudents = await Promise.all(
         emergencies.map(async (emergency) => {
             if (emergency.student_id) {
