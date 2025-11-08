@@ -1,9 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/HomePage.css';
+import AlertMonitor from './AlertMonitor'; // keep import, it’s fine
 
 function Homepage() {
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate('/');
+  };
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -11,7 +16,8 @@ function Homepage() {
 
   return (
     <div className="homepage-container">
-      <header className="header">
+      {/* ✅ Make sure header stays on top */}
+      <header className="header navbar">
         <div className="header-content">
           <div className="branding">
             <h1 className="title">S.A.F.E</h1>
@@ -38,6 +44,9 @@ function Homepage() {
         </div>
       </header>
 
+      {/* ✅ Add the AlertMonitor here so it runs but doesn’t cover anything */}
+      <AlertMonitor />
+
       <main className="main-content homepage-content">
         <div className="info-box">
           <div className="h2-box">
@@ -50,7 +59,6 @@ function Homepage() {
             and responding to distress signals triggered through their personal SAFE Tags.
           </div>
 
-          {/* Social Links as Icons */}
           <div className="contact">
             <h4>| Contact Us |</h4>
           </div>
