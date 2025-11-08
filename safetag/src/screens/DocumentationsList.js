@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import '../css/SharedBase.css';
 import '../css/DocumentationList.css';
 
 function DocumentationsList() {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase, fetchStudents } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import '../css/SharedBase.css';
 import '../css/Documentations.css';
 
 function Documentations() {
@@ -220,9 +221,8 @@ function Documentations() {
 
             <main className="main-content user-page-content">
                 <h2 className="doc-title">DOCUMENTATION</h2>
-                
-                <div className="doc-layout-wrapper" style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-                    <div className="doc-card" style={{ flex: '2', minWidth: '400px' }}>
+                <div className="doc-layout-wrapper">
+                    <div className="doc-card">
                         <h3 className="section-title">DEMOGRAPHIC PROFILE</h3>
 
                         {errorMessage && (<div className="error-message">{errorMessage}</div>)}
@@ -329,64 +329,23 @@ function Documentations() {
                     </div>
 
                     {showPasswordPrompt && (
-                        <div className="password-prompt-sidebar" style={{
-                            flex: '1',
-                            padding: '20px',
-                            backgroundColor: '#fff',
-                            borderRadius: '8px',
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                            marginTop: '480px',
-                            minWidth: '250px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '15px',
-                        }}>
+                        <div className="password-prompt-sidebar">
                             <h4>Enter Password to View All</h4>
                             <input
                                 type="password"
                                 value={passwordInput}
                                 onChange={e => setPasswordInput(e.target.value)}
                                 placeholder="Password"
-                                style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
                                 onKeyPress={(e) => {
                                     if (e.key === 'Enter') {
                                         handlePasswordConfirm();
                                     }
                                 }}
                             />
-                            {passwordError && <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>{passwordError}</div>}
-                            <div className="modal-actions" style={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                gap: "12px",
-                            }}>
-                                <button
-                                    style={{
-                                        padding: "8px 20px",
-                                        background: "#007bff",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "4px",
-                                        cursor: "pointer",
-                                        fontWeight: "bold"
-                                    }}
-                                    onClick={handlePasswordConfirm}
-                                >
-                                    Confirm
-                                </button>
-                                <button
-                                    style={{
-                                        padding: "8px 20px",
-                                        background: "#f5f5f5",
-                                        color: "#333",
-                                        border: "1px solid #ccc",
-                                        borderRadius: "4px",
-                                        cursor: "pointer"
-                                    }}
-                                    onClick={() => setShowPasswordPrompt(false)}
-                                >
-                                    Cancel
-                                </button>
+                            {passwordError && <div className="error-message password-error-text">{passwordError}</div>}
+                            <div className="modal-actions">
+                                <button className="primary-btn" onClick={handlePasswordConfirm}>Confirm</button>
+                                <button className="secondary-btn" onClick={() => setShowPasswordPrompt(false)}>Cancel</button>
                             </div>
                         </div>
                     )}

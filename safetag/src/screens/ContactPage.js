@@ -43,69 +43,77 @@ function ContactPage() {
   const statusText = emergency ? (emergency.is_resolved ? 'Resolved' : 'Active') : 'Unknown';
 
   return (
-    <div className="contact-page-container">
+    <div className="user-page-container">
+      {/* Header */}
       <header className="header">
         <div className="header-content">
           <div className="branding">
             <h1 className="title">S.A.F.E</h1>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
-          <nav className="nav-icons" aria-label="Primary navigation">
-            <button className="nav-icon" aria-label="Home" onClick={() => handleNavigation('/home')}><i className="fas fa-home"></i></button>
-            <button className="nav-icon" aria-label="User" onClick={() => handleNavigation('/user')}><i className="fas fa-user"></i></button>
-            <button className="nav-icon" aria-label="Statistics" onClick={() => handleNavigation('/statistics')}><i className="fas fa-chart-bar"></i></button>
-            <button className="nav-icon active" aria-label="Contact" onClick={() => handleNavigation('/contact')}><i className="fas fa-phone"></i></button>
-            <button className="nav-icon" aria-label="Settings" onClick={() => handleNavigation('/settings')}><i className="fas fa-cog"></i></button>
-          </nav>
+          <div className="nav-icons">
+            <div className="nav-icon" onClick={() => handleNavigation('/home')}>
+              <i className="fas fa-home"></i>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/user')}>
+              <i className="fas fa-user"></i>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/statistics')}>
+              <i className="fas fa-chart-bar"></i>
+            </div>
+            <div className="nav-icon active" onClick={() => handleNavigation('/contact')}>
+              <i className="fas fa-phone"></i>
+            </div>
+            <div className="nav-icon" onClick={() => handleNavigation('/settings')}>
+              <i className="fas fa-cog"></i>
+            </div>
+          </div>
         </div>
       </header>
       <main className="main-content">
-        <section className="emergency-alert glass-panel">
-          <div className="alert-header">
-            <h2 className="alert-title"><i className="fas fa-triangle-exclamation"></i> Emergency Details</h2>
-            {emergency && <span className={`pill ${statusText === 'Active' ? 'pill-active' : 'pill-resolved'}`}>{statusText}</span>}
-          </div>
+        <section className="emergency-alert">
+          <h2 className="alert-title"><i className="fas fa-triangle-exclamation"></i> Emergency Details</h2>
           {emergency ? (
-            <div className="alert-grid">
-              <div className="alert-item"><span className="item-label">Reported:</span><span className="item-value">{reportedTime}</span></div>
-              <div className="alert-item"><span className="item-label">Created:</span><span className="item-value">{createdTime}</span></div>
-              <div className="alert-item full-width"><span className="item-label">Location:</span><span className="item-value">{locationText}</span></div>
+            <div className="alert-details">
+              <p className="status-line"><strong>Status:</strong> <span className={statusText === 'Active' ? 'status-active' : 'status-resolved'}>{statusText}</span></p>
+              <p><strong>Reported:</strong> {reportedTime}</p>
+              <p><strong>Created:</strong> {createdTime}</p>
+              <p><strong>Location:</strong> {locationText}</p>
               <div className="alert-actions">
-                <button className="secondary-btn" onClick={() => navigate('/emergency')}>Back</button>
-                <button className="primary-btn" onClick={handleDone}>Done</button>
+                <button className="back-emergencies-btn" onClick={() => navigate('/emergencies')}>Back to Emergencies</button>
+                <button className="done-button" onClick={handleDone}>DONE</button>
               </div>
             </div>
           ) : (
-            <p className="alert-empty">No emergency data passed. Return to Emergencies list.</p>
+            <p className="alert-subtitle">No emergency data passed. Navigate from the Emergencies page to view details here.</p>
           )}
         </section>
-        <section className="student-card glass-panel" aria-labelledby="student-info-heading">
-          <div className="card-header">
-            <h3 id="student-info-heading">Student Information</h3>
-          </div>
-          <div className="card-body">
-            {student ? (
-              <div className="student-layout">
-                <div className="avatar-wrapper">
-                  <img src={studentAvatar} alt={studentFullName} className="avatar" />
+        <div className="content-wrapper">
+          <section className="student-card">
+            <div className="card-header"><h3>Student Information</h3></div>
+            <div className="card-body">
+              {student ? (
+                <div className="profile-section">
+                  <div className="profile-image">
+                    <img src={studentAvatar} alt={studentFullName} className="avatar" />
+                  </div>
+                  <div className="student-info">
+                    <div className="info-row"><span className="label">Name:</span><span className="value">{studentFullName}</span></div>
+                    <div className="info-row"><span className="label">Student ID:</span><span className="value">{studentId}</span></div>
+                    <div className="info-row"><span className="label">Status:</span><span className="value">{statusText}</span></div>
+                    <div className="info-row"><span className="label">Location:</span><span className="value">{locationText}</span></div>
+                    <div className="info-row"><span className="label">Reported:</span><span className="value">{reportedTime}</span></div>
+                  </div>
                 </div>
-                <div className="details-list">
-                  <div className="detail-row"><span className="detail-label">Name</span><span className="detail-value">{studentFullName}</span></div>
-                  <div className="detail-row"><span className="detail-label">Student ID</span><span className="detail-value">{studentId}</span></div>
-                  <div className="detail-row"><span className="detail-label">Status</span><span className="detail-value">{statusText}</span></div>
-                  <div className="detail-row"><span className="detail-label">Location</span><span className="detail-value">{locationText}</span></div>
-                  <div className="detail-row"><span className="detail-label">Reported</span><span className="detail-value">{reportedTime}</span></div>
-                </div>
-              </div>
-            ) : (
-              <p className="no-student">No student data available for this emergency.</p>
-            )}
-          </div>
-        </section>
+              ) : (
+                <p className="no-student">No student data available for this emergency.</p>
+              )}
+            </div>
+          </section>
+        </div>
       </main>
     </div>
   );
 }
 
 export default ContactPage;
-
