@@ -5,10 +5,6 @@ import '../css/HomePage.css';
 function Homepage() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    navigate('/');
-  };
-
   const handleNavigation = (path) => {
     navigate(path);
   };

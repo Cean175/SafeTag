@@ -28,7 +28,18 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "node": true
+    },
+    "globals": {
+      "globalThis": "readonly"
+    },
+    "rules": {
+      "no-undef": "off"
+    }
   },
   "browserslist": {
     "production": [

@@ -5,13 +5,25 @@ import '../css/ContactPage.css';
 function ContactPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [emergencyData, setEmergencyData] = useState(null);
+
+  // Emergency object passed from EmergencyPage via: navigate('/contact', { state: { emergency } })
+  const emergency = location.state?.emergency || null;
+  const [student, setStudent] = useState(null);
 
   useEffect(() => {
-    if (location.state && location.state.emergencyData) {
-      setEmergencyData(location.state.emergencyData);
+    if (emergency && emergency.students) {
+      setStudent(emergency.students);
+    } else if (emergency) {
+      // Fallback: some fields might be flat if student join failed
+      setStudent({
+        first_name: emergency.first_name || 'Unknown',
+        middle_name: emergency.middle_name || '',
+        last_name: emergency.last_name || '',
+        student_id: emergency.student_id || 'N/A',
+        avatar_url: emergency.avatar_url || null
+      });
     }
-  }, [location]);
+  }, [emergency]);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -21,158 +33,79 @@ function ContactPage() {
     navigate('/home');
   };
 
-  const studentInfo = {
-    name: emergencyData?.name || 'Not available',
-    age: emergencyData?.age || 'Not available',
-    studentId: emergencyData?.studentId || 'Not available',
-    course: emergencyData?.course || 'Not available',
-    healthCondition: emergencyData?.Healthcondition || 'Not available',
-    avatarUrl:
-      emergencyData?.avatarUrl ||
-      'https://via.placeholder.com/100x100.png?text=Student',
-  };
+  const studentFullName = student ? `${student.first_name} ${student.middle_name || ''} ${student.last_name}`.replace(/\s+/g,' ').trim() : 'Not available';
+  const studentAvatar = student?.avatar_url || 'https://via.placeholder.com/100x100.png?text=Student';
+  const studentId = student?.student_id || 'Not available';
 
-  const contactInfo = {
-    name: emergencyData?.emergencyContactName || 'Not available',
-    phone: emergencyData?.phone || 'Not available',
-  };
+  const locationText = emergency?.location || 'No location provided';
+  const reportedTime = emergency?.reported_at ? new Date(emergency.reported_at).toLocaleString() : 'N/A';
+  const createdTime = emergency?.created_at ? new Date(emergency.created_at).toLocaleString() : 'N/A';
+  const statusText = emergency ? (emergency.is_resolved ? 'Resolved' : 'Active') : 'Unknown';
 
   return (
-    <div className="user-page-container">
-      {/* Header */}
+    <div className="contact-page-container">
       <header className="header">
         <div className="header-content">
           <div className="branding">
             <h1 className="title">S.A.F.E</h1>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
-
-          <div className="nav-icons">
-            <div className="nav-icon" onClick={() => handleNavigation('/home')}>
-              <i className="fas fa-home"></i>
-            </div>
-            <div className="nav-icon" onClick={() => handleNavigation('/user')}>
-              <i className="fas fa-user"></i>
-            </div>
-            <div
-              className="nav-icon"
-              onClick={() => handleNavigation('/statistics')}
-            >
-              <i className="fas fa-chart-bar"></i>
-            </div>
-            <div
-              className="nav-icon active"
-              onClick={() => handleNavigation('/contact')}
-            >
-              <i className="fas fa-phone"></i>
-            </div>
-            <div
-              className="nav-icon"
-              onClick={() => handleNavigation('/settings')}
-            >
-              <i className="fas fa-cog"></i>
-            </div>
-          </div>
+          <nav className="nav-icons" aria-label="Primary navigation">
+            <button className="nav-icon" aria-label="Home" onClick={() => handleNavigation('/home')}><i className="fas fa-home"></i></button>
+            <button className="nav-icon" aria-label="User" onClick={() => handleNavigation('/user')}><i className="fas fa-user"></i></button>
+            <button className="nav-icon" aria-label="Statistics" onClick={() => handleNavigation('/statistics')}><i className="fas fa-chart-bar"></i></button>
+            <button className="nav-icon active" aria-label="Contact" onClick={() => handleNavigation('/contact')}><i className="fas fa-phone"></i></button>
+            <button className="nav-icon" aria-label="Settings" onClick={() => handleNavigation('/settings')}><i className="fas fa-cog"></i></button>
+          </nav>
         </div>
       </header>
-
       <main className="main-content">
-        {/* Emergency Section */}
-        <section className="emergency-alert">
-          <h2 className="alert-title">
-            <i className="fas fa-triangle-exclamation"></i> Emergency Alert
-          </h2>
-          <p className="alert-subtitle">
-            If you have accomplished the emergency response, click below:
-          </p>
-          <button className="done-button" onClick={handleDone}>
-            DONE
-          </button>
+        <section className="emergency-alert glass-panel">
+          <div className="alert-header">
+            <h2 className="alert-title"><i className="fas fa-triangle-exclamation"></i> Emergency Details</h2>
+            {emergency && <span className={`pill ${statusText === 'Active' ? 'pill-active' : 'pill-resolved'}`}>{statusText}</span>}
+          </div>
+          {emergency ? (
+            <div className="alert-grid">
+              <div className="alert-item"><span className="item-label">Reported:</span><span className="item-value">{reportedTime}</span></div>
+              <div className="alert-item"><span className="item-label">Created:</span><span className="item-value">{createdTime}</span></div>
+              <div className="alert-item full-width"><span className="item-label">Location:</span><span className="item-value">{locationText}</span></div>
+              <div className="alert-actions">
+                <button className="secondary-btn" onClick={() => navigate('/emergency')}>Back</button>
+                <button className="primary-btn" onClick={handleDone}>Done</button>
+              </div>
+            </div>
+          ) : (
+            <p className="alert-empty">No emergency data passed. Return to Emergencies list.</p>
+          )}
         </section>
-
-        {/* ✅ Flex container to align student info & location side by side */}
-        <div className="content-wrapper">
-          {/* Student Information */}
-          <section className="student-card">
-            <div className="card-header">
-              <h3>Student Information</h3>
-            </div>
-            <div className="card-body">
-              <div className="profile-section">
-                <div className="profile-image">
-                  <img
-                    src={studentInfo.avatarUrl}
-                    alt="Student profile avatar"
-                    className="avatar"
-                  />
+        <section className="student-card glass-panel" aria-labelledby="student-info-heading">
+          <div className="card-header">
+            <h3 id="student-info-heading">Student Information</h3>
+          </div>
+          <div className="card-body">
+            {student ? (
+              <div className="student-layout">
+                <div className="avatar-wrapper">
+                  <img src={studentAvatar} alt={studentFullName} className="avatar" />
                 </div>
-                <div className="student-info">
-                  <div className="info-row">
-                    <span className="label">Name:</span>
-                    <span className="value">{studentInfo.name}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="label">Age:</span>
-                    <span className="value">{studentInfo.age}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="label">Student ID:</span>
-                    <span className="value">{studentInfo.studentId}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="label">Year & Course:</span>
-                    <span className="value">{studentInfo.course}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="label">Health Condition:</span>
-                    <span className="value">{studentInfo.healthCondition}</span>
-                  </div>
+                <div className="details-list">
+                  <div className="detail-row"><span className="detail-label">Name</span><span className="detail-value">{studentFullName}</span></div>
+                  <div className="detail-row"><span className="detail-label">Student ID</span><span className="detail-value">{studentId}</span></div>
+                  <div className="detail-row"><span className="detail-label">Status</span><span className="detail-value">{statusText}</span></div>
+                  <div className="detail-row"><span className="detail-label">Location</span><span className="detail-value">{locationText}</span></div>
+                  <div className="detail-row"><span className="detail-label">Reported</span><span className="detail-value">{reportedTime}</span></div>
                 </div>
               </div>
-              <div className="emergency-contact">
-                <h4>Emergency Contact</h4>
-                <div className="contact-info">
-                  <div className="contact-row">
-                    <span className="label">Name:</span>
-                    <span className="value">{contactInfo.name}</span>
-                  </div>
-                  <div className="contact-row">
-                    <span className="label">Phone:</span>
-                    <span className="value">{contactInfo.phone}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Location Section */}
-          <section className="location-section">
-            <h3>Location</h3>
-            <div className="map-container">
-              <iframe
-                title="Live Google Map of emergency location"
-                src="https://maps.google.com/maps?q=Lipa%20City,%20Batangas&t=&z=15&ieUTF8&iwloc=&output=embed"
-                width="100%"
-                height="100%"
-                style={{ border: 0, borderRadius: '10px' }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
-            </div>
-            <a
-              href="https://www.google.com/maps/search/?api=1&query=Lipa+City,Batangas"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="click-button"
-            >
-              View Location
-            </a>
-          </section>
-        </div>
+            ) : (
+              <p className="no-student">No student data available for this emergency.</p>
+            )}
+          </div>
+        </section>
       </main>
     </div>
   );
 }
 
 export default ContactPage;
+

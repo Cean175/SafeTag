@@ -8,21 +8,9 @@ function StudentsPage() {
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [selectedStudentIndex, setSelectedStudentIndex] = useState(null);
-  const [avatar, setAvatar] = useState(null);
-    const [showPasswordModal, setShowPasswordModal] = useState(false);
-    const [editPassword, setEditPassword] = useState('');
-    const [editError, setEditError] = useState('');
-
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatar(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [editPassword, setEditPassword] = useState('');
+  const [editError, setEditError] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -50,9 +38,7 @@ function StudentsPage() {
     navigate(path);
   };
 
-  const handleStudentClick = (index) => {
-    setSelectedStudentIndex(index);
-  };
+  // Selection handled via dropdown; click handler removed to avoid unused warnings
 
   const handleAddStudent = () => {
     navigate('/addstudent');
