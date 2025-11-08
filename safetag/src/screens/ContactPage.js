@@ -6,7 +6,7 @@ function ContactPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Emergency object passed from EmergencyPage via: navigate('/contact', { state: { emergency } })
+
   const emergency = location.state?.emergency || null;
   const [student, setStudent] = useState(null);
 
@@ -14,7 +14,7 @@ function ContactPage() {
     if (emergency && emergency.students) {
       setStudent(emergency.students);
     } else if (emergency) {
-      // Fallback: some fields might be flat if student join failed
+      
       setStudent({
         first_name: emergency.first_name || 'Unknown',
         middle_name: emergency.middle_name || '',
@@ -30,7 +30,7 @@ function ContactPage() {
   };
 
   const handleDone = () => {
-    navigate('/home');
+    navigate('/documentations');
   };
 
   const studentFullName = student ? `${student.first_name} ${student.middle_name || ''} ${student.last_name}`.replace(/\s+/g,' ').trim() : 'Not available';
@@ -71,7 +71,7 @@ function ContactPage() {
               <div className="alert-item"><span className="item-label">Created:</span><span className="item-value">{createdTime}</span></div>
               <div className="alert-item full-width"><span className="item-label">Location:</span><span className="item-value">{locationText}</span></div>
               <div className="alert-actions">
-                <button className="secondary-btn" onClick={() => navigate('/emergency')}>Back</button>
+                <button className="secondary-btn" onClick={() => navigate('/emergencies')}>Back</button>
                 <button className="primary-btn" onClick={handleDone}>Done</button>
               </div>
             </div>
@@ -108,4 +108,3 @@ function ContactPage() {
 }
 
 export default ContactPage;
-
