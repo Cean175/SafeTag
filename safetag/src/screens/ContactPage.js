@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabaseClient';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../css/ContactPage.css';
 
@@ -9,12 +10,15 @@ function ContactPage() {
 
   const emergency = location.state?.emergency || null;
   const [student, setStudent] = useState(null);
+  const [showDoneMsg, setShowDoneMsg] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isResolving, setIsResolving] = useState(false);
+  const [resolveError, setResolveError] = useState('');
 
   useEffect(() => {
     if (emergency && emergency.students) {
       setStudent(emergency.students);
     } else if (emergency) {
-      
       setStudent({
         first_name: emergency.first_name || 'Unknown',
         middle_name: emergency.middle_name || '',
@@ -23,6 +27,10 @@ function ContactPage() {
         avatar_url: emergency.avatar_url || null
       });
     }
+    // Request notification permission on mount
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
   }, [emergency]);
 
   const handleNavigation = (path) => {
@@ -30,7 +38,43 @@ function ContactPage() {
   };
 
   const handleDone = () => {
-    navigate('/documentations');
+    setResolveError('');
+    setShowConfirmModal(true);
+  };
+
+  const confirmMarkDone = async () => {
+    if (!emergency?.id) {
+      navigate('/documentations');
+      return;
+    }
+    try {
+      setIsResolving(true);
+      setResolveError('');
+      const { error } = await supabase
+        .from('ongoing_emergencies')
+        .update({ is_resolved: true })
+        .eq('id', emergency.id);
+      if (error) throw error;
+
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Emergency Verified', {
+          body: 'Emergency marked as done and verified.',
+          icon: '/emergency-icon.png',
+          tag: 'emergency-done'
+        });
+      }
+      // Tell EmergencyNotification to stop the alert sound now that user verified
+      window.dispatchEvent(new Event('emergency-sound-stop'));
+      setShowDoneMsg(true);
+      setTimeout(() => setShowDoneMsg(false), 1500);
+      setShowConfirmModal(false);
+      navigate('/documentations');
+    } catch (err) {
+      console.error('Failed to resolve emergency:', err);
+      setResolveError('Failed to mark as done. Please try again.');
+    } finally {
+      setIsResolving(false);
+    }
   };
 
   const studentFullName = student ? `${student.first_name} ${student.middle_name || ''} ${student.last_name}`.replace(/\s+/g,' ').trim() : 'Not available';
@@ -71,6 +115,30 @@ function ContactPage() {
         </div>
       </header>
       <main className="main-content">
+        {showDoneMsg && (
+          <div style={{position:'fixed',top:90,right:30,zIndex:9999,background:'#27ae60',color:'#fff',padding:'1rem 2rem',borderRadius:'8px',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'}}>
+            Emergency marked as done and verified!
+          </div>
+        )}
+        {showConfirmModal && (
+          <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.35)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:10000}}>
+            <div style={{background:'#fff',borderRadius:12,width:'min(500px,90vw)',padding:'20px 22px',boxShadow:'0 10px 30px rgba(0,0,0,0.2)'}}>
+              <h3 style={{margin:'0 0 10px',color:'#c0392b'}}><i className="fas fa-exclamation-triangle"></i> Confirm Resolution</h3>
+              <p style={{margin:'0 0 16px',color:'#333'}}>Are you sure you want to mark this emergency as <strong>Done</strong>? This will resolve it and stop alerts.</p>
+              {resolveError && (
+                <div style={{background:'#fdecea',color:'#c0392b',padding:'8px 12px',borderRadius:8,marginBottom:10}}>
+                  {resolveError}
+                </div>
+              )}
+              <div style={{display:'flex',gap:12,justifyContent:'flex-end'}}>
+                <button className="secondary-btn" disabled={isResolving} onClick={() => setShowConfirmModal(false)}>Cancel</button>
+                <button className="primary-btn" onClick={confirmMarkDone} disabled={isResolving}>
+                  {isResolving ? 'Marking…' : 'Yes, Mark as Done'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <section className="emergency-alert">
           <h2 className="alert-title"><i className="fas fa-triangle-exclamation"></i> Emergency Details</h2>
           {emergency ? (
