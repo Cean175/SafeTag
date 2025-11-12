@@ -6,10 +6,6 @@ import AlertMonitor from './AlertMonitor'; // keep import, it’s fine
 function Homepage() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    navigate('/');
-  };
-
   const handleNavigation = (path) => {
     navigate(path);
   };

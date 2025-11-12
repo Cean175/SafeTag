@@ -11,7 +11,6 @@ import Settings from './screens/Settings';
 import ContactPage from './screens/ContactPage';
 import Statistics from './screens/Statistics';
 import DocumentationsList from './screens/DocumentationsList';
-import ProtectedRoute from './components/ProtectedRoute';
 import AlertMonitor from './screens/AlertMonitor';
 import EmergencyNotification from './components/EmergencyNotification';
 

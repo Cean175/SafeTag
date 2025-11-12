@@ -30,6 +30,37 @@ function EmergencyNotification() {
     };
   }, []);
 
+  // Play alert sound
+  const playAlertSound = () => {
+    if (audioRef.current && !isPlaying) {
+      audioRef.current.play().catch(err => console.error('Failed to play alert sound:', err));
+      setIsPlaying(true);
+    }
+  };
+
+  // Stop alert sound
+  const stopAlertSound = React.useCallback(() => {
+    if (audioRef.current && isPlaying) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
+    }
+  }, [isPlaying]);
+
+  // Trigger alert and notification
+  const triggerAlert = React.useCallback((count = 1) => {
+    setShowAlert(true);
+    setEmergencyCount(count);
+    playAlertSound();
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('🚨 EMERGENCY ALERT', {
+        body: `There ${count === 1 ? 'is 1 ongoing emergency' : `are ${count} ongoing emergencies`}!`,
+        icon: '/emergency-icon.png',
+        tag: 'emergency-alert'
+      });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Emergency polling and alert logic
   useEffect(() => {
     const fetchEmergencies = async () => {
@@ -66,7 +97,7 @@ function EmergencyNotification() {
       const interval = setInterval(fetchEmergencies, 10000);
       return () => clearInterval(interval);
     }
-  }, [isLoginPage, isContactPage]);
+  }, [isLoginPage, isContactPage, stopAlertSound, triggerAlert]);
 
   // Stop sound on explicit global signal (from ContactPage after verification)
   useEffect(() => {
@@ -76,47 +107,10 @@ function EmergencyNotification() {
     };
     window.addEventListener('emergency-sound-stop', stopHandler);
     return () => window.removeEventListener('emergency-sound-stop', stopHandler);
-  }, []);
-
-  // Play alert sound
-  const playAlertSound = () => {
-    if (audioRef.current && !isPlaying) {
-      audioRef.current.play().catch(err => console.error('Failed to play alert sound:', err));
-      setIsPlaying(true);
-    }
-  };
-
-  // Stop alert sound
-  const stopAlertSound = () => {
-    if (audioRef.current && isPlaying) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      setIsPlaying(false);
-    }
-  };
-
-  // Trigger alert and notification
-  const triggerAlert = (count = 1) => {
-    setShowAlert(true);
-    setEmergencyCount(count);
-    playAlertSound();
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('🚨 EMERGENCY ALERT', {
-        body: `There ${count === 1 ? 'is 1 ongoing emergency' : `are ${count} ongoing emergencies`}!`,
-        icon: '/emergency-icon.png',
-        tag: 'emergency-alert'
-      });
-    }
-  };
-
-  // ...removed Web Audio API logic...
+  }, [stopAlertSound]);
 
   const handleViewEmergency = () => {
     navigate('/emergency');
-  };
-
-  const handleViewLocation = (emergency) => {
-    navigate('/contact', { state: { emergency } });
   };
 
   // Hide UI on login page and stop any sound

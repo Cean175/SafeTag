@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase, fetchOngoingEmergencies, fetchResolvedEmergencies, markEmergencyAsResolved } from '../lib/supabaseClient';
+import { supabase, fetchOngoingEmergencies, fetchResolvedEmergencies } from '../lib/supabaseClient';
 import '../css/EmergencyPage.css';
 
 function EmergencyPage() {
@@ -8,9 +8,27 @@ function EmergencyPage() {
   const [emergencies, setEmergencies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [resolvingId, setResolvingId] = useState(null);
   const [viewMode, setViewMode] = useState('ongoing'); // 'ongoing' or 'resolved'
   const alertedIdsRef = useRef(new Set()); // track which emergencies already triggered sound
+  const [localReportTimes, setLocalReportTimes] = useState(() => {
+    // Load saved local report times from localStorage on mount
+    try {
+      const saved = localStorage.getItem('emergencyLocalReportTimes');
+      return saved ? JSON.parse(saved) : {};
+    } catch (e) {
+      console.error('Failed to load local report times:', e);
+      return {};
+    }
+  });
+
+  // Save local report times to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('emergencyLocalReportTimes', JSON.stringify(localReportTimes));
+    } catch (e) {
+      console.error('Failed to save local report times:', e);
+    }
+  }, [localReportTimes]);
 
   // Simple in-browser beep (avoids needing an mp3 file)
   const playAlertSound = useCallback(() => {
@@ -43,6 +61,21 @@ function EmergencyPage() {
         : await fetchResolvedEmergencies();
       console.log('Emergencies loaded:', data);
       console.log('Number of emergencies:', data?.length);
+      
+      // Record local report times for new emergencies
+      if (data && data.length > 0) {
+        const now = new Date().toISOString();
+        setLocalReportTimes(prev => {
+          const updated = { ...prev };
+          data.forEach(emergency => {
+            if (!updated[emergency.id]) {
+              updated[emergency.id] = now;
+            }
+          });
+          return updated;
+        });
+      }
+      
       setEmergencies(data);
     } catch (err) {
       console.error('Error loading emergencies:', err);
@@ -73,6 +106,13 @@ function EmergencyPage() {
               const exists = updated.some(e => e.id === newRow.id);
               if (!exists) {
                 updated = [{ ...newRow }, ...updated];
+                // Record local report time for new emergency
+                if (!localReportTimes[newRow.id]) {
+                  setLocalReportTimes(prev => ({
+                    ...prev,
+                    [newRow.id]: new Date().toISOString()
+                  }));
+                }
                 // Sound only if not previously alerted
                 if (!alertedIdsRef.current.has(newRow.id)) {
                   playAlertSound();
@@ -83,6 +123,13 @@ function EmergencyPage() {
               const exists = updated.some(e => e.id === newRow.id);
               if (!exists) {
                 updated = [{ ...newRow }, ...updated];
+                // Record local report time if not already recorded
+                if (!localReportTimes[newRow.id]) {
+                  setLocalReportTimes(prev => ({
+                    ...prev,
+                    [newRow.id]: new Date().toISOString()
+                  }));
+                }
               }
             }
           }
@@ -109,6 +156,13 @@ function EmergencyPage() {
               // Row not found locally; add if it matches current filter
               if (viewMode === 'ongoing' && !newRow.is_resolved) {
                 updated.unshift({ ...newRow });
+                // Record local report time
+                if (!localReportTimes[newRow.id]) {
+                  setLocalReportTimes(prev => ({
+                    ...prev,
+                    [newRow.id]: new Date().toISOString()
+                  }));
+                }
                 if (!alertedIdsRef.current.has(newRow.id)) {
                   playAlertSound();
                   alertedIdsRef.current.add(newRow.id);
@@ -116,6 +170,13 @@ function EmergencyPage() {
               }
               if (viewMode === 'resolved' && newRow.is_resolved) {
                 updated.unshift({ ...newRow });
+                // Record local report time
+                if (!localReportTimes[newRow.id]) {
+                  setLocalReportTimes(prev => ({
+                    ...prev,
+                    [newRow.id]: new Date().toISOString()
+                  }));
+                }
               }
             }
           }
@@ -136,55 +197,7 @@ function EmergencyPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [viewMode, playAlertSound]);
-
-  const handleMarkAsResolved = async (emergencyId) => {
-    console.log('handleMarkAsResolved called with ID:', emergencyId);
-    
-    if (!window.confirm('Mark this emergency as resolved?')) {
-      console.log('User cancelled resolve action');
-      return;
-    }
-
-    try {
-      setResolvingId(emergencyId);
-      console.log('Calling markEmergencyAsResolved...');
-      
-      const result = await markEmergencyAsResolved(emergencyId);
-      
-      console.log('Emergency resolved successfully:', result);
-      console.log('Removing emergency from list...');
-      
-      // Remove from list
-      setEmergencies(emergencies.filter(e => e.id !== emergencyId));
-      
-      // Show success message
-      alert('Emergency marked as resolved successfully!');
-      
-    } catch (err) {
-      console.error('Error resolving emergency:', err);
-      console.error('Error type:', typeof err);
-      console.error('Error message:', err.message);
-      console.error('Full error object:', JSON.stringify(err, null, 2));
-      
-      // More detailed error message
-      let errorMessage = 'Failed to mark emergency as resolved.\n\n';
-      if (err.message) {
-        errorMessage += `Error: ${err.message}\n`;
-      }
-      if (err.hint) {
-        errorMessage += `Hint: ${err.hint}\n`;
-      }
-      if (err.code) {
-        errorMessage += `Code: ${err.code}\n`;
-      }
-      errorMessage += '\nCheck the browser console for more details.';
-      
-      alert(errorMessage);
-    } finally {
-      setResolvingId(null);
-    }
-  };
+  }, [viewMode, playAlertSound, localReportTimes]);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -319,7 +332,9 @@ function EmergencyPage() {
 
                   <div className="emergency-info-row">
                     <i className="far fa-clock"></i>
-                    <span><strong>Reported:</strong> {formatDateTime(emergency.reported_at)}</span>
+                    <span>
+                      <strong>Reported (Local Device):</strong> {formatDateTime(localReportTimes[emergency.id] || emergency.reported_at)}
+                    </span>
                   </div>
                 </div>
 

@@ -83,7 +83,6 @@ function ContactPage() {
 
   const locationText = emergency?.location || 'No location provided';
   const reportedTime = emergency?.reported_at ? new Date(emergency.reported_at).toLocaleString() : 'N/A';
-  const createdTime = emergency?.created_at ? new Date(emergency.created_at).toLocaleString() : 'N/A';
   const statusText = emergency ? (emergency.is_resolved ? 'Resolved' : 'Active') : 'Unknown';
 
   return (
