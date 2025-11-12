@@ -310,13 +310,13 @@ function EmergencyPage() {
                       {emergency.students.avatar_url && (
                         <img 
                           src={emergency.students.avatar_url} 
-                          alt={`${emergency.students.first_name} ${emergency.students.last_name}`}
+                          alt={emergency.students.student_name || 'Student'}
                           className="student-avatar"
                         />
                       )}
                       <div className="student-details">
                         <h3 className="student-name">
-                          {emergency.students.first_name} {emergency.students.middle_name} {emergency.students.last_name}
+                          {emergency.student.student_name}
                         </h3>
                         <p className="student-id">ID: {emergency.students.student_id}</p>
                       </div>
@@ -341,7 +341,12 @@ function EmergencyPage() {
                 <div className="emergency-card-footer">
                   <button
                     className="view-location-btn"
-                    onClick={() => navigate('/contact', { state: { emergency } })}
+                    onClick={() => navigate('/contact', { 
+                      state: { 
+                        emergency,
+                        localReportedTime: localReportTimes[emergency.id] || emergency.reported_at
+                      } 
+                    })}
                   >
                     <i className="fas fa-map-marked-alt"></i> View Location
                   </button>

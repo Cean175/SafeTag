@@ -20,9 +20,7 @@ function ContactPage() {
       setStudent(emergency.students);
     } else if (emergency) {
       setStudent({
-        first_name: emergency.first_name || 'Unknown',
-        middle_name: emergency.middle_name || '',
-        last_name: emergency.last_name || '',
+        student_name: emergency.student_name || 'Unknown',
         student_id: emergency.student_id || 'N/A',
         avatar_url: emergency.avatar_url || null
       });
@@ -77,12 +75,15 @@ function ContactPage() {
     }
   };
 
-  const studentFullName = student ? `${student.first_name} ${student.middle_name || ''} ${student.last_name}`.replace(/\s+/g,' ').trim() : 'Not available';
-  const studentAvatar = student?.avatar_url || 'https://via.placeholder.com/100x100.png?text=Student';
+  const studentFullName = student?.student_name || 'Not available';
+  const studentAvatar = student?.avatar_url || emergency?.students?.avatar_url || 'https://via.placeholder.com/100x100.png?text=Student';
   const studentId = student?.student_id || 'Not available';
 
   const locationText = emergency?.location || 'No location provided';
-  const reportedTime = emergency?.reported_at ? new Date(emergency.reported_at).toLocaleString() : 'N/A';
+  // Get the local reported time passed from EmergencyPage, or fall back to reported_at
+  const reportedTime = location.state?.localReportedTime 
+    ? new Date(location.state.localReportedTime).toLocaleString() 
+    : (emergency?.reported_at ? new Date(emergency.reported_at).toLocaleString() : 'N/A');
   const statusText = emergency ? (emergency.is_resolved ? 'Resolved' : 'Active') : 'Unknown';
 
   return (
@@ -168,7 +169,6 @@ function ContactPage() {
                     <div className="info-row"><span className="label">Student ID:</span><span className="value">{studentId}</span></div>
                     <div className="info-row"><span className="label">Status:</span><span className="value">{statusText}</span></div>
                     <div className="info-row"><span className="label">Location:</span><span className="value">{locationText}</span></div>
-                    <div className="info-row"><span className="label">Reported:</span><span className="value">{reportedTime}</span></div>
                   </div>
                 </div>
               ) : (
