@@ -274,66 +274,114 @@ function DocumentationsList() {
               overflowY: "auto",
             }}
           >
-            {/* Close Button */}
-            <button
-              onClick={closeModal}
-              style={{
-                position: "absolute",
-                top: "16px",
-                right: "16px",
-                background: "none",
-                border: "none",
-                fontSize: "1.8em",
-                cursor: "pointer",
-                color: "#43a047",
-                lineHeight: 1,
-              }}
-              aria-label="Close"
-            >
-              &times;
-            </button>
-
-            {/* Edit Button in Modal */}
-            {!editMode && !showDelete && (
-              <button
-                style={{
-                  position: "absolute",
-                  top: "16px",
-                  right: "56px",
-                  background: "#43a047",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "6px 12px",
-                  cursor: "pointer",
-                  fontSize: "0.95em"
-                }}
-                onClick={handleEditClick}
-              >
-                Edit
-              </button>
-            )}
-
-            {/* Delete Button in Modal */}
-            {!editMode && !showDelete && (
-              <button
-                style={{
-                  position: "absolute",
-                  top: "16px",
-                  right: "120px",
-                  background: "#e53935",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "6px 12px",
-                  cursor: "pointer",
-                  fontSize: "0.95em"
-                }}
-                onClick={handleDeleteClick}
-              >
-                Delete
-              </button>
-            )}
+            {/* Header with action buttons */}
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "20px",
+              paddingBottom: "16px",
+              borderBottom: "2px solid #f0f0f0"
+            }}>
+              <h2 style={{ 
+                color: "#2e7d32", 
+                margin: 0,
+                fontSize: "1.4em",
+                fontWeight: "600"
+              }}>
+                {editMode ? "Edit Documentation" : "Documentation Details"}
+              </h2>
+              
+              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                {/* Action Buttons - Only show when not in edit mode or delete confirmation */}
+                {!editMode && !showDelete && (
+                  <>
+                    <button
+                      style={{
+                        background: "#fff",
+                        color: "#43a047",
+                        border: "2px solid #43a047",
+                        borderRadius: "8px",
+                        padding: "8px 16px",
+                        cursor: "pointer",
+                        fontSize: "0.9em",
+                        fontWeight: "600",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        transition: "all 0.2s ease",
+                      }}
+                      onClick={handleEditClick}
+                      onMouseOver={(e) => {
+                        e.target.style.background = "#43a047";
+                        e.target.style.color = "#fff";
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.background = "#fff";
+                        e.target.style.color = "#43a047";
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                      Edit
+                    </button>
+                    <button
+                      style={{
+                        background: "#fff",
+                        color: "#e53935",
+                        border: "2px solid #e53935",
+                        borderRadius: "8px",
+                        padding: "8px 16px",
+                        cursor: "pointer",
+                        fontSize: "0.9em",
+                        fontWeight: "600",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        transition: "all 0.2s ease",
+                      }}
+                      onClick={handleDeleteClick}
+                      onMouseOver={(e) => {
+                        e.target.style.background = "#e53935";
+                        e.target.style.color = "#fff";
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.background = "#fff";
+                        e.target.style.color = "#e53935";
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                      Delete
+                    </button>
+                  </>
+                )}
+                
+                {/* Close Button */}
+                <button
+                  onClick={closeModal}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "1.8em",
+                    cursor: "pointer",
+                    color: "#666",
+                    lineHeight: 1,
+                    padding: "0 4px",
+                    transition: "color 0.2s ease",
+                  }}
+                  onMouseOver={(e) => e.target.style.color = "#e53935"}
+                  onMouseOut={(e) => e.target.style.color = "#666"}
+                  aria-label="Close"
+                >
+                  &times;
+                </button>
+              </div>
+            </div>
 
             {/* Delete Confirmation */}
             {showDelete && (
@@ -385,9 +433,6 @@ function DocumentationsList() {
             {/* Modal Content */}
             {editMode ? (
               <div>
-                <h2 style={{ color: "#2e7d32", marginBottom: "20px", fontSize: "1.4em" }}>
-                  Edit Documentation
-                </h2>
                 <form>
                   <label>
                     Student Name:
@@ -450,10 +495,6 @@ function DocumentationsList() {
             ) : (
               !showDelete && (
                 <>
-                  {/* Title */}
-                  <h2 style={{ color: "#2e7d32", marginBottom: "20px", fontSize: "1.4em" }}>
-                    {selectedDoc.title || "Student Documentation"}
-                  </h2>
                   {/* Header: Avatar + Name */}
                   <div
                     style={{

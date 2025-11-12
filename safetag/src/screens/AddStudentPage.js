@@ -30,7 +30,17 @@ function AddStudentPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === "student_id") {
+      // Only allow digits, max 10
+      const cleaned = value.replace(/\D/g, "").slice(0, 10);
+      setFormData({ ...formData, student_id: cleaned });
+    } else if (name === "age") {
+      // Only allow positive digits, max 3 digits
+      const cleaned = value.replace(/\D/g, "").slice(0, 3);
+      setFormData({ ...formData, age: cleaned });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleFileChange = (e) => {
@@ -54,8 +64,12 @@ function AddStudentPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Validate student_id: must be exactly 10 digits
+    if (!/^\d{10}$/.test(formData.student_id)) {
+      alert("Student ID must be exactly 10 digits.");
+      return;
+    }
     setIsLoading(true);
-
     try {
       // Upload profile picture if provided
       let uploadedUrl = null;
@@ -78,7 +92,6 @@ function AddStudentPage() {
           uploadedUrl = null;
         }
       }
-
       // This payload object's keys now match your actual database columns.
       const payload = {
         student_id: formData.student_id, // send the form's ID to the 'student_id' text column
@@ -91,7 +104,6 @@ function AddStudentPage() {
         health_condition: formData.healthCondition === "Other" ? formData.otherHealthCondition : formData.healthCondition || null,
         treatment_needs: formData.treatmentNeeds || null,
       };
-
       await createStudent(payload);
       alert("Student added successfully!");
       navigate('/user'); // Or whichever page lists the students
@@ -145,7 +157,7 @@ function AddStudentPage() {
             <input
               type="text"
               name="name"
-              placeholder="Student Name"
+              placeholder="Student Full Name"
               value={formData.name}
               onChange={handleChange}
               required
@@ -158,24 +170,30 @@ function AddStudentPage() {
             <input
               type="text"
               name="student_id"
-              placeholder="Student Id"
+              placeholder="Student ID "
               value={formData.student_id}
               onChange={handleChange}
               required
               disabled={isLoading}
+              maxLength={10}
+              pattern="\d{10}"
+              title="Student ID must be exactly 10 digits"
             />
           </div>
 
           {/* Student Age */}
           <div className="form-group">
             <input
-              type="number"
+              type="text"
               name="age"
               placeholder="Student Age"
               value={formData.age}
               onChange={handleChange}
               required
               disabled={isLoading}
+              maxLength={2}
+              pattern="\d+"
+              title="Age must be a positive number"
             />
           </div>
           {/* Student Sex */}
@@ -195,15 +213,33 @@ function AddStudentPage() {
           
           {/* Student Level */}
           <div className="form-group">
-            <input
-              type="text"
+            <select
               name="level"
-              placeholder="Student Level (e.g., 1st Year)"
               value={formData.level}
               onChange={handleChange}
               required
               disabled={isLoading}
-            />
+            >
+              <option value="" disabled>Select Student Level</option>
+              <option value="Nursery">Nursery</option>
+              <option value="Kindergarten">Kindergarten</option>
+              <option value="Grade 1">Grade 1</option>
+              <option value="Grade 2">Grade 2</option>
+              <option value="Grade 3">Grade 3</option>
+              <option value="Grade 4">Grade 4</option>
+              <option value="Grade 5">Grade 5</option>
+              <option value="Grade 6">Grade 6</option>
+              <option value="Grade 7">Grade 7</option>
+              <option value="Grade 8">Grade 8</option>
+              <option value="Grade 9">Grade 9</option>
+              <option value="Grade 10">Grade 10</option>
+              <option value="Grade 11">Grade 11</option>
+              <option value="Grade 12">Grade 12</option>
+              <option value="1st Year College">1st Year College</option>
+              <option value="2nd Year College">2nd Year College</option>
+              <option value="3rd Year College">3rd Year College</option>
+              <option value="4th Year College">4th Year College</option>
+            </select>
           </div>
           
           {/* Student Course */}

@@ -145,7 +145,6 @@ function ContactPage() {
             <div className="alert-details">
               <p className="status-line"><strong>Status:</strong> <span className={statusText === 'Active' ? 'status-active' : 'status-resolved'}>{statusText}</span></p>
               <p><strong>Reported:</strong> {reportedTime}</p>
-              <p><strong>Created:</strong> {createdTime}</p>
               <p><strong>Location:</strong> {locationText}</p>
               <div className="alert-actions">
                 <button className="secondary-btn" onClick={() => navigate('/emergency')}>Back</button>

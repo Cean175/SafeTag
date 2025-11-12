@@ -109,7 +109,7 @@ export async function fetchOngoingEmergencies() {
         .from('ongoing_emergencies')
         .select('*')
         .eq('is_resolved', false)
-        .order('reported_at', { ascending: false });
+        .order('id', { ascending: false });
     
     console.log('Fetch emergencies - data:', emergencies);
     console.log('Fetch emergencies - error:', emergencyError);
@@ -183,7 +183,7 @@ export async function fetchResolvedEmergencies() {
         .from('ongoing_emergencies')
         .select('*')
         .eq('is_resolved', true)
-        .order('reported_at', { ascending: false });
+        .order('id', { ascending: false });
     
     console.log('Fetch resolved emergencies - data:', emergencies);
     console.log('Fetch resolved emergencies - error:', emergencyError);

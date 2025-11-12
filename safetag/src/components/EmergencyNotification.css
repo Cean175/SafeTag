@@ -118,7 +118,8 @@
   color: white;
   border-radius: 20px;
   padding: 0;
-  margin-bottom: 2rem;
+  margin-top: 110px;
+  margin-bottom: 10px;
   box-shadow: 0 12px 40px rgba(231, 76, 60, 0.5), 0 0 0 3px rgba(255, 255, 255, 0.3);
   overflow: hidden;
   animation: expandIn 0.5s ease-out, pulse-expanded 3s infinite;

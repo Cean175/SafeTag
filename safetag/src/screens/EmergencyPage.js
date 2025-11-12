@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchOngoingEmergencies, fetchResolvedEmergencies, markEmergencyAsResolved } from '../lib/supabaseClient';
+import { supabase, fetchOngoingEmergencies, fetchResolvedEmergencies, markEmergencyAsResolved } from '../lib/supabaseClient';
 import '../css/EmergencyPage.css';
 
 function EmergencyPage() {
@@ -10,6 +10,28 @@ function EmergencyPage() {
   const [error, setError] = useState(null);
   const [resolvingId, setResolvingId] = useState(null);
   const [viewMode, setViewMode] = useState('ongoing'); // 'ongoing' or 'resolved'
+  const alertedIdsRef = useRef(new Set()); // track which emergencies already triggered sound
+
+  // Simple in-browser beep (avoids needing an mp3 file)
+  const playAlertSound = useCallback(() => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 880; // A5 tone
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.7, ctx.currentTime + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 1.0);
+      osc.start();
+      osc.stop(ctx.currentTime + 1.0);
+    } catch (e) {
+      console.warn('Audio playback failed:', e);
+    }
+  }, []);
 
   const loadEmergencies = useCallback(async () => {
     try {
@@ -34,6 +56,87 @@ function EmergencyPage() {
   useEffect(() => {
     loadEmergencies();
   }, [loadEmergencies]);
+
+  // Real-time subscription to ongoing_emergencies table
+  useEffect(() => {
+    // Only subscribe while viewing emergencies; subscription affects both modes
+    const channel = supabase.channel('public:ongoing_emergencies')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'ongoing_emergencies' }, (payload) => {
+        const { eventType, new: newRow, old: oldRow } = payload;
+
+        setEmergencies((current) => {
+          let updated = [...current];
+
+          if (eventType === 'INSERT') {
+            if (newRow && !newRow.is_resolved && viewMode === 'ongoing') {
+              // Prepend new active emergency
+              const exists = updated.some(e => e.id === newRow.id);
+              if (!exists) {
+                updated = [{ ...newRow }, ...updated];
+                // Sound only if not previously alerted
+                if (!alertedIdsRef.current.has(newRow.id)) {
+                  playAlertSound();
+                  alertedIdsRef.current.add(newRow.id);
+                }
+              }
+            } else if (newRow && newRow.is_resolved && viewMode === 'resolved') {
+              const exists = updated.some(e => e.id === newRow.id);
+              if (!exists) {
+                updated = [{ ...newRow }, ...updated];
+              }
+            }
+          }
+
+          if (eventType === 'UPDATE') {
+            if (!newRow) return current;
+            const idx = updated.findIndex(e => e.id === newRow.id);
+            // Transition from active to resolved
+            if (idx !== -1) {
+              if (viewMode === 'ongoing' && newRow.is_resolved) {
+                // Remove if it just got resolved
+                updated.splice(idx, 1);
+              } else if (viewMode === 'ongoing' && !newRow.is_resolved) {
+                // Update ongoing row
+                updated[idx] = { ...updated[idx], ...newRow };
+              } else if (viewMode === 'resolved' && newRow.is_resolved) {
+                // Update or add to resolved list
+                updated[idx] = { ...updated[idx], ...newRow };
+              } else if (viewMode === 'resolved' && !newRow.is_resolved) {
+                // If in resolved view and it reverted to active, remove
+                updated.splice(idx, 1);
+              }
+            } else {
+              // Row not found locally; add if it matches current filter
+              if (viewMode === 'ongoing' && !newRow.is_resolved) {
+                updated.unshift({ ...newRow });
+                if (!alertedIdsRef.current.has(newRow.id)) {
+                  playAlertSound();
+                  alertedIdsRef.current.add(newRow.id);
+                }
+              }
+              if (viewMode === 'resolved' && newRow.is_resolved) {
+                updated.unshift({ ...newRow });
+              }
+            }
+          }
+
+            if (eventType === 'DELETE' && oldRow) {
+              updated = updated.filter(e => e.id !== oldRow.id);
+            }
+
+          return updated;
+        });
+      })
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Realtime subscribed to ongoing_emergencies');
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [viewMode, playAlertSound]);
 
   const handleMarkAsResolved = async (emergencyId) => {
     console.log('handleMarkAsResolved called with ID:', emergencyId);
@@ -186,9 +289,6 @@ function EmergencyPage() {
                       {viewMode === 'ongoing' ? 'ACTIVE' : 'RESOLVED'}
                     </span>
                   </div>
-                  <div className="emergency-time">
-                    {formatDateTime(emergency.reported_at)}
-                  </div>
                 </div>
 
                 <div className="emergency-card-body">
@@ -219,7 +319,7 @@ function EmergencyPage() {
 
                   <div className="emergency-info-row">
                     <i className="far fa-clock"></i>
-                    <span><strong>Reported:</strong> {formatDateTime(emergency.created_at)}</span>
+                    <span><strong>Reported:</strong> {formatDateTime(emergency.reported_at)}</span>
                   </div>
                 </div>
 
@@ -230,23 +330,6 @@ function EmergencyPage() {
                   >
                     <i className="fas fa-map-marked-alt"></i> View Location
                   </button>
-                  {viewMode === 'ongoing' && (
-                    <button
-                      className="done-btn"
-                      onClick={() => handleMarkAsResolved(emergency.id)}
-                      disabled={resolvingId === emergency.id}
-                    >
-                      {resolvingId === emergency.id ? (
-                        <>
-                          <i className="fas fa-spinner fa-spin"></i> Resolving...
-                        </>
-                      ) : (
-                        <>
-                          <i className="fas fa-check"></i> Mark as Done
-                        </>
-                      )}
-                    </button>
-                  )}
                 </div>
               </div>
             ))}
