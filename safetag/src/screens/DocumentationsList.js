@@ -509,6 +509,9 @@ function DocumentationsList() {
                         src={selectedDoc.avatar_url}
                         alt="avatar"
                         style={{ width: "60px", height: "60px", borderRadius: "50%" }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
                       />
                     ) : (
                       <div

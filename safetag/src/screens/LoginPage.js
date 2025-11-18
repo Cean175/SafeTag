@@ -11,7 +11,7 @@ function LoginPage() {
 
   // Temporary valid credentials
   const validUsername = 'testuser@example.com';
-  const validPassword = 'test1234';
+  const validPassword = 'safetag123';
   
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';

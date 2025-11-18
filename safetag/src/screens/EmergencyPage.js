@@ -137,7 +137,6 @@ function EmergencyPage() {
           if (eventType === 'UPDATE') {
             if (!newRow) return current;
             const idx = updated.findIndex(e => e.id === newRow.id);
-            // Transition from active to resolved
             if (idx !== -1) {
               if (viewMode === 'ongoing' && newRow.is_resolved) {
                 // Remove if it just got resolved
@@ -170,7 +169,6 @@ function EmergencyPage() {
               }
               if (viewMode === 'resolved' && newRow.is_resolved) {
                 updated.unshift({ ...newRow });
-                // Record local report time
                 if (!localReportTimes[newRow.id]) {
                   setLocalReportTimes(prev => ({
                     ...prev,
@@ -312,6 +310,9 @@ function EmergencyPage() {
                           src={emergency.students.avatar_url} 
                           alt={emergency.students.student_name || 'Student'}
                           className="student-avatar"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
                         />
                       )}
                       <div className="student-details">

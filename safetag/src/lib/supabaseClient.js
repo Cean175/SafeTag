@@ -72,14 +72,34 @@ export async function deleteStudent(id) {
 
 export async function uploadFile(file, { bucket = 'avatars' } = {}) {
     if (!file) return null;
-    const fileExt = file.name.split('.').pop();
+    const fileExt = file.name.split('.').pop().toLowerCase();
     const fileName = `${Date.now()}_${Math.random().toString(36).slice(2,9)}.${fileExt}`;
+
+    // Determine proper content type for images
+    let contentType = file.type;
+    if (!contentType || contentType === 'application/octet-stream') {
+        const mimeTypes = {
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'gif': 'image/gif',
+            'webp': 'image/webp',
+            'svg': 'image/svg+xml',
+            'bmp': 'image/bmp',
+            'ico': 'image/x-icon'
+        };
+        contentType = mimeTypes[fileExt] || 'image/jpeg';
+    }
 
     // Upload
     const { error: uploadError } = await supabase
         .storage
         .from(bucket)
-        .upload(fileName, file, { upsert: false, contentType: file.type || 'application/octet-stream' });
+        .upload(fileName, file, { 
+            upsert: false, 
+            contentType: contentType,
+            cacheControl: '3600'
+        });
 
     if (uploadError) {
         console.error('Supabase storage upload error:', uploadError);
@@ -99,6 +119,7 @@ export async function uploadFile(file, { bucket = 'avatars' } = {}) {
 
     // compatibility: publicData may contain publicUrl or publicURL
     const url = publicData?.publicUrl ?? publicData?.publicURL ?? null;
+    console.log('Uploaded image URL:', url, 'Content-Type:', contentType);
     return url;
 }
 

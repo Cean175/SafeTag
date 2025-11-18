@@ -162,7 +162,14 @@ function ContactPage() {
               {student ? (
                 <div className="profile-section">
                   <div className="profile-image">
-                    <img src={studentAvatar} alt={studentFullName} className="avatar" />
+                    <img 
+                      src={studentAvatar} 
+                      alt={studentFullName} 
+                      className="avatar"
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/100x100.png?text=No+Image';
+                      }}
+                    />
                   </div>
                   <div className="student-info">
                     <div className="info-row"><span className="label">Name:</span><span className="value">{studentFullName}</span></div>

@@ -42,7 +42,6 @@ function AlertMonitor() {
     }
   }, [isPlaying]);
 
-  // Fetch student details for an emergency
   const fetchStudentDetails = async (studentId) => {
     if (!studentId) return null;
 
@@ -59,7 +58,6 @@ function AlertMonitor() {
     return data;
   };
 
-  // Subscribe to real-time emergency alerts
   useEffect(() => {
     const fetchRecentAlerts = async () => {
       const twentyFourHoursAgo = new Date();
@@ -88,7 +86,6 @@ function AlertMonitor() {
 
     fetchRecentAlerts();
 
-    // Real-time subscription for new emergencies
     const channel = supabase
       .channel('emergency-alerts')
       .on(
@@ -107,7 +104,6 @@ function AlertMonitor() {
           setAlerts((prev) => [alertWithStudent, ...prev]);
           playAlertSound();
 
-          // Browser notification
           if ('Notification' in window && Notification.permission === 'granted') {
             const studentName = student
               ? `${student.first_name} ${student.last_name}`
@@ -123,7 +119,6 @@ function AlertMonitor() {
       )
       .subscribe();
 
-    // Ask for notification permission
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }
@@ -132,9 +127,8 @@ function AlertMonitor() {
       supabase.removeChannel(channel);
       stopAlertSound();
     };
-  }, [playAlertSound, stopAlertSound]); // ✅ Added dependencies here
+  }, [playAlertSound, stopAlertSound]);
 
-  // Handle acknowledgment
   const handleAcknowledge = async (alertId) => {
     stopAlertSound();
 
@@ -151,13 +145,11 @@ function AlertMonitor() {
     }
   };
 
-  // Handle respond
   const handleRespond = async (alert) => {
     stopAlertSound();
     navigate('/contact', { state: { emergency: alert } });
   };
 
-  // Dismiss all alerts
   const handleDismissAll = () => {
     stopAlertSound();
     setAlerts([]);
@@ -213,6 +205,9 @@ function AlertMonitor() {
                       src={alert.students.avatar_url}
                       alt={`${alert.students.first_name} ${alert.students.last_name}`}
                       className="alert-avatar"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
                     />
                   )}
                   <div className="alert-details">

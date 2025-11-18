@@ -38,13 +38,25 @@
   50% { opacity: 0.9; }
 }
 
+/* Override SharedBase and ContactPage main-content styles */
+.students-page-container .main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  margin-top: 100px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
 .students-page-content {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 1rem 2rem;
+  align-items: flex-start;
+  padding: 2rem 2rem 1rem 2rem;
   flex: 1;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   width: 100%;
   overflow: hidden;
@@ -52,12 +64,13 @@
 
 .students-layout {
   display: flex;
-  gap: 2rem;
-  align-items: center;
+  gap: 3rem;
+  align-items: flex-start;
   justify-content: center;
   width: 100%;
   height: 100%;
   max-height: calc(100vh - 140px);
+  padding: 0 1rem;
 }
 
 /* ============================================
@@ -149,8 +162,9 @@
   align-items: center;
   flex-direction: column;
   gap: 0;
-  height: 100%;
-  justify-content: center;
+  height: fit-content;
+  max-height: 100%;
+  justify-content: flex-start;
 }
 
 .student-tab {
@@ -182,10 +196,9 @@
     0 2px 8px rgba(0, 0, 0, 0.08),
     inset 0 1px 1px rgba(255, 255, 255, 0.9);
   width: 100%;
-  min-height: 600px;
   height: auto;
   overflow-y: auto;
-  margin-top: 90px;
+  margin-top: 0;
 }
 
 .profile-header-badge {
@@ -217,6 +230,10 @@
   object-fit: cover;
   border: 3px solid #4CAF50;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  background: #f5f5f5;
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .default-avatar {
@@ -410,8 +427,10 @@
   flex-direction: column;
   gap: 1rem;
   height: 100%;
-  justify-content: center;
-  max-width: 600px;
+  max-height: 100%;
+  justify-content: flex-start;
+  max-width: 750px;
+  overflow: hidden;
 }
 
 .no-students-message {
@@ -457,7 +476,10 @@
 
 .students-list {
   color: #2E7D32;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 
 .student-list-item {
@@ -737,6 +759,14 @@
   color: #7e7e7e;
 }
 
+.edit-profile-btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding: 0 1rem;
+}
+
 .improved-edit-btn {
   width: 100%;
   display: flex;
@@ -748,13 +778,12 @@
   color: #fff;
   border: none;
   border-radius: 25px;
-  padding: 0.5rem 1.5rem;
+  padding: 0.7rem 2rem;
   font-size: 1rem;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(67,233,123,0.15); 
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-  margin-top: 10px;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -763,6 +792,7 @@
 .edit-profile-btn:hover {
   background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
   box-shadow: 0 4px 16px rgba(67,233,123,0.25);
+  transform: translateY(-2px);
 }
 
 /* Modal overlay and content for password prompt */

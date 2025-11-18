@@ -110,7 +110,11 @@ function AddStudentPage() {
     } catch (err) {
       console.error('Failed to create student:', err);
       const msg = typeof err?.message === 'string' ? err.message : String(err);
-      if (msg.toLowerCase().includes('row-level security')) {
+      const code = err?.code;
+      
+      if (code === '23505' || msg.includes('duplicate key') || msg.includes('unique constraint')) {
+        alert('❌ A student with this ID already exists. Please use a different Student ID.');
+      } else if (msg.toLowerCase().includes('row-level security')) {
         alert('Action blocked by Supabase Row Level Security. Please enable insert/select policies for the students table and storage bucket. See console and README for details.');
       } else {
         alert("Failed to add student. Please check the console for details.");
