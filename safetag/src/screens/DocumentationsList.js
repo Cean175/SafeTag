@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import '../css/SharedBase.css';
@@ -8,12 +8,21 @@ function DocumentationsList() {
   const [docs, setDocs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedDoc, setSelectedDoc] = useState(null);
+  // List interaction
+  const [selectedId, setSelectedId] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
+  // Edit / delete (kept minimal)
   const [editMode, setEditMode] = useState(false);
   const [editData, setEditData] = useState({});
   const [showDelete, setShowDelete] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
+  // Filtering & sorting
+  const [search, setSearch] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterCondition, setFilterCondition] = useState('');
+  const [sortBy, setSortBy] = useState('date'); // date | name | level | age | status | condition
+  const [sortOrder, setSortOrder] = useState('desc'); // asc | desc
   const navigate = useNavigate();
 
   // Set your required password here
@@ -37,8 +46,9 @@ function DocumentationsList() {
     fetchDocs();
   }, []);
 
-  const handleCardClick = (doc) => {
-    setSelectedDoc(doc);
+  const handleSelect = (doc) => {
+    setSelectedId(doc.id);
+    setExpandedId(prev => prev === doc.id ? null : doc.id);
     setEditMode(false);
     setEditData(doc);
     setShowDelete(false);
@@ -47,16 +57,17 @@ function DocumentationsList() {
   };
 
   const closeModal = () => {
-    setSelectedDoc(null);
+    setExpandedId(null);
     setEditMode(false);
     setShowDelete(false);
     setDeletePassword('');
     setDeleteError('');
   };
 
-  const handleEditClick = () => {
+  const handleEditClick = (doc) => {
     setEditMode(true);
-    setEditData(selectedDoc);
+    setEditData(doc);
+    setExpandedId(doc.id);
   };
 
   const handleEditChange = (e) => {
@@ -67,12 +78,11 @@ function DocumentationsList() {
     const { error } = await supabase
       .from('documentations')
       .update(editData)
-      .eq('id', selectedDoc.id);
+      .eq('id', editData.id);
     if (error) {
       alert('Failed to update documentation.');
     } else {
-      setDocs(docs.map(doc => doc.id === selectedDoc.id ? editData : doc));
-      setSelectedDoc(editData);
+      setDocs(docs.map(doc => doc.id === editData.id ? editData : doc));
       setEditMode(false);
     }
   };
@@ -92,14 +102,52 @@ function DocumentationsList() {
     const { error } = await supabase
       .from('documentations')
       .delete()
-      .eq('id', selectedDoc.id);
+      .eq('id', editData.id);
     if (error) {
       setDeleteError('Failed to delete documentation.');
     } else {
-      setDocs(docs.filter(doc => doc.id !== selectedDoc.id));
+      setDocs(docs.filter(doc => doc.id !== editData.id));
       closeModal();
     }
   };
+
+  // Derived list: filter + search + sort
+  const filteredSorted = useMemo(() => {
+    let list = [...docs];
+
+    const q = search.trim().toLowerCase();
+    if (q) {
+      list = list.filter(d => (
+        (d.student_name || '').toLowerCase().includes(q) ||
+        (d.student_id || '').toLowerCase().includes(q) ||
+        (d.student_lvl || '').toLowerCase().includes(q) ||
+        (d.medical_condition || '').toLowerCase().includes(q)
+      ));
+    }
+    if (filterStatus) {
+      list = list.filter(d => (d.status || '').toLowerCase() === filterStatus.toLowerCase());
+    }
+    if (filterCondition) {
+      list = list.filter(d => (d.medical_condition || '').toLowerCase().includes(filterCondition.toLowerCase()));
+    }
+
+    list.sort((a,b) => {
+      const dir = sortOrder === 'asc' ? 1 : -1;
+      const val = (field) => {
+        switch(field){
+          case 'name': return (a.student_name||'').localeCompare(b.student_name||'') * dir;
+          case 'date': return ((new Date(a.incident_date||a.created_at||0)) - (new Date(b.incident_date||b.created_at||0))) * dir;
+          case 'level': return (a.student_lvl||'').localeCompare(b.student_lvl||'') * dir;
+          case 'age': return ((parseInt(a.age)||0) - (parseInt(b.age)||0)) * dir;
+          case 'status': return (a.status||'').localeCompare(b.status||'') * dir;
+          case 'condition': return (a.medical_condition||'').localeCompare(b.medical_condition||'') * dir;
+          default: return ((new Date(a.created_at||0)) - (new Date(b.created_at||0))) * dir;
+        }
+      };
+      return val(sortBy);
+    });
+    return list;
+  }, [docs, search, filterStatus, filterCondition, sortBy, sortOrder]);
 
   // Simple Navigation Bar
   const NavBar = () => (
@@ -171,415 +219,138 @@ function DocumentationsList() {
   return (
     <div className="main-content DL-page-content" style={{ height: '100vh', display: 'flex', marginTop: '0', flexDirection: 'column' }}>
       <NavBar />
-      <div
-        className="doc-list"
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          paddingRight: '8px',
-          marginTop: '16px',
-          marginBottom: '16px',
-          
-        }}
-      >
-        {docs.length === 0 ? (
-          <div className="no-docs">
-            <p>No documentations found.</p>
-          </div>
+      {/* Controls */}
+      <div style={{ padding: '12px 20px 0', display: 'flex', flexWrap: 'wrap', gap: '12px', background: 'transparent' }}>
+        <input
+          type="text"
+          placeholder="Search name, ID, level, condition..."
+          value={search}
+          onChange={e=>setSearch(e.target.value)}
+          style={{ flex:'1 1 240px', padding:'10px 14px', border:'2px solid #c8e6c9', borderRadius:'8px', fontSize:'0.95em' }}
+        />
+        <select value={filterStatus} onChange={e=>setFilterStatus(e.target.value)} style={{ padding:'10px', border:'2px solid #c8e6c9', borderRadius:'8px' }}>
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Others">Others</option>
+        </select>
+        <select value={filterCondition} onChange={e=>setFilterCondition(e.target.value)} style={{ padding:'10px', border:'2px solid #c8e6c9', borderRadius:'8px' }}>
+          <option value="">All Conditions</option>
+          <option value="None">None</option>
+          <option value="Asthma">Asthma</option>
+          <option value="Diabetes">Diabetes</option>
+          <option value="Hypertension">Hypertension</option>
+          <option value="Others">Others</option>
+        </select>
+        <select value={sortBy} onChange={e=>setSortBy(e.target.value)} style={{ padding:'10px', border:'2px solid #c8e6c9', borderRadius:'8px' }}>
+          <option value="date">Date</option>
+          <option value="name">Name</option>
+          <option value="level">Level</option>
+          <option value="age">Age</option>
+          <option value="status">Status</option>
+          <option value="condition">Condition</option>
+        </select>
+        <select value={sortOrder} onChange={e=>setSortOrder(e.target.value)} style={{ padding:'10px', border:'2px solid #c8e6c9', borderRadius:'8px' }}>
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+        <button onClick={()=>{setSearch('');setFilterStatus('');setFilterCondition('');setSortBy('date');setSortOrder('desc');}} style={{ padding:'10px 16px', background:'#43a047', color:'#fff', border:'none', borderRadius:'8px', fontWeight:'600', cursor:'pointer' }}>Reset</button>
+      </div>
+      {/* List */}
+      <div style={{ flex:1, overflowY:'auto', padding:'8px 20px 20px' }}>
+        {filteredSorted.length === 0 ? (
+          <div style={{ padding:'40px', textAlign:'center', color:'#2e7d32', fontWeight:'600' }}>No documentations match your filters.</div>
         ) : (
-          docs.map(doc => (
-            <div
-              key={doc.id}
-              className="doc-card"
-              style={{
-                background: '#f9f9f9',
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px rgba(34, 139, 34, 0.08)',
-                marginBottom: '20px',
-                padding: '20px',
-                transition: 'box-shadow 0.2s',
-                borderLeft: '6px solid #43a047',
-                cursor: 'pointer',
-                position: 'relative',
-                marginLeft: '10px',
-                marginRight: '20px',
-              }}
-              onClick={() => handleCardClick(doc)}
-            >
-              {/* Student Info */}
-              <div style={{ marginBottom: "10px", lineHeight: "1.5" }}>
-                <div style={{ fontWeight: "600", color: "#2e7d32" }}>
-                  {doc.student_name || "N/A"}
-                </div>
-                <div style={{ fontSize: "0.9em", color: "#444" }}>
-                  ID: {doc.student_id || "N/A"} | Level: {doc.student_lvl || "N/A"} | Age:{" "}
-                  {doc.age || "N/A"}
-                </div>
-              </div>
-              {/* Incident Info */}
-              <div style={{ marginBottom: "10px", fontSize: "0.9em", color: "#333" }}>
-                <strong>Date:</strong> {doc.incident_date || "N/A"} <br />
-                <strong>Time:</strong> {doc.incident_time || "N/A"} <br />
-                <strong>Location:</strong> {doc.location || "N/A"}
-              </div>
-              {/* Status + Medical */}
-              <div style={{ marginBottom: "10px", fontSize: "0.9em", color: "#333" }}>
-                <strong>Status:</strong> {doc.status || "N/A"} <br />
-                <strong>Medical Condition:</strong> {doc.medical_condition || "N/A"}
-              </div>
-              {/* Description */}
-              <div style={{ marginBottom: "12px", fontSize: "0.9em", color: "#333" }}>
-                <strong>Description:</strong> {doc.description || "N/A"}
-              </div>
-              {/* System Info */}
-              <div style={{ fontSize: "0.8em", color: "#757575" }}>
-                Created:{" "}
-                {doc.created_at
-                  ? new Date(doc.created_at).toLocaleString()
-                  : "N/A"}
-              </div>
-            </div>
-          ))
+          <ul style={{ listStyle:'none', margin:0, padding:0 }}>
+            {filteredSorted.map(doc => {
+              const expanded = expandedId === doc.id;
+              return (
+                <li key={doc.id} style={{
+                  background:'#ffffff',
+                  marginBottom:'12px',
+                  borderRadius:'10px',
+                  border:'1px solid #e0f2e9',
+                  boxShadow:'0 2px 6px rgba(34,139,34,0.06)',
+                  transition:'background 0.15s, box-shadow 0.15s',
+                  cursor:'pointer'
+                }} onClick={()=>handleSelect(doc)}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'12px 16px' }}>
+                    <div style={{ fontWeight:600, color:'#2e7d32' }}>{doc.student_name || 'N/A'}</div>
+                    <div style={{ fontSize:'0.75em', color:'#388e3c', fontWeight:600 }}>{expanded ? 'Hide' : 'Show'}</div>
+                  </div>
+                  <div style={{ padding:'0 16px 12px', fontSize:'0.8em', color:'#355e3b' }}>
+                    ID: {doc.student_id || 'N/A'} | Level: {doc.student_lvl || 'N/A'} | Age: {doc.age || 'N/A'} | Status: {doc.status || 'N/A'} | Condition: {doc.medical_condition || 'N/A'}
+                  </div>
+                  {expanded && (
+                    <div style={{ borderTop:'1px solid #e0f2e9', padding:'10px 16px 14px', fontSize:'0.85em', lineHeight:1.5 }}>
+                      <div><strong>Date:</strong> {doc.incident_date || 'N/A'} <strong>Time:</strong> {doc.incident_time || 'N/A'} <strong>Location:</strong> {doc.location || 'N/A'}</div>
+                      <div style={{ marginTop:'6px' }}><strong>Description:</strong> {doc.description || 'N/A'}</div>
+                      <div style={{ marginTop:'8px', fontSize:'0.75em', color:'#607d8b' }}>Created: {doc.created_at ? new Date(doc.created_at).toLocaleString() : 'N/A'}</div>
+                      <div style={{ marginTop:'4px', display:'flex', gap:'8px', flexWrap:'wrap' }}>
+                        {!editMode && !showDelete && (
+                          <>
+                            <button onClick={(e)=>{e.stopPropagation();handleEditClick(doc);}} style={{ background:'#fff', border:'1px solid #43a047', color:'#2e7d32', padding:'6px 12px', borderRadius:'6px', fontSize:'0.75em', fontWeight:600, cursor:'pointer' }}>Edit</button>
+                            <button onClick={(e)=>{e.stopPropagation();setShowDelete(true);setEditData(doc);}} style={{ background:'#fff', border:'1px solid #e53935', color:'#b71c1c', padding:'6px 12px', borderRadius:'6px', fontSize:'0.75em', fontWeight:600, cursor:'pointer' }}>Delete</button>
+                          </>
+                        )}
+                      </div>
+                      {editMode && editData.id === doc.id && (
+                        <div style={{ marginTop:'10px' }}>
+                          <form onSubmit={(e)=>{e.preventDefault();handleEditSave();}}>
+                            <input style={inputStyle} name="student_name" value={editData.student_name||''} onChange={handleEditChange} placeholder="Student Name" />
+                            <input style={inputStyle} name="student_id" value={editData.student_id||''} onChange={handleEditChange} placeholder="Student ID" />
+                            <input style={inputStyle} name="student_lvl" value={editData.student_lvl||''} onChange={handleEditChange} placeholder="Level" />
+                            <input style={inputStyle} name="age" value={editData.age||''} onChange={handleEditChange} placeholder="Age" />
+                            <input style={inputStyle} name="incident_date" value={editData.incident_date||''} onChange={handleEditChange} placeholder="Date" />
+                            <input style={inputStyle} name="incident_time" value={editData.incident_time||''} onChange={handleEditChange} placeholder="Time" />
+                            <input style={inputStyle} name="location" value={editData.location||''} onChange={handleEditChange} placeholder="Location" />
+                            <input style={inputStyle} name="status" value={editData.status||''} onChange={handleEditChange} placeholder="Status" />
+                            <input style={inputStyle} name="medical_condition" value={editData.medical_condition||''} onChange={handleEditChange} placeholder="Medical Condition" />
+                            <textarea style={{ ...inputStyle, minHeight:'70px' }} name="description" value={editData.description||''} onChange={handleEditChange} placeholder="Description" />
+                            <div style={{ marginTop:'8px', display:'flex', gap:'8px' }}>
+                              <button type="submit" style={primaryBtn}>Save</button>
+                              <button type="button" style={secondaryBtn} onClick={()=>setEditMode(false)}>Cancel</button>
+                            </div>
+                          </form>
+                        </div>
+                      )}
+                      {showDelete && editData.id === doc.id && (
+                        <div style={{ marginTop:'10px' }}>
+                          <h4 style={{ color:'#e53935', margin:'4px 0' }}>Confirm Deletion</h4>
+                          <input type="password" value={deletePassword} onChange={e=>setDeletePassword(e.target.value)} placeholder="Password" style={inputStyle} />
+                          {deleteError && <div style={{ color:'#e53935', fontSize:'0.7em', marginTop:'4px' }}>{deleteError}</div>}
+                          <div style={{ marginTop:'6px', display:'flex', gap:'6px' }}>
+                            <button onClick={handleDeleteConfirm} style={dangerBtn}>Delete</button>
+                            <button onClick={()=>{setShowDelete(false);setDeletePassword('');setDeleteError('');}} style={secondaryBtn}>Cancel</button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         )}
       </div>
 
       {/* Modal Dialog */}
-      {selectedDoc && (
-        <div
-          className="modal-overlay"
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0,0,0,0.4)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            className="modal-content"
-            style={{
-              background: "#fff",
-              borderRadius: "16px",
-              padding: "28px",
-              maxWidth: "520px",
-              width: "90%",
-              boxShadow: "0 8px 30px rgba(34,139,34,0.2)",
-              position: "relative",
-              maxHeight: "80vh",
-              overflowY: "auto",
-            }}
-          >
-            {/* Header with action buttons */}
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "20px",
-              paddingBottom: "16px",
-              borderBottom: "2px solid #f0f0f0"
-            }}>
-              <h2 style={{ 
-                color: "#2e7d32", 
-                margin: 0,
-                fontSize: "1.4em",
-                fontWeight: "600"
-              }}>
-                {editMode ? "Edit Documentation" : "Documentation Details"}
-              </h2>
-              
-              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                {/* Action Buttons - Only show when not in edit mode or delete confirmation */}
-                {!editMode && !showDelete && (
-                  <>
-                    <button
-                      style={{
-                        background: "#fff",
-                        color: "#43a047",
-                        border: "2px solid #43a047",
-                        borderRadius: "8px",
-                        padding: "8px 16px",
-                        cursor: "pointer",
-                        fontSize: "0.9em",
-                        fontWeight: "600",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        transition: "all 0.2s ease",
-                      }}
-                      onClick={handleEditClick}
-                      onMouseOver={(e) => {
-                        e.target.style.background = "#43a047";
-                        e.target.style.color = "#fff";
-                      }}
-                      onMouseOut={(e) => {
-                        e.target.style.background = "#fff";
-                        e.target.style.color = "#43a047";
-                      }}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                      </svg>
-                      Edit
-                    </button>
-                    <button
-                      style={{
-                        background: "#fff",
-                        color: "#e53935",
-                        border: "2px solid #e53935",
-                        borderRadius: "8px",
-                        padding: "8px 16px",
-                        cursor: "pointer",
-                        fontSize: "0.9em",
-                        fontWeight: "600",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        transition: "all 0.2s ease",
-                      }}
-                      onClick={handleDeleteClick}
-                      onMouseOver={(e) => {
-                        e.target.style.background = "#e53935";
-                        e.target.style.color = "#fff";
-                      }}
-                      onMouseOut={(e) => {
-                        e.target.style.background = "#fff";
-                        e.target.style.color = "#e53935";
-                      }}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      </svg>
-                      Delete
-                    </button>
-                  </>
-                )}
-                
-                {/* Close Button */}
-                <button
-                  onClick={closeModal}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    fontSize: "1.8em",
-                    cursor: "pointer",
-                    color: "#666",
-                    lineHeight: 1,
-                    padding: "0 4px",
-                    transition: "color 0.2s ease",
-                  }}
-                  onMouseOver={(e) => e.target.style.color = "#e53935"}
-                  onMouseOut={(e) => e.target.style.color = "#666"}
-                  aria-label="Close"
-                >
-                  &times;
-                </button>
-              </div>
-            </div>
-
-            {/* Delete Confirmation */}
-            {showDelete && (
-              <div style={{ marginTop: "32px", marginBottom: "16px" }}>
-                <h3 style={{ color: "#e53935" }}>Confirm Deletion</h3>
-                <p>Enter password to delete this documentation:</p>
-                <input
-                  type="password"
-                  value={deletePassword}
-                  onChange={e => setDeletePassword(e.target.value)}
-                  style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc", width: "100%" }}
-                  placeholder="Password"
-                />
-                {deleteError && (
-                  <div style={{ color: "#e53935", marginTop: "8px" }}>{deleteError}</div>
-                )}
-                <div style={{ marginTop: "16px" }}>
-                  <button
-                    style={{
-                      background: "#e53935",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "6px",
-                      padding: "8px 16px",
-                      cursor: "pointer",
-                      marginRight: "8px"
-                    }}
-                    onClick={handleDeleteConfirm}
-                  >
-                    Confirm Delete
-                  </button>
-                  <button
-                    style={{
-                      background: "#e0e0e0",
-                      color: "#333",
-                      border: "none",
-                      borderRadius: "6px",
-                      padding: "8px 16px",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => setShowDelete(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Modal Content */}
-            {editMode ? (
-              <div>
-                <form>
-                  <label>
-                    Student Name:
-                    <input name="student_name" value={editData.student_name || ''} onChange={handleEditChange} />
-                  </label>
-                  <br />
-                  <label>
-                    Student ID:
-                    <input name="student_id" value={editData.student_id || ''} onChange={handleEditChange} />
-                  </label>
-                  <br />
-                  <label>
-                    Level:
-                    <input name="student_lvl" value={editData.student_lvl || ''} onChange={handleEditChange} />
-                  </label>
-                  <br />
-                  <label>
-                    Age:
-                    <input name="age" value={editData.age || ''} onChange={handleEditChange} />
-                  </label>
-                  <br />
-                  <label>
-                    Date:
-                    <input name="incident_date" value={editData.incident_date || ''} onChange={handleEditChange} />
-                  </label>
-                  <br />
-                  <label>
-                    Time:
-                    <input name="incident_time" value={editData.incident_time || ''} onChange={handleEditChange} />
-                  </label>
-                  <br />
-                  <label>
-                    Location:
-                    <input name="location" value={editData.location || ''} onChange={handleEditChange} />
-                  </label>
-                  <br />
-                  <label>
-                    Status:
-                    <input name="status" value={editData.status || ''} onChange={handleEditChange} />
-                  </label>
-                  <br />
-                  <label>
-                    Medical Condition:
-                    <input name="medical_condition" value={editData.medical_condition || ''} onChange={handleEditChange} />
-                  </label>
-                  <br />
-                  <label>
-                    Description:
-                    <textarea name="description" value={editData.description || ''} onChange={handleEditChange} />
-                  </label>
-                  <br />
-                  <button type="button" style={{ background: "#43a047", color: "#fff", border: "none", borderRadius: "6px", padding: "8px 16px", marginTop: "12px", cursor: "pointer" }} onClick={handleEditSave}>
-                    Save
-                  </button>
-                  <button type="button" style={{ marginLeft: "8px", background: "#e0e0e0", color: "#333", border: "none", borderRadius: "6px", padding: "8px 16px", marginTop: "12px", cursor: "pointer" }} onClick={() => setEditMode(false)}>
-                    Cancel
-                  </button>
-                </form>
-              </div>
-            ) : (
-              !showDelete && (
-                <>
-                  {/* Header: Avatar + Name */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: "16px",
-                      gap: "12px",
-                    }}
-                  >
-                    {selectedDoc.avatar_url ? (
-                      <img
-                        src={selectedDoc.avatar_url}
-                        alt="avatar"
-                        style={{ width: "60px", height: "60px", borderRadius: "50%" }}
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          width: "60px",
-                          height: "60px",
-                          borderRadius: "50%",
-                          background: "#e0e0e0",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "1.2em",
-                          color: "#555",
-                        }}
-                      >
-                        ?
-                      </div>
-                    )}
-                    <div>
-                      <div style={{ fontWeight: "bold", fontSize: "1.1em" }}>
-                        {selectedDoc.student_name || "N/A"}
-                      </div>
-                      <div style={{ fontSize: "0.9em", color: "#555" }}>
-                        ID: {selectedDoc.student_id || "N/A"} | Level:{" "}
-                        {selectedDoc.student_lvl || "N/A"} | Age:{" "}
-                        {selectedDoc.age || "N/A"}
-                      </div>
-                    </div>
-                  </div>
-                  {/* Event Info */}
-                  <div style={{ marginBottom: "12px" }}>
-                    <strong>Date:</strong>{" "}
-                    {selectedDoc.incident_date || "N/A"} <br />
-                    <strong>Time:</strong>{" "}
-                    {selectedDoc.incident_time || "N/A"} <br />
-                    <strong>Location:</strong>{" "}
-                    {selectedDoc.location || "N/A"}
-                  </div>
-                  {/* Medical Info */}
-                  <div style={{ marginBottom: "12px" }}>
-                    <strong>Status:</strong> {selectedDoc.status || "N/A"} <br />
-                    <strong>Medical Condition:</strong>{" "}
-                    {selectedDoc.medical_condition || "N/A"}
-                  </div>
-                  {/* Description */}
-                  <div style={{ marginBottom: "12px" }}>
-                    <strong>Description:</strong> {selectedDoc.description || "N/A"}
-                  </div>
-                  {/* System Info */}
-                  <div style={{ fontSize: "0.85em", color: "#757575" }}>
-                    Created:{" "}
-                    {selectedDoc.created_at
-                      ? new Date(selectedDoc.created_at).toLocaleString()
-                      : "N/A"}
-                    <br />
-                    Updated:{" "}
-                    {selectedDoc.updated_at
-                      ? new Date(selectedDoc.updated_at).toLocaleString()
-                      : "N/A"}
-                  </div>
-                </>
-              )
-            )}
-          </div>
-        </div>
+      {/* Modal removed in list redesign */}
       )}
     </div>
   );
 }
+// Shared inline input/button styles (minimal – no external mutation)
+const inputStyle = {
+  width:'100%',
+  marginBottom:'6px',
+  padding:'8px 10px',
+  border:'1px solid #cfd8dc',
+  borderRadius:'6px',
+  fontSize:'0.75em'
+};
+const primaryBtn = { background:'#43a047', color:'#fff', border:'none', padding:'6px 12px', borderRadius:'6px', fontSize:'0.75em', fontWeight:600, cursor:'pointer' };
+const secondaryBtn = { background:'#eceff1', color:'#37474f', border:'none', padding:'6px 12px', borderRadius:'6px', fontSize:'0.75em', fontWeight:600, cursor:'pointer' };
+const dangerBtn = { background:'#e53935', color:'#fff', border:'none', padding:'6px 12px', borderRadius:'6px', fontSize:'0.75em', fontWeight:600, cursor:'pointer' };
 
 export default DocumentationsList;
