@@ -10,6 +10,7 @@ import Documentations from './screens/Documentations';
 import Settings from './screens/Settings';
 import ContactPage from './screens/ContactPage';
 import Statistics from './screens/Statistics';
+import PolicyInstructions from './screens/PolicyInstructions';
 import DocumentationsList from './screens/DocumentationsList';
 import AlertMonitor from './screens/AlertMonitor';
 import EmergencyNotification from './components/EmergencyNotification';
@@ -34,6 +35,7 @@ function App() {
         <Route path="/documentations-list" element={<DocumentationsList />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/policy" element={<PolicyInstructions />} />
       </Routes>
     </Router>
   );

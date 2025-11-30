@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/SharedBase.css';
 import '../css/UserPage.css';
+import BrandLogos from '../components/BrandLogos';
 
 
 
@@ -33,7 +34,10 @@ function UserPage() {
       <header className="header">
         <div className="header-content">
           <div className="branding">
-            <h1 className="title">S.A.F.E</h1>
+            <div className="title-row">
+              <h1 className="title">S.A.F.E</h1>
+              <BrandLogos />
+            </div>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
 

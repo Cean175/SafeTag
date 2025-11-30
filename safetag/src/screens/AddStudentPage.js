@@ -3,6 +3,7 @@ import '../css/UserPage.css';
 import '../css/AddStudentPage.css';
 import { useState, useEffect } from "react";
 import { createStudent, uploadFile } from '../lib/supabaseClient';
+import BrandLogos from '../components/BrandLogos';
 
 function AddStudentPage() {
   const navigate = useNavigate();
@@ -130,7 +131,10 @@ function AddStudentPage() {
       <header className="header">
         <div className="header-content">
           <div className="branding">
-            <h1 className="title">S.A.F.E</h1>
+            <div className="title-row">
+              <h1 className="title">S.A.F.E</h1>
+              <BrandLogos />
+            </div>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
           <nav className="nav-icons">

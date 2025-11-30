@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import '../css/SharedBase.css';
 import '../css/DocumentationList.css';
+import BrandLogos from '../components/BrandLogos';
 
 function DocumentationsList() {
   const [docs, setDocs] = useState([]);
@@ -199,7 +200,10 @@ function DocumentationsList() {
           <path d="M15 18l-6-6 6-6" />
         </svg>
       </button>
-      <span>SafeTag Documentation</span>
+      <span style={{display:'flex',alignItems:'center',gap:'12px'}}>
+        <span>SafeTag Documentation</span>
+        <BrandLogos />
+      </span>
     </nav>
   );
 

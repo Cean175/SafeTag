@@ -3,6 +3,7 @@ import { supabase, fetchStudents } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import '../css/SharedBase.css';
 import '../css/Documentations.css';
+import BrandLogos from '../components/BrandLogos';
 
 function Documentations() {
     const navigate = useNavigate();
@@ -196,7 +197,10 @@ function Documentations() {
             <header className="header">
                 <div className="header-content">
                     <div className="branding">
-                        <h1 className="title">S.A.F.E</h1>
+                        <div className="title-row">
+                            <h1 className="title">S.A.F.E</h1>
+                            <BrandLogos />
+                        </div>
                         <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
                     </div>
                     <div className="nav-icons">

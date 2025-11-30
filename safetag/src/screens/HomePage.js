@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/HomePage.css';
 import AlertMonitor from './AlertMonitor'; // keep import, it’s fine
+import BrandLogos from '../components/BrandLogos';
 
 function Homepage() {
   const navigate = useNavigate();
@@ -16,7 +17,10 @@ function Homepage() {
       <header className="header navbar">
         <div className="header-content">
           <div className="branding">
-            <h1 className="title">S.A.F.E</h1>
+            <div className="title-row">
+              <h1 className="title">S.A.F.E</h1>
+              <BrandLogos />
+            </div>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
 

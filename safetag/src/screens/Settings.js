@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/Settings.css';
+import BrandLogos from '../components/BrandLogos';
 
 function Settings() {
   const navigate = useNavigate();
@@ -23,7 +24,10 @@ const handleLogout = () => {
       <header className="header">
         <div className="header-content">
           <div className="branding">
-            <h1 className="title">S.A.F.E</h1>
+            <div className="title-row">
+              <h1 className="title">S.A.F.E</h1>
+              <BrandLogos />
+            </div>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
 
@@ -55,6 +59,11 @@ const handleLogout = () => {
           <button className="logout-btn" onClick={handleLogout}>
             Log-out
           </button>
+          <div style={{marginTop:'1.5rem',textAlign:'center'}}>
+            <button className="secondary-btn" onClick={() => handleNavigation('/policy')}>
+              View Policies & Instructions
+            </button>
+          </div>
         </div>
       </main>
     </div>

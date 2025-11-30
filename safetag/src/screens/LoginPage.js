@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import '../App.css';
 import '../css/LoginPage.css';
+import BrandLogos from '../components/BrandLogos';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
@@ -42,8 +43,11 @@ function LoginPage() {
     <div className="login-container">
       <header className="header">
         <div className="header-content">
-          <div className="branding">
-            <h1 className="title">S.A.F.E</h1>
+          <div className="branding" style={{alignItems:'flex-start'}}>
+            <div className="title-row">
+              <h1 className="title">S.A.F.E</h1>
+              <BrandLogos />
+            </div>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
         </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase, fetchOngoingEmergencies, fetchResolvedEmergencies } from '../lib/supabaseClient';
 import '../css/EmergencyPage.css';
+import BrandLogos from '../components/BrandLogos';
 
 function EmergencyPage() {
   const navigate = useNavigate();
@@ -218,7 +219,10 @@ function EmergencyPage() {
       <header className="header">
         <div className="header-content">
           <div className="branding">
-            <h1 className="title">S.A.F.E</h1>
+            <div className="title-row">
+              <h1 className="title">S.A.F.E</h1>
+              <BrandLogos />
+            </div>
             <p className="subtitle">STUDENT ASSISTANCE FOR EMERGENCIES</p>
           </div>
 

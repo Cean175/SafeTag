@@ -1,0 +1,28 @@
+/* Shared brand logos styling */
+.brand-logos {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-left: 16px;
+}
+
+.brand-logo {
+	height: 42px;
+	width: auto;
+	display: block;
+	object-fit: contain;
+	filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}
+
+/* Place logos beside title */
+.title-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+.title-row .brand-logos { margin-left: 0; }
+
+@media (max-width: 700px) {
+	.brand-logos { gap:6px; }
+	.brand-logo { height:32px; }
+}
