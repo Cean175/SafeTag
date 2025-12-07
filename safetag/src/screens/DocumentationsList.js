@@ -10,7 +10,6 @@ function DocumentationsList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   // List interaction
-  const [selectedId, setSelectedId] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   // Edit / delete (kept minimal)
   const [editMode, setEditMode] = useState(false);
@@ -48,7 +47,6 @@ function DocumentationsList() {
   }, []);
 
   const handleSelect = (doc) => {
-    setSelectedId(doc.id);
     setExpandedId(prev => prev === doc.id ? null : doc.id);
     setEditMode(false);
     setEditData(doc);
@@ -89,8 +87,9 @@ function DocumentationsList() {
   };
 
   // Delete logic
-  const handleDeleteClick = () => {
+  const handleDeleteClick = (doc) => {
     setShowDelete(true);
+    setEditData(doc);
     setDeletePassword('');
     setDeleteError('');
   };
@@ -294,7 +293,7 @@ function DocumentationsList() {
                         {!editMode && !showDelete && (
                           <>
                             <button onClick={(e)=>{e.stopPropagation();handleEditClick(doc);}} style={{ background:'#fff', border:'1px solid #43a047', color:'#2e7d32', padding:'6px 12px', borderRadius:'6px', fontSize:'0.75em', fontWeight:600, cursor:'pointer' }}>Edit</button>
-                            <button onClick={(e)=>{e.stopPropagation();setShowDelete(true);setEditData(doc);}} style={{ background:'#fff', border:'1px solid #e53935', color:'#b71c1c', padding:'6px 12px', borderRadius:'6px', fontSize:'0.75em', fontWeight:600, cursor:'pointer' }}>Delete</button>
+                            <button onClick={(e)=>{e.stopPropagation();handleDeleteClick(doc);}} style={{ background:'#fff', border:'1px solid #e53935', color:'#b71c1c', padding:'6px 12px', borderRadius:'6px', fontSize:'0.75em', fontWeight:600, cursor:'pointer' }}>Delete</button>
                           </>
                         )}
                       </div>
@@ -340,7 +339,6 @@ function DocumentationsList() {
 
       {/* Modal Dialog */}
       {/* Modal removed in list redesign */}
-      )}
     </div>
   );
 }

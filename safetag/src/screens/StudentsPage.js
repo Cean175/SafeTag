@@ -9,8 +9,8 @@ import BrandLogos from '../components/BrandLogos';
 function StudentsPage() {
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
-  const [filteredStudents, setFilteredStudents] = useState([]);
-  const [selectedStudentIndex, setSelectedStudentIndex] = useState(null);
+  // const [filteredStudents, setFilteredStudents] = useState([]); // Removed state
+  const [selectedStudentId, setSelectedStudentId] = useState(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [editPassword, setEditPassword] = useState('');
   const [editError, setEditError] = useState('');
@@ -28,9 +28,10 @@ function StudentsPage() {
       try {
         const studentsData = await fetchStudents();
         setStudents(studentsData || []);
-        setFilteredStudents(studentsData || []);
+        // setFilteredStudents(studentsData || []); // Removed
         if (studentsData && studentsData.length > 0) {
-          setSelectedStudentIndex(0);
+          const first = studentsData[0];
+          setSelectedStudentId(first.student_id || first.id);
         }
       } catch (err) {
         console.error('Failed to fetch students', err);
@@ -38,17 +39,18 @@ function StudentsPage() {
         if (savedStudents) {
           const studentsData = JSON.parse(savedStudents);
           setStudents(studentsData);
-          setFilteredStudents(studentsData);
+          // setFilteredStudents(studentsData); // Removed
           if (studentsData.length > 0) {
-            setSelectedStudentIndex(0);
+            const first = studentsData[0];
+            setSelectedStudentId(first.student_id || first.id);
           }
         }
       }
     })();
   }, []);
 
-  // Filter and sort effect
-  useEffect(() => {
+  // Filter and sort logic
+  const filteredStudents = React.useMemo(() => {
     let result = [...students];
 
     // Apply search filter
@@ -126,21 +128,25 @@ function StudentsPage() {
       }
     });
 
-    setFilteredStudents(result);
-    
-    // Reset selection if current selection is not in filtered results
-    if (selectedStudentIndex !== null) {
-      const currentStudent = students[selectedStudentIndex];
-      const newIndex = result.findIndex(s => s.id === currentStudent?.id);
-      if (newIndex === -1) {
-        setSelectedStudentIndex(result.length > 0 ? 0 : null);
-      } else {
-        setSelectedStudentIndex(newIndex);
-      }
-    } else if (result.length > 0) {
-      setSelectedStudentIndex(0);
-    }
+    return result;
   }, [searchQuery, filterSex, filterLevel, filterHealthCondition, sortBy, sortOrder, students]);
+
+  // Selection logic
+  useEffect(() => {
+    if (filteredStudents.length > 0) {
+      // If no selection or current selection not in filtered list, select first
+      // Note: checking if selectedStudentId is in filteredStudents might be expensive for large lists, 
+      // but for typical page sizes it's fine.
+      const exists = filteredStudents.some(s => (s.student_id || s.id) === selectedStudentId);
+      if (!selectedStudentId || !exists) {
+        // Prefer student_id if available, else id
+        const first = filteredStudents[0];
+        setSelectedStudentId(first.student_id || first.id);
+      }
+    } else {
+      setSelectedStudentId(null);
+    }
+  }, [filteredStudents, selectedStudentId]);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -165,8 +171,9 @@ function StudentsPage() {
     setSortOrder('asc');
   };
 
-  const selectedStudent =
-    selectedStudentIndex !== null ? filteredStudents[selectedStudentIndex] : null;
+  const selectedStudent = selectedStudentId 
+    ? filteredStudents.find(s => (s.student_id || s.id) === selectedStudentId) 
+    : null;
 
   return (
     <div className="students-page-container">
@@ -228,9 +235,8 @@ function StudentsPage() {
                                   setShowPasswordModal(false);
                                   setEditPassword('');
                                   setEditError('');
-                                  if (selectedStudentIndex !== null) {
-                                    const actualStudent = filteredStudents[selectedStudentIndex];
-                                    const actualIndex = students.findIndex(s => s.id === actualStudent.id);
+                                  if (selectedStudent) {
+                                    const actualIndex = students.findIndex(s => s.id === selectedStudent.id);
                                     navigate(`/editstudent/${actualIndex}`);
                                   }
                                 } else {
@@ -518,8 +524,8 @@ function StudentsPage() {
                     filteredStudents.map((student, index) => (
                       <div
                         key={student.id || index}
-                        className={`student-card ${selectedStudentIndex === index ? 'selected' : ''}`}
-                        onClick={() => setSelectedStudentIndex(index)}
+                        className={`student-card ${(selectedStudentId === (student.student_id || student.id)) ? 'selected' : ''}`}
+                        onClick={() => setSelectedStudentId(student.student_id || student.id)}
                       >
                         <div className="student-card-avatar">
                           {(student.avatar_url || student.profilePicture || student.profile_picture) ? (
