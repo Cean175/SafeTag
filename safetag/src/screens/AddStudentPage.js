@@ -1,13 +1,161 @@
 import { useNavigate } from 'react-router-dom';
 import '../css/UserPage.css';
 import '../css/AddStudentPage.css';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { read, utils } from 'xlsx';
 import { createStudent, uploadFile } from '../lib/supabaseClient';
 import BrandLogos from '../components/BrandLogos';
 
 function AddStudentPage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handleImportClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const processExcelFile = async (file) => {
+    if (!file) return;
+
+    setIsImporting(true);
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = read(data);
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const jsonData = utils.sheet_to_json(worksheet);
+
+      if (jsonData.length === 0) {
+        alert("No data found in the Excel file.");
+        setIsImporting(false);
+        return;
+      }
+
+      let successCount = 0;
+      let errorCount = 0;
+      let errors = [];
+
+      for (const [index, originalRow] of jsonData.entries()) {
+        const rowNumber = index + 2; // +1 for 0-index, +1 for header row
+        
+        // Normalize keys to lowercase for flexible matching
+        const row = {};
+        Object.keys(originalRow).forEach(key => {
+          row[key.trim().toLowerCase()] = originalRow[key];
+        });
+
+        // Mapping: check various potential column names
+        const studentIdRaw = String(row['student id'] || row['student_id'] || row['id'] || '');
+        const name = row['name'] || row['fullname'] || row['full name'];
+        const age = parseInt(row['age'], 10);
+        const sex = row['sex'] || row['gender'];
+        const level = row['level'] || row['grade'] || row['year_level'];
+        const course = row['course'] || row['program'];
+        const healthCondition = row['health condition'] || row['health_condition'] || row['health'];
+        const treatmentNeeds = row['treatment needs'] || row['treatment_needs'] || row['treatment'];
+
+        // Validate required fields
+        const missingFields = [];
+        if (!studentIdRaw) missingFields.push('Student ID');
+        if (!name) missingFields.push('Name');
+        if (!age) missingFields.push('Age');
+        if (!sex) missingFields.push('Sex');
+        if (!level) missingFields.push('Level');
+        if (!course) missingFields.push('Course');
+        if (!healthCondition) missingFields.push('Health Condition');
+        if (!treatmentNeeds) missingFields.push('Treatment Needs');
+
+        if (missingFields.length > 0) {
+           const msg = `Row ${rowNumber} skipped: Missing ${missingFields.join(', ')}`;
+           console.warn(msg, originalRow);
+           if (errors.length < 5) errors.push(msg); // Limit reported errors
+           errorCount++;
+           continue;
+        }
+
+        const studentId = studentIdRaw.trim();
+        
+        if (studentId.length === 0) {
+            const msg = `Row ${rowNumber} skipped: ID cannot be empty (found "${studentIdRaw}")`;
+           console.warn(msg, originalRow);
+           if (errors.length < 5) errors.push(msg);
+           errorCount++;
+           continue;
+        }
+        
+        const payload = {
+          student_id: studentId,
+          name: name,
+          age: age,
+          sex: sex,
+          level: level,
+          course: course,
+          health_condition: healthCondition,
+          treatment_needs: treatmentNeeds,
+        };
+
+        try {
+           await createStudent(payload);
+           successCount++;
+        } catch (err) {
+           const msg = `Row ${rowNumber} failed to save: ${err.message || 'Unknown error'}`;
+           console.error(msg, err);
+           if (errors.length < 5) errors.push(msg);
+           errorCount++;
+        }
+      }
+
+      let message = `Import complete.\nSuccess: ${successCount}\nFailed: ${errorCount}`;
+      if (errorCount > 0 && errors.length > 0) {
+          message += "\n\nSample Errors:\n" + errors.join("\n");
+          if (errorCount > errors.length) message += `\n...and ${errorCount - errors.length} more.`;
+      }
+      alert(message);
+      
+      // Refresh logic if needed, or stay on page to add more
+      
+    } catch (error) {
+      console.error("Error processing Excel file:", error);
+      alert("Error processing Excel file: " + error.message);
+    } finally {
+      setIsImporting(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleExcelFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      processExcelFile(e.target.files[0]);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      if (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.type === "application/vnd.ms-excel" || file.name.endsWith(".xlsx") || file.name.endsWith(".xls")) {
+          processExcelFile(file);
+      } else {
+        alert("Please drop a valid Excel file (.xlsx or .xls)");
+      }
+    }
+  };
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -32,9 +180,8 @@ function AddStudentPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "student_id") {
-      // Only allow digits, max 10
-      const cleaned = value.replace(/\D/g, "").slice(0, 10);
-      setFormData({ ...formData, student_id: cleaned });
+      // Allow any alphanumeric ID
+      setFormData({ ...formData, student_id: value });
     } else if (name === "age") {
       // Only allow positive digits, max 3 digits
       const cleaned = value.replace(/\D/g, "").slice(0, 3);
@@ -65,9 +212,8 @@ function AddStudentPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate student_id: must be exactly 10 digits
-    if (!/^\d{10}$/.test(formData.student_id)) {
-      alert("Student ID must be exactly 10 digits.");
+    if (!formData.student_id || formData.student_id.trim() === '') {
+      alert("Student ID is required.");
       return;
     }
     setIsLoading(true);
@@ -160,6 +306,45 @@ function AddStudentPage() {
       {/* Main Content */}
       <main className="main-content add-student-content">
         <form className="student-form" onSubmit={handleSubmit} encType="multipart/form-data" aria-label="Add student form">
+        
+          <div 
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={handleImportClick}
+            style={{ 
+                border: isDragging ? '2px dashed #4CAF50' : '2px dashed #ccc',
+                borderRadius: '12px',
+                padding: '30px',
+                textAlign: 'center',
+                backgroundColor: isDragging ? 'rgba(76, 175, 80, 0.1)' : '#f8f9fa',
+                cursor: 'pointer',
+                marginBottom: '20px',
+                transition: 'all 0.2s ease',
+                position: 'relative'
+            }}
+          >
+              <input 
+                  type="file" 
+                  accept=".xlsx, .xls" 
+                  ref={fileInputRef} 
+                  style={{ display: 'none' }} 
+                  onChange={handleExcelFileChange}
+              />
+              <div style={{ fontSize: '2.5rem', color: '#4CAF50', marginBottom: '15px' }}>
+                <i className="fas fa-file-excel"></i>
+              </div>
+              <h3 style={{ margin: '0 0 5px', fontSize: '1.1rem', color: '#333' }}>
+                {isImporting ? "Importing Data..." : "Drag & Drop Excel File"}
+              </h3>
+              <p style={{ margin: '0', fontSize: '0.9rem', color: '#666' }}>
+                or <span style={{ color: '#4CAF50', textDecoration: 'underline' }}>browse to upload</span>
+              </p>
+               <div style={{ fontSize: '0.75rem', color: '#999', marginTop: '15px', fontStyle: 'italic' }}>
+                  Required columns: Student ID, Name, Age, Sex, Level, Course, Health Condition, Treatment Needs
+              </div>
+          </div>
+
           {/* Student Name */}
           <div className="form-group">
             <input
@@ -183,9 +368,6 @@ function AddStudentPage() {
               onChange={handleChange}
               required
               disabled={isLoading}
-              maxLength={10}
-              pattern="\d{10}"
-              title="Student ID must be exactly 10 digits"
             />
           </div>
 
