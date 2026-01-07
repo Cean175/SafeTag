@@ -39,6 +39,16 @@ export async function deleteDocumentation(id) {
     return data[0];
 }
 
+export async function fetchStudentRecords(studentId) {
+    const { data, error } = await supabase
+        .from('documentations')
+        .select('*')
+        .eq('student_id', studentId)
+        .order('incident_date', { ascending: false });
+    if (error) throw error;
+    return data;
+}
+
 // -------------------- Students API --------------------
 export async function createStudent(payload) {
     const { data, error } = await supabase.from('students').insert([payload]).select("*");

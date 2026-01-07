@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../css/StudentsPage.css';
 import '../css/StudentsPageSearch.css';
 import '../css/AddStudentPage.css';
-import { fetchStudents } from '../lib/supabaseClient';
+import { fetchStudents, fetchStudentRecords } from '../lib/supabaseClient';
 import BrandLogos from '../components/BrandLogos';
 
 function StudentsPage() {
@@ -14,6 +14,10 @@ function StudentsPage() {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [editPassword, setEditPassword] = useState('');
   const [editError, setEditError] = useState('');
+
+  const [showRecordsModal, setShowRecordsModal] = useState(false);
+  const [studentRecords, setStudentRecords] = useState([]);
+  const [loadingRecords, setLoadingRecords] = useState(false);
   
   // Search and filter states
   const [searchQuery, setSearchQuery] = useState('');
@@ -148,6 +152,25 @@ function StudentsPage() {
     }
   }, [filteredStudents, selectedStudentId]);
 
+  const selectedStudent = selectedStudentId 
+    ? filteredStudents.find(s => (s.student_id || s.id) === selectedStudentId) 
+    : null;
+
+  const handleViewRecords = async () => {
+    if (!selectedStudent) return;
+    setShowRecordsModal(true);
+    setLoadingRecords(true);
+    try {
+      const idToFetch = selectedStudent.student_id || selectedStudent.studentId || selectedStudent.id; 
+      const records = await fetchStudentRecords(idToFetch);
+      setStudentRecords(records || []);
+    } catch (err) {
+      console.error('Failed to fetch records', err);
+    } finally {
+      setLoadingRecords(false);
+    }
+  };
+
   const handleNavigation = (path) => {
     navigate(path);
   };
@@ -170,10 +193,6 @@ function StudentsPage() {
     setSortBy('name');
     setSortOrder('asc');
   };
-
-  const selectedStudent = selectedStudentId 
-    ? filteredStudents.find(s => (s.student_id || s.id) === selectedStudentId) 
-    : null;
 
   return (
     <div className="students-page-container">
@@ -256,6 +275,49 @@ function StudentsPage() {
                         </div>
                       </div>
                     )}
+                    {showRecordsModal && (
+                      <div className="modal-overlay">
+                        <div className="modal-content records-modal-content" style={{ maxWidth: '600px', width: '90%' }}>
+                          <h3 style={{ marginBottom: '15px', color: '#333' }}>Student Records History</h3>
+                          
+                          {loadingRecords ? (
+                             <div className="loading-spinner">Loading...</div>
+                          ) : (
+                            <div className="records-list" style={{ maxHeight: '400px', overflowY: 'auto', textAlign: 'left' }}>
+                                {studentRecords.length === 0 ? (
+                                    <p style={{ color: '#666', fontStyle: 'italic', padding: '20px', textAlign: 'center' }}>No records found for this student.</p>
+                                ) : (
+                                    studentRecords.map((record, idx) => (
+                                        <div key={idx} className="record-item" style={{ 
+                                            border: '1px solid #eee',
+                                            borderRadius: '8px', 
+                                            padding: '12px',
+                                            marginBottom: '10px',
+                                            backgroundColor: '#f9f9f9'
+                                        }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', borderBottom: '1px solid #ddd', paddingBottom: '5px' }}>
+                                                <strong style={{ color: '#FA7070' }}>{record.incident_date}</strong>
+                                                <span style={{ fontSize: '0.9em', color: '#888' }}>{record.incident_time}</span>
+                                            </div>
+                                            <div style={{ marginBottom: '4px', fontSize: '14px' }}><strong>Condition:</strong> {record.medical_condition}</div>
+                                            <div style={{ marginBottom: '4px', fontSize: '14px' }}><strong>Status:</strong> {record.status}</div>
+                                            <div style={{ marginBottom: '4px', fontSize: '14px' }}><strong>Description:</strong> {record.description}</div>
+                                            {record.location && <div style={{ fontSize: '14px' }}><strong>Location:</strong> {record.location}</div>}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                          )}
+
+                          <div className="modal-actions" style={{ marginTop: '20px', justifyContent: 'flex-end' }}>
+                            <button
+                              className="modal-cancel-btn"
+                              onClick={() => setShowRecordsModal(false)}
+                            >Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <div className="profile-card">
                       <div className="profile-header-badge">DEMOGRAPHIC PROFILE</div>
                       <div className="profile-avatar-section">
@@ -321,7 +383,10 @@ function StudentsPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="edit-profile-btn-container improved-edit-btn">
+                    <div className="edit-profile-btn-container improved-edit-btn" style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+                      <button className="edit-profile-btn" onClick={handleViewRecords} style={{ backgroundColor: '#ff9800' }}>
+                        <i className="fas fa-history"></i> View Records History
+                      </button>
                       <button className="edit-profile-btn" onClick={handleEditStudent}>
                         <i className="fas fa-edit"></i> Edit Profile
                       </button>
