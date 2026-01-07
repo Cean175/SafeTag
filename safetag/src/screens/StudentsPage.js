@@ -18,6 +18,7 @@ function StudentsPage() {
   const [showRecordsModal, setShowRecordsModal] = useState(false);
   const [studentRecords, setStudentRecords] = useState([]);
   const [loadingRecords, setLoadingRecords] = useState(false);
+  const [showTableModal, setShowTableModal] = useState(false);
   
   // Search and filter states
   const [searchQuery, setSearchQuery] = useState('');
@@ -194,6 +195,40 @@ function StudentsPage() {
     setSortOrder('asc');
   };
 
+  const exportToCSV = () => {
+    if (!filteredStudents || !filteredStudents.length) return;
+
+    const headers = ['Name', 'Student ID', 'Sex', 'Age', 'Level', 'Course', 'Health Condition', 'Treatment Needs'];
+    const filename = `Registered_Students_${new Date().toISOString().split('T')[0]}.csv`;
+
+    const csvContent = [
+        headers.join(','),
+        ...filteredStudents.map(student => {
+            const clean = (text) => `"${(text || '').toString().replace(/"/g, '""')}"`;
+            return [
+                clean(student.name),
+                clean(student.student_id || student.id || student.studentId),
+                clean(student.sex),
+                clean(student.age),
+                clean(student.level || student.yearLevel),
+                clean(student.course),
+                clean(student.health_condition),
+                clean(student.treatment_needs)
+            ].join(',');
+        })
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="students-page-container">
       <header className="header">
@@ -313,6 +348,70 @@ function StudentsPage() {
                             <button
                               className="modal-cancel-btn"
                               onClick={() => setShowRecordsModal(false)}
+                            >Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {showTableModal && (
+                      <div className="modal-overlay">
+                        <div className="modal-content records-modal-content" style={{ maxWidth: '90%', width: '1200px', height: '80vh', display: 'flex', flexDirection: 'column' }}>
+                          <h3 style={{ marginBottom: '15px', color: '#333' }}>Registered Students List</h3>
+                          
+                          <div className="table-container" style={{ flex: 1, overflow: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+                              <thead style={{ position: 'sticky', top: 0, background: '#f5f5f5', zIndex: 1 }}>
+                                <tr>
+                                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Name</th>
+                                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>ID</th>
+                                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Sex</th>
+                                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Age</th>
+                                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Level</th>
+                                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Course</th>
+                                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Condition</th>
+                                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Needs</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {filteredStudents.length === 0 ? (
+                                  <tr>
+                                    <td colSpan="8" style={{ padding: '20px', textAlign: 'center', color: '#666' }}>No students found matching filters.</td>
+                                  </tr>
+                                ) : (
+                                  filteredStudents.map((student, idx) => (
+                                    <tr key={student.id || idx} style={{ borderBottom: '1px solid #eee' }}>
+                                      <td style={{ padding: '10px' }}>{student.name}</td>
+                                      <td style={{ padding: '10px' }}>{student.student_id || student.id || student.studentId}</td>
+                                      <td style={{ padding: '10px' }}>{student.sex}</td>
+                                      <td style={{ padding: '10px' }}>{student.age}</td>
+                                      <td style={{ padding: '10px' }}>{student.level || student.yearLevel}</td>
+                                      <td style={{ padding: '10px' }}>{student.course || '-'}</td>
+                                      <td style={{ padding: '10px' }}>
+                                        {student.health_condition && student.health_condition.toLowerCase() !== 'none' ? (
+                                          <span style={{ background: '#ffebee', color: '#c62828', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>
+                                            {student.health_condition}
+                                          </span>
+                                        ) : 'None'}
+                                      </td>
+                                      <td style={{ padding: '10px' }}>{student.treatment_needs || 'None'}</td>
+                                    </tr>
+                                  ))
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          <div className="modal-actions" style={{ marginTop: '20px', justifyContent: 'flex-end', gap: '10px' }}>
+                             <button
+                              className="modal-confirm-btn"
+                              onClick={exportToCSV}
+                              style={{ background: '#4CAF50' }}
+                            >
+                              <i className="fas fa-file-export"></i> Export CSV
+                            </button>
+                            <button
+                              className="modal-cancel-btn"
+                              onClick={() => setShowTableModal(false)}
                             >Close</button>
                           </div>
                         </div>
@@ -449,12 +548,32 @@ function StudentsPage() {
                     <h3 className="filters-title">
                       <i className="fas fa-filter"></i> Filters
                     </h3>
-                    <button 
-                      className="clear-filters-btn"
-                      onClick={clearAllFilters}
-                    >
-                      <i className="fas fa-redo"></i> Clear All
-                    </button>
+                    <div className="filter-actions" style={{ display: 'flex', gap: '10px' }}>
+                      <button 
+                        className="view-table-btn"
+                        onClick={() => setShowTableModal(true)}
+                        style={{
+                          background: '#2196F3',
+                          color: 'white',
+                          border: 'none',
+                          padding: '6px 12px',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          fontSize: '0.85rem'
+                        }}
+                      >
+                        <i className="fas fa-table"></i> View Table
+                      </button>
+                      <button 
+                        className="clear-filters-btn"
+                        onClick={clearAllFilters}
+                      >
+                        <i className="fas fa-redo"></i> Clear All
+                      </button>
+                    </div>
                   </div>
 
                   <div className="filters-grid">
