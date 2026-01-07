@@ -12,6 +12,7 @@ import ContactPage from './screens/ContactPage';
 import Statistics from './screens/Statistics';
 import PolicyInstructions from './screens/PolicyInstructions';
 import DocumentationsList from './screens/DocumentationsList';
+import PeriodicReports from './screens/PeriodicReports';
 import AlertMonitor from './screens/AlertMonitor';
 import EmergencyNotification from './components/EmergencyNotification';
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/documentations" element={<Documentations />} />
         <Route path="/documentations-list" element={<DocumentationsList />} />
+        <Route path="/periodic-reports" element={<PeriodicReports />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/policy" element={<PolicyInstructions />} />

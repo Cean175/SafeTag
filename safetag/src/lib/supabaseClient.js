@@ -234,7 +234,7 @@ export async function fetchResolvedEmergencies() {
             if (emergency.student_id) {
                 const { data: student, error: studentError } = await supabase
                     .from('students')
-                    .select('first_name, middle_name, last_name, student_id, avatar_url')
+                    .select('first_name, middle_name, last_name, name, student_id, avatar_url')
                     .eq('student_id', emergency.student_id)
                     .single();
                 

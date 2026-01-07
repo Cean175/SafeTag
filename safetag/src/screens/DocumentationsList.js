@@ -258,6 +258,7 @@ function DocumentationsList() {
           <option value="desc">Descending</option>
         </select>
         <button onClick={()=>{setSearch('');setFilterStatus('');setFilterCondition('');setSortBy('date');setSortOrder('desc');}} style={{ padding:'10px 16px', background:'#43a047', color:'#fff', border:'none', borderRadius:'8px', fontWeight:'600', cursor:'pointer' }}>Reset</button>
+        <button onClick={() => navigate('/periodic-reports')} style={{ padding:'10px 16px', background:'#FA7070', color:'#fff', border:'none', borderRadius:'8px', fontWeight:'600', cursor:'pointer' }}>Periodic Reports</button>
       </div>
       {/* List */}
       <div style={{ flex:1, overflowY:'auto', padding:'8px 20px 20px' }}>

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase, fetchOngoingEmergencies, fetchResolvedEmergencies } from '../lib/supabaseClient';
 import '../css/EmergencyPage.css';
+import '../css/EmergencyPageTable.css';
+import '../css/EmergencyPageExport.css';
 import BrandLogos from '../components/BrandLogos';
 
 function EmergencyPage() {
@@ -214,6 +216,54 @@ function EmergencyPage() {
     });
   };
 
+  const exportToCSV = () => {
+    if (!emergencies || !emergencies.length) return;
+
+    const headers = ['Student Name', 'Student ID', 'Location', 'Reported At', 'Status'];
+    const filename = `Resolved_Emergencies_${new Date().toISOString().split('T')[0]}.csv`;
+    
+    const csvContent = [
+        headers.join(','),
+        ...emergencies.map(emergency => {
+            const clean = (text) => `"${(text || '').toString().replace(/"/g, '""')}"`;
+            
+            let studentName = emergency.student_name || 'Unknown';
+            if (emergency.students) {
+                if (emergency.students.name) {
+                    studentName = emergency.students.name;
+                } else {
+                    const fn = emergency.students.first_name || '';
+                    const ln = emergency.students.last_name || '';
+                    if (fn || ln) studentName = `${fn} ${ln}`.trim();
+                }
+            }
+
+            const studentId = emergency.students?.student_id || emergency.student_id || 'N/A';
+            const reported = localReportTimes[emergency.id] 
+              ? new Date(localReportTimes[emergency.id]).toLocaleString()
+              : (emergency.reported_at ? new Date(emergency.reported_at).toLocaleString() : 'N/A');
+
+            return [
+                clean(studentName),
+                clean(studentId),
+                clean(emergency.location),
+                clean(reported),
+                clean(emergency.is_resolved ? 'RESOLVED' : 'ACTIVE')
+            ].join(',');
+        })
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="emergency-page-container">
       <header className="header">
@@ -266,6 +316,11 @@ function EmergencyPage() {
                 <i className="fas fa-check-circle"></i> Resolved
               </button>
             </div>
+            {viewMode === 'resolved' && (
+              <button className="export-btn" onClick={exportToCSV} disabled={loading || emergencies.length === 0} style={{ marginRight: '10px' }}>
+                <i className="fas fa-file-export"></i> Export
+              </button>
+            )}
             <button className="refresh-btn" onClick={loadEmergencies} disabled={loading}>
               <i className="fas fa-sync-alt"></i> Refresh
             </button>
@@ -293,71 +348,142 @@ function EmergencyPage() {
 
         {!loading && !error && emergencies.length > 0 && (
           <div className="emergencies-list">
-            {emergencies.map((emergency, index) => (
-              <div key={emergency.id} className={`emergency-card ${viewMode === 'resolved' ? 'resolved' : ''}`}>
-                <div className={`emergency-number ${viewMode === 'resolved' ? 'resolved' : ''}`}>#{index + 1}</div>
-                
-                <div className="emergency-card-header">
-                  <div className="emergency-status">
-                    <i className={viewMode === 'ongoing' ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle'}></i>
-                    <span className={`status-badge ${viewMode === 'resolved' ? 'resolved' : ''}`}>
-                      {viewMode === 'ongoing' ? 'ACTIVE' : 'RESOLVED'}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="emergency-card-body">
-                  {emergency.students && (
-                    <div className="student-info">
-                      {emergency.students.avatar_url && (
-                        <img 
-                          src={emergency.students.avatar_url} 
-                          alt={emergency.students.student_name || 'Student'}
-                          className="student-avatar"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                          }}
-                        />
-                      )}
-                      <div className="student-details">
-                        <h3 className="student-name">
-                          {emergency.student.student_name}
-                        </h3>
-                        <p className="student-id">ID: {emergency.students.student_id}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {emergency.location && (
-                    <div className="emergency-info-row">
-                      <i className="fas fa-map-marker-alt"></i>
-                      <span><strong>Location:</strong> {emergency.location}</span>
-                    </div>
-                  )}
-
-                  <div className="emergency-info-row">
-                    <i className="far fa-clock"></i>
-                    <span>
-                      <strong>Reported (Local Device):</strong> {formatDateTime(localReportTimes[emergency.id] || emergency.reported_at)}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="emergency-card-footer">
-                  <button
-                    className="view-location-btn"
-                    onClick={() => navigate('/contact', { 
-                      state: { 
-                        emergency,
-                        localReportedTime: localReportTimes[emergency.id] || emergency.reported_at
-                      } 
-                    })}
-                  >
-                    <i className="fas fa-map-marked-alt"></i> View Location
-                  </button>
-                </div>
+            {viewMode === 'resolved' ? (
+              <div className="table-responsive">
+                <table className="emergency-table">
+                  <thead>
+                    <tr>
+                      <th>Student</th>
+                      <th>Location</th>
+                      <th>Reported At</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {emergencies.map((emergency) => (
+                      <tr key={emergency.id}>
+                        <td className="col-student">
+                          {emergency.students ? (
+                            <div className="student-cell">
+                              {emergency.students.avatar_url && (
+                                <img
+                                  src={emergency.students.avatar_url}
+                                  alt="Avatar"
+                                  className="mini-avatar"
+                                  onError={(e) => { e.target.style.display = 'none'; }}
+                                />
+                              )}
+                              <div>
+                                <div className="student-name-text">
+                                  {
+                                      emergency.students.name 
+                                          ? emergency.students.name 
+                                          : (emergency.students.first_name || emergency.students.last_name 
+                                              ? `${emergency.students.first_name || ''} ${emergency.students.last_name || ''}`.trim()
+                                              : (emergency.student_name || `Student ${emergency.students.student_id || emergency.student_id}`))
+                                  }
+                                </div>
+                                <div className="student-id-text">{emergency.students.student_id || emergency.student_id}</div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="student-cell">
+                                <div>
+                                    <div className="student-name-text">
+                                        {emergency.student_name || `Student ${emergency.student_id}`}
+                                    </div>
+                                    <div className="student-id-text">{emergency.student_id}</div>
+                                </div>
+                            </div>
+                          )}
+                        </td>
+                        <td>{emergency.location || 'Unknown'}</td>
+                        <td>{formatDateTime(localReportTimes[emergency.id] || emergency.reported_at)}</td>
+                        <td>
+                          <button
+                            className="view-location-btn small-btn"
+                            onClick={() => navigate('/contact', {
+                              state: {
+                                emergency,
+                                localReportedTime: localReportTimes[emergency.id] || emergency.reported_at
+                              }
+                            })}
+                          >
+                            <i className="fas fa-map-marked-alt"></i> View
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
+            ) : (
+              // Ongoing view (Original Card Layout)
+              emergencies.map((emergency, index) => (
+                <div key={emergency.id} className="emergency-card">
+                  <div className="emergency-number">#{index + 1}</div>
+                  
+                  <div className="emergency-card-header">
+                    <div className="emergency-status">
+                      <i className="fas fa-exclamation-triangle"></i>
+                      <span className="status-badge">ACTIVE</span>
+                    </div>
+                  </div>
+
+                  <div className="emergency-card-body">
+                    {emergency.students && (
+                      <div className="student-info">
+                        {emergency.students.avatar_url && (
+                          <img 
+                            src={emergency.students.avatar_url} 
+                            alt={emergency.students.first_name || 'Student'}
+                            className="student-avatar"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                        )}
+                        <div className="student-details">
+                          <h3 className="student-name">
+                             {emergency.students.first_name} {emergency.students.last_name}
+                             {!emergency.students.first_name && !emergency.students.last_name && emergency.student_id ? `Student ${emergency.student_id}` : ''}
+                          </h3>
+                          <p className="student-id">ID: {emergency.students.student_id}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {emergency.location && (
+                      <div className="emergency-info-row">
+                        <i className="fas fa-map-marker-alt"></i>
+                        <span><strong>Location:</strong> {emergency.location}</span>
+                      </div>
+                    )}
+
+                    <div className="emergency-info-row">
+                      <i className="far fa-clock"></i>
+                      <span>
+                        <strong>Reported (Local Device):</strong> {formatDateTime(localReportTimes[emergency.id] || emergency.reported_at)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="emergency-card-footer">
+                    <button
+                      className="view-location-btn"
+                      onClick={() => navigate('/contact', { 
+                        state: { 
+                          emergency,
+                          localReportedTime: localReportTimes[emergency.id] || emergency.reported_at
+                        } 
+                      })}
+                    >
+                      <i className="fas fa-map-marked-alt"></i> View Location
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
       </main>
